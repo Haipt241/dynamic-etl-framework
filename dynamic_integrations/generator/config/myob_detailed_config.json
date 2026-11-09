@@ -1,0 +1,196 @@
+{
+  "integration_name": "MYOB_DETAILED",
+  "description": "Integration with MYOB AccountRight API",
+  "auth_type": "myob_oauth2",
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "MYOB_CLIENT_ID",
+    "MYOB_ACCESS_TOKEN",
+    "MYOB_CLIENT_SECRET",
+    "MYOB_API_KEY",
+    "MYOB_API_VERSION"
+  ],
+  "env_var_validations": {
+    "MYOB_CLIENT_ID": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_ACCESS_TOKEN": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_CLIENT_SECRET": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_COMPANY_FILE": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_API_KEY": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_CF_TOKEN": "lambda x: bool(x) and len(x) > 0"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "etani_link_organisation_id": {
+      "env_var": "EtaniLinkOrganisationID",
+      "default_value": ""
+    },
+    "myob_client_id": {
+      "env_var": "MYOB_CLIENT_ID",
+      "description": "MYOB API Client ID",
+      "default_value": ""
+    },
+    "myob_access_token": {
+      "env_var": "MYOB_ACCESS_TOKEN",
+      "description": "MYOB JWT Access Token",
+      "default_value": ""
+    },
+    "myob_client_secret": {
+      "env_var": "MYOB_CLIENT_SECRET",
+      "description": "MYOB API Client Secret",
+      "default_value": ""
+    },
+    "myob_company_file": {
+      "env_var": "MYOB_COMPANY_FILE",
+      "description": "MYOB Company File ID/GUID",
+      "default_value": ""
+    },
+    "myob_api_key": {
+      "env_var": "MYOB_API_KEY",
+      "description": "MYOB API Key for x-myobapi-key header",
+      "default_value": ""
+    },
+    "myob_api_version": {
+      "env_var": "MYOB_API_VERSION",
+      "description": "MYOB API Version for x-myobapi-version header",
+      "default_value": ""
+    },
+    "myob_api_endpoint": {
+      "env_var": "MYOB_API_ENDPOINT",
+      "description": "MYOB API Base URL Endpoint",
+      "default_value": ""
+    },
+    "myob_cf_token": {
+      "env_var": "MYOB_CF_TOKEN",
+      "description": "MYOB Company File Token",
+      "default_value": ""
+    },
+    "myob_refresh_token": {
+      "env_var": "MYOB_REFRESH_TOKEN",
+      "description": "MYOB Refresh Token",
+      "default_value": ""
+    },
+    "myob_user_uid": {
+      "env_var": "MYOB_USER_UID",
+      "description": "MYOB User UID",
+      "default_value": ""
+    },
+    "myob_user_username": {
+      "env_var": "MYOB_USER_USERNAME",
+      "description": "MYOB User Username",
+      "default_value": ""
+    },
+    "myob_organisation": {
+      "env_var": "MYOB_ORGANISATION",
+      "description": "MYOB Organisation Name",
+      "default_value": ""
+    }
+  },
+  "capabilities": {
+    "supports_upsert": true,
+    "supports_incremental_sync": true,
+    "supports_oauth": true
+  },
+  "auth_config": {
+    "auth_type": "myob_oauth2",
+    "token_url": "https://secure.myob.com/oauth2/v1/authorize/",
+    "authorization_url": "https://secure.myob.com/oauth2/account/authorize",
+    "client_id_env_var": "MYOB_CLIENT_ID",
+    "client_secret_env_var": "MYOB_CLIENT_SECRET",
+    "scope": "CompanyFile offline_access openid",
+    "grant_type": "refresh_token",
+    "token_validity_minutes": 20,
+    "refresh_token_validity_days": 7,
+    "additional_params": {},
+    "custom_headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Accept": "application/json"
+    },
+    "token_storage": {
+      "type": "file",
+      "path": "token/MYOB_CLIENT{client_id}_ORG{org_id}.txt"
+    }
+  },
+  "reconciliation": {
+    "enabled": true,
+    "type": "api_total_count",
+    "field_mapping": {
+      "total_count_field": "Count"
+    },
+    "endpoints": [
+      "InventoryItem",
+      "ItemPriceMatrix",
+      "PriceLevelDetail",
+      "InventoryAdjustment",
+      "InventoryLocation",
+      "InventoryBuild",
+      "SaleInvoiceItem",
+      "SaleInvoiceService",
+      "SaleInvoiceProfessional",
+      "SaleInvoiceTimeBilling",
+      "SaleInvoiceMiscellaneous",
+      "SaleOrderItem",
+      "SaleOrderService",
+      "SaleOrderProfessional",
+      "SaleOrderTimeBilling",
+      "SaleOrderMiscellaneous",
+      "SaleQuoteMiscellaneous",
+      "SaleQuoteTimeBilling",
+      "SaleQuoteProfessional",
+      "SaleQuoteService",
+      "SaleQuoteItem",
+      "PurchaseBillItem",
+      "PurchaseBillService",
+      "PurchaseBillProfessional",
+      "PurchaseBillMiscellaneous",
+      "PurchaseOrderItem",
+      "PurchaseOrderService",
+      "PurchaseOrderProfessional",
+      "PurOrderMisc",
+      "PayrollCategoryWage",
+      "PayrollCatEntitle",
+      "PayrollCategoryDeduction",
+      "PayrollCategoryExpense",
+      "PayrollCatSuper",
+      "PayrollCategoryTax",
+      "PayrollCategoryTaxTable",
+      "InvItemLocDetails",
+      "InventoryAdjLn",
+      "SaleInvoiceSvcLns",
+      "SaleInvTimeBillLines",
+      "SaleInvMiscellaneousLines",
+      "SaleQuoteItemLines",
+      "PurchaseBillServiceLines",
+      "PurBillMiscLines",
+      "InventoryBldLns",
+      "SaleInvoiceItmLns",
+      "SaleInvoiceProfLines",
+      "SaleOrderItmLns",
+      "SaleOrderSvcLn",
+      "SaleOrderProfLn",
+      "SaleOrderTmBillLn",
+      "SaleOrderMiscLn",
+      "SaleQuoteMiscLines",
+      "SaleQuoteTimeBillLn",
+      "SaleQuoteProfLn",
+      "SaleQuoteSvcLn",
+      "SaleQuoteItmLns",
+      "PurchaseBillItmLn",
+      "PurchaseBillProfLn",
+      "PurchaseOrderItmLn",
+      "PurchaseOrderSvcLn",
+      "PurchaseOrderProfLn",
+      "PurchaseOrderMiscLns",
+      "LinkedPayrollCatWages",
+      "PayrollCatSuperExempt"
+    ],
+    "retry_attempts": 1
+  }
+}

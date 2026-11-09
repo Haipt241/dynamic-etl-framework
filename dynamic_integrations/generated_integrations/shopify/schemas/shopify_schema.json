@@ -1,0 +1,6207 @@
+{
+  "integration_name": "SHOPIFY",
+  "display_name": "Shopify E-commerce Platform",
+  "category": "ecommerce",
+  "api_config": {
+    "base_url": "https://{store_url}/admin/api/{api_version}/",
+    "version": "2022-10",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "authentication": {
+      "type": "header_token",
+      "header": "X-Shopify-Access-Token",
+      "format": "{access_token}",
+      "description": "Shopify Access Token - Uses X-Shopify-Access-Token header"
+    },
+    "url_patterns": {
+      "has_company_id": false,
+      "has_realm_id": false,
+      "has_store_variable": true,
+      "entity_endpoint": "/{EntityName}.json",
+      "url_template_vars": [
+        "store_url",
+        "api_version"
+      ],
+      "requires_trailing_slash": false
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "pagination": {
+      "type": "link_header_based",
+      "limit_param": "limit",
+      "page_info_param": "page_info",
+      "default_limit": 250,
+      "max_limit": 250,
+      "header_name": "Link",
+      "next_rel": "next"
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Customers",
+      "description": "Customer master records with addresses and order history",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/customers.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "page",
+            "since_id",
+            "updated_at_min"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "customers",
+        "is_array": true,
+        "nested_objects": [
+          "Address",
+          "EmailMarketingConsent",
+          "SmsMarketingConsent"
+        ],
+        "array_fields": [
+          "addresses",
+          "tax_exemptions"
+        ],
+        "jsonb_fields": [
+          "addresses",
+          "tax_exemptions",
+          "email_marketing_consent",
+          "sms_marketing_consent",
+          "default_address"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "email",
+          "db_column": "Email",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "first_name",
+          "db_column": "FirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "last_name",
+          "db_column": "LastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "orders_count",
+          "db_column": "OrdersCount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_spent",
+          "db_column": "TotalSpent",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "last_order_id",
+          "db_column": "LastOrderId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "note",
+          "db_column": "Note",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "verified_email",
+          "db_column": "VerifiedEmail",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "multipass_identifier",
+          "db_column": "MultipassIdentifier",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_exempt",
+          "db_column": "TaxExempt",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tags",
+          "db_column": "Tags",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "last_order_name",
+          "db_column": "LastOrderName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phone",
+          "db_column": "Phone",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_exemptions",
+          "db_column": "tax_exemptions",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email_marketing_consent.state",
+          "db_column": "EmailMarketingConsentState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email_marketing_consent.opt_in_level",
+          "db_column": "EmailMarketingConsentOptInLevel",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email_marketing_consent.consent_updated_at",
+          "db_column": "EmailMarketingConsentConsentUpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sms_marketing_consent.state",
+          "db_column": "SmsMarketingConsentState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sms_marketing_consent.opt_in_level",
+          "db_column": "SmsMarketingConsentOptInLevel",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sms_marketing_consent.consent_updated_at",
+          "db_column": "SmsMarketingConsentConsentUpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sms_marketing_consent.consent_collected_from",
+          "db_column": "SmsMarketingConsentConsentCollectedFrom",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.id",
+          "db_column": "DefaultAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.customer_id",
+          "db_column": "DefaultAddressCustomerId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.first_name",
+          "db_column": "DefaultAddressFirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.last_name",
+          "db_column": "DefaultAddressLastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.company",
+          "db_column": "DefaultAddressCompany",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.address1",
+          "db_column": "DefaultAddressAddress1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.address2",
+          "db_column": "DefaultAddressAddress2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.city",
+          "db_column": "DefaultAddressCity",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.province",
+          "db_column": "DefaultAddressProvince",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.country",
+          "db_column": "DefaultAddressCountry",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.zip",
+          "db_column": "DefaultAddressZip",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.phone",
+          "db_column": "DefaultAddressPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.name",
+          "db_column": "DefaultAddressName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.province_code",
+          "db_column": "DefaultAddressProvinceCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.country_code",
+          "db_column": "DefaultAddressCountryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.country_name",
+          "db_column": "DefaultAddressCountryName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default_address.default",
+          "db_column": "DefaultAddressDefault",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_Customers",
+      "staging_table": "SHOPIFY_CustomersSTAGE",
+      "incremental": true,
+      "priority": "high",
+      "nested_extractions": [
+        {
+          "table_name": "CustomersAddr",
+          "source_field": "addresses"
+        }
+      ]
+    },
+    {
+      "name": "ApplicationCharge",
+      "description": "Application charges for theme purchases and app installations",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/application_charges.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "page_info",
+            "since_id"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updated_at_min",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss-04:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "api_client_id",
+          "db_column": "ApiClientId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "return_url",
+          "db_column": "ReturnUrl",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "external_id",
+          "db_column": "ExternalId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "charge_type",
+          "db_column": "ChargeType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "decorated_return_url",
+          "db_column": "DecoratedReturnUrl",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "application_charges",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_applicationchargestage",
+        "prod_table": "c{clientID}_integration_applicationcharge",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Status",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ApplicationCredit",
+      "description": "Application credits for refunds and account adjustments",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/application_credits.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "page_info",
+            "since_id"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "created_at_min",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss-04:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on creation date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "application_credits",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_applicationcreditstage",
+        "prod_table": "c{clientID}_integration_applicationcredit",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "RecurringApplicationCharge",
+      "description": "Recurring subscription charges for applications and services",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/recurring_application_charges.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "page_info",
+            "since_id"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updated_at_min",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss-04:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_on",
+          "db_column": "BillingOn",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "activated_on",
+          "db_column": "ActivatedOn",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "return_url",
+          "db_column": "ReturnUrl",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cancelled_on",
+          "db_column": "CancelledOn",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "trial_days",
+          "db_column": "TrialDays",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "trial_ends_on",
+          "db_column": "TrialEndsOn",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "api_client_id",
+          "db_column": "ApiClientId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "decorated_return_url",
+          "db_column": "DecoratedReturnUrl",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "recurring_application_charges",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_recurringapplicationchargestage",
+        "prod_table": "c{clientID}_integration_recurringapplicationcharge",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Status",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Orders",
+      "description": "Order transaction records with line items and customer information",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/orders.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "status",
+            "limit",
+            "updated_at_min",
+            "since_id"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "orders",
+        "is_array": true,
+        "nested_objects": [
+          "customer",
+          "billing_address",
+          "shipping_address",
+          "total_price_set",
+          "subtotal_price_set"
+        ],
+        "array_fields": [
+          "line_items",
+          "fulfillments",
+          "refunds",
+          "tax_lines",
+          "shipping_lines",
+          "discount_applications"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Order ID"
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "app_id",
+          "db_column": "AppId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "browser_ip",
+          "db_column": "BrowserIp",
+          "data_type": "VARCHAR(45)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "buyer_accepts_marketing",
+          "db_column": "BuyerAcceptsMarketing",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cancel_reason",
+          "db_column": "CancelReason",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cancelled_at",
+          "db_column": "CancelledAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cart_token",
+          "db_column": "CartToken",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "checkout_id",
+          "db_column": "CheckoutId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "checkout_token",
+          "db_column": "CheckoutToken",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "closed_at",
+          "db_column": "ClosedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "confirmation_number",
+          "db_column": "ConfirmationNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "confirmed",
+          "db_column": "Confirmed",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contact_email",
+          "db_column": "ContactEmail",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(3)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price",
+          "db_column": "CurrentSubtotalPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_additional_fees_set",
+          "db_column": "current_total_additional_fees_set",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts",
+          "db_column": "CurrentTotalDiscounts",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_duties_set",
+          "db_column": "current_total_duties_set",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price",
+          "db_column": "CurrentTotalPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax",
+          "db_column": "CurrentTotalTax",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_locale",
+          "db_column": "CustomerLocale",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "device_id",
+          "db_column": "DeviceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discount_codes",
+          "db_column": "discount_codes",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "duties_included",
+          "db_column": "DutiesIncluded",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email",
+          "db_column": "Email",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "estimated_taxes",
+          "db_column": "EstimatedTaxes",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "financial_status",
+          "db_column": "FinancialStatus",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_status",
+          "db_column": "FulfillmentStatus",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "landing_site",
+          "db_column": "LandingSite",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "landing_site_ref",
+          "db_column": "LandingSiteRef",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "location_id",
+          "db_column": "LocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "merchant_business_entity_id",
+          "db_column": "MerchantBusinessEntityId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "merchant_of_record_app_id",
+          "db_column": "MerchantOfRecordAppId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "note",
+          "db_column": "Note",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "note_attributes",
+          "db_column": "note_attributes",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "number",
+          "db_column": "Number",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_number",
+          "db_column": "OrderNumber",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_status_url",
+          "db_column": "OrderStatusUrl",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "original_total_additional_fees_set",
+          "db_column": "original_total_additional_fees_set",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "original_total_duties_set",
+          "db_column": "original_total_duties_set",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payment_gateway_names",
+          "db_column": "payment_gateway_names",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phone",
+          "db_column": "Phone",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "po_number",
+          "db_column": "PoNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "presentment_currency",
+          "db_column": "PresentmentCurrency",
+          "data_type": "VARCHAR(3)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "processed_at",
+          "db_column": "ProcessedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reference",
+          "db_column": "Reference",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "referring_site",
+          "db_column": "ReferringSite",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "source_identifier",
+          "db_column": "SourceIdentifier",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "source_name",
+          "db_column": "SourceName",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "source_url",
+          "db_column": "SourceUrl",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price",
+          "db_column": "SubtotalPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tags",
+          "db_column": "Tags",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_exempt",
+          "db_column": "TaxExempt",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_lines",
+          "db_column": "tax_lines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxes_included",
+          "db_column": "TaxesIncluded",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "token",
+          "db_column": "Token",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts",
+          "db_column": "TotalDiscounts",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price",
+          "db_column": "TotalLineItemsPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_outstanding",
+          "db_column": "TotalOutstanding",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price",
+          "db_column": "TotalPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax",
+          "db_column": "TotalTax",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tip_received",
+          "db_column": "TotalTipReceived",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_weight",
+          "db_column": "TotalWeight",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "user_id",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discount_applications",
+          "db_column": "discount_applications",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payment_terms",
+          "db_column": "payment_terms",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.accept_language",
+          "db_column": "ClientDetailsAcceptLanguage",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.browser_height",
+          "db_column": "ClientDetailsBrowserHeight",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.browser_ip",
+          "db_column": "ClientDetailsBrowserIp",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.browser_width",
+          "db_column": "ClientDetailsBrowserWidth",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.session_hash",
+          "db_column": "ClientDetailsSessionHash",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_details.user_agent",
+          "db_column": "ClientDetailsUserAgent",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set.shop_money",
+          "db_column": "CurrentSubtotalPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set_shop_money.amount",
+          "db_column": "CurrentSubtotalPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set_shop_money.currency_code",
+          "db_column": "CurrentSubtotalPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set.presentment_money",
+          "db_column": "CurrentSubtotalPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set_presentment_money.amount",
+          "db_column": "CurrentSubtotalPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_subtotal_price_set_presentment_money.currency_code",
+          "db_column": "CurrentSubtotalPriceSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set.shop_money",
+          "db_column": "CurrentTotalDiscountsSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set_shop_money.amount",
+          "db_column": "CurrentTotalDiscountsSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set_shop_money.currency_code",
+          "db_column": "CurrentTotalDiscountsSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set.presentment_money",
+          "db_column": "CurrentTotalDiscountsSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set_presentment_money.amount",
+          "db_column": "CurrentTotalDiscountsSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_discounts_set_presentment_money.currency_code",
+          "db_column": "CurrentTotalDiscountsSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set.shop_money",
+          "db_column": "CurrentTotalPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set_shop_money.amount",
+          "db_column": "CurrentTotalPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set_shop_money.currency_code",
+          "db_column": "CurrentTotalPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set.presentment_money",
+          "db_column": "CurrentTotalPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set_presentment_money.amount",
+          "db_column": "CurrentTotalPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_price_set_presentment_money.currency_code",
+          "db_column": "CurrentTotalPriceSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set.shop_money",
+          "db_column": "CurrentTotalTaxSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set_shop_money.amount",
+          "db_column": "CurrentTotalTaxSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set_shop_money.currency_code",
+          "db_column": "CurrentTotalTaxSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set.presentment_money",
+          "db_column": "CurrentTotalTaxSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set_presentment_money.amount",
+          "db_column": "CurrentTotalTaxSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_total_tax_set_presentment_money.currency_code",
+          "db_column": "CurrentTotalTaxSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set.shop_money",
+          "db_column": "SubtotalPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set_shop_money.amount",
+          "db_column": "SubtotalPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set_shop_money.currency_code",
+          "db_column": "SubtotalPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set.presentment_money",
+          "db_column": "SubtotalPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set_presentment_money.amount",
+          "db_column": "SubtotalPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_price_set_presentment_money.currency_code",
+          "db_column": "SubtotalPriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set.shop_money",
+          "db_column": "TotalCashRoundingPaymentAdjSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set_shop_money.amount",
+          "db_column": "TotalCashRoundingPaymentAdjSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set_shop_money.currency_code",
+          "db_column": "TotalCashRoundingPaymentAdjSetShopMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set.presentment_money",
+          "db_column": "TotalCashRoundingPaymentAdjSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set_presentment_money.amount",
+          "db_column": "TotalCashRoundingPaymentAdjSetPresentmentMoneyAmt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_payment_adjustment_set_presentment_money.currency_code",
+          "db_column": "TotalCashRoundingPaymentAdjSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set.shop_money",
+          "db_column": "TotalCashRoundingRefundAdjustmentSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set_shop_money.amount",
+          "db_column": "TotalCashRoundingRefundAdjSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set_shop_money.currency_code",
+          "db_column": "TotalCashRoundingRefundAdjSetShopMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set.presentment_money",
+          "db_column": "TotalCashRoundingRefundAdjSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set_presentment_money.amount",
+          "db_column": "TotalCashRoundingRefundAdjSetPresentmentMoneyAmt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_cash_rounding_refund_adjustment_set_presentment_money.currency_code",
+          "db_column": "TotalCashRoundingRefundAdjSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set.shop_money",
+          "db_column": "TotalDiscountsSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set_shop_money.amount",
+          "db_column": "TotalDiscountsSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set_shop_money.currency_code",
+          "db_column": "TotalDiscountsSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set.presentment_money",
+          "db_column": "TotalDiscountsSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set_presentment_money.amount",
+          "db_column": "TotalDiscountsSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discounts_set_presentment_money.currency_code",
+          "db_column": "TotalDiscountsSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set.shop_money",
+          "db_column": "TotalLineItemsPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set_shop_money.amount",
+          "db_column": "TotalLineItemsPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set_shop_money.currency_code",
+          "db_column": "TotalLineItemsPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set.presentment_money",
+          "db_column": "TotalLineItemsPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set_presentment_money.amount",
+          "db_column": "TotalLineItemsPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_line_items_price_set_presentment_money.currency_code",
+          "db_column": "TotalLineItemsPriceSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set.shop_money",
+          "db_column": "TotalPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set_shop_money.amount",
+          "db_column": "TotalPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set_shop_money.currency_code",
+          "db_column": "TotalPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set.presentment_money",
+          "db_column": "TotalPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set_presentment_money.amount",
+          "db_column": "TotalPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_price_set_presentment_money.currency_code",
+          "db_column": "TotalPriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set.shop_money",
+          "db_column": "TotalShippingPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set_shop_money.amount",
+          "db_column": "TotalShippingPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set_shop_money.currency_code",
+          "db_column": "TotalShippingPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set.presentment_money",
+          "db_column": "TotalShippingPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set_presentment_money.amount",
+          "db_column": "TotalShippingPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_shipping_price_set_presentment_money.currency_code",
+          "db_column": "TotalShippingPriceSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set.shop_money",
+          "db_column": "TotalTaxSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_shop_money.amount",
+          "db_column": "TotalTaxSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_shop_money.currency_code",
+          "db_column": "TotalTaxSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set.presentment_money",
+          "db_column": "TotalTaxSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_presentment_money.amount",
+          "db_column": "TotalTaxSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_presentment_money.currency_code",
+          "db_column": "TotalTaxSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.first_name",
+          "db_column": "BillingAddressFirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.address1",
+          "db_column": "BillingAddressAddress1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.phone",
+          "db_column": "BillingAddressPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.city",
+          "db_column": "BillingAddressCity",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.zip",
+          "db_column": "BillingAddressZip",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.province",
+          "db_column": "BillingAddressProvince",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.country",
+          "db_column": "BillingAddressCountry",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.last_name",
+          "db_column": "BillingAddressLastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.address2",
+          "db_column": "BillingAddressAddress2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.company",
+          "db_column": "BillingAddressCompany",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.latitude",
+          "db_column": "BillingAddressLatitude",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.longitude",
+          "db_column": "BillingAddressLongitude",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.name",
+          "db_column": "BillingAddressName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.country_code",
+          "db_column": "BillingAddressCountryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing_address.province_code",
+          "db_column": "BillingAddressProvinceCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.id",
+          "db_column": "CustomerId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.email",
+          "db_column": "CustomerEmail",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.created_at",
+          "db_column": "CustomerCreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.updated_at",
+          "db_column": "CustomerUpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.first_name",
+          "db_column": "CustomerFirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.last_name",
+          "db_column": "CustomerLastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.state",
+          "db_column": "CustomerState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.note",
+          "db_column": "CustomerNote",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.verified_email",
+          "db_column": "CustomerVerifiedEmail",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.multipass_identifier",
+          "db_column": "CustomerMultipassIdentifier",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.tax_exempt",
+          "db_column": "CustomerTaxExempt",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.phone",
+          "db_column": "CustomerPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.email_marketing_consent",
+          "db_column": "CustomerEmailMarketingConsent",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_email_marketing_consent.state",
+          "db_column": "CustomerEmailMarketingConsentState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_email_marketing_consent.opt_in_level",
+          "db_column": "CustomerEmailMarketingConsentOptInLevel",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_email_marketing_consent.consent_updated_at",
+          "db_column": "CustomerEmailMarketingConsentConsentUpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.sms_marketing_consent",
+          "db_column": "CustomerSmsMarketingConsent",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_sms_marketing_consent.state",
+          "db_column": "CustomerSmsMarketingConsentState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_sms_marketing_consent.opt_in_level",
+          "db_column": "CustomerSmsMarketingConsentOptInLevel",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_sms_marketing_consent.consent_updated_at",
+          "db_column": "CustomerSmsMarketingConsentConsentUpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_sms_marketing_consent.consent_collected_from",
+          "db_column": "CustomerSmsMarketingConsentCollectedFrom",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.tags",
+          "db_column": "CustomerTags",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.currency",
+          "db_column": "CustomerCurrency",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.tax_exemptions",
+          "db_column": "CustomerTaxExemptions",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.admin_graphql_api_id",
+          "db_column": "CustomerAdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer.default_address",
+          "db_column": "CustomerDefaultAddress",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.id",
+          "db_column": "CustomerDefaultAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.customer_id",
+          "db_column": "CustomerDefaultAddressCustomerId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.first_name",
+          "db_column": "CustomerDefaultAddressFirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.last_name",
+          "db_column": "CustomerDefaultAddressLastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.company",
+          "db_column": "CustomerDefaultAddressCompany",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.address1",
+          "db_column": "CustomerDefaultAddressAddress1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.address2",
+          "db_column": "CustomerDefaultAddressAddress2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.city",
+          "db_column": "CustomerDefaultAddressCity",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.province",
+          "db_column": "CustomerDefaultAddressProvince",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.country",
+          "db_column": "CustomerDefaultAddressCountry",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.zip",
+          "db_column": "CustomerDefaultAddressZip",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.phone",
+          "db_column": "CustomerDefaultAddressPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.name",
+          "db_column": "CustomerDefaultAddressName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.province_code",
+          "db_column": "CustomerDefaultAddressProvinceCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.country_code",
+          "db_column": "CustomerDefaultAddressCountryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.country_name",
+          "db_column": "CustomerDefaultAddressCountryName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer_default_address.default",
+          "db_column": "CustomerDefaultAddressDefault",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.first_name",
+          "db_column": "ShippingAddressFirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.address1",
+          "db_column": "ShippingAddressAddress1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.phone",
+          "db_column": "ShippingAddressPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.city",
+          "db_column": "ShippingAddressCity",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.zip",
+          "db_column": "ShippingAddressZip",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.province",
+          "db_column": "ShippingAddressProvince",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.country",
+          "db_column": "ShippingAddressCountry",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.last_name",
+          "db_column": "ShippingAddressLastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.address2",
+          "db_column": "ShippingAddressAddress2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.company",
+          "db_column": "ShippingAddressCompany",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.latitude",
+          "db_column": "ShippingAddressLatitude",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.longitude",
+          "db_column": "ShippingAddressLongitude",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.name",
+          "db_column": "ShippingAddressName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.country_code",
+          "db_column": "ShippingAddressCountryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipping_address.province_code",
+          "db_column": "ShippingAddressProvinceCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_Orders",
+      "staging_table": "SHOPIFY_OrdersSTAGE",
+      "incremental": true,
+      "priority": "high",
+      "nested_extractions": [
+        {
+          "table_name": "OrdersFulfl",
+          "source_field": "fulfillments"
+        },
+        {
+          "table_name": "OrdersLine_Items",
+          "source_field": "line_items"
+        },
+        {
+          "table_name": "OrdersRefunds",
+          "source_field": "refunds"
+        },
+        {
+          "table_name": "OrdersShipLines",
+          "source_field": "shipping_lines"
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "description": "Product catalog records with variants and images",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/products.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "since_id",
+            "published_status"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "products",
+        "is_array": true,
+        "nested_objects": [
+          "image"
+        ],
+        "array_fields": [
+          "variants",
+          "options",
+          "images"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the product"
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "body_html",
+          "db_column": "BodyHtml",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "vendor",
+          "db_column": "Vendor",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_type",
+          "db_column": "ProductType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "handle",
+          "db_column": "Handle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "published_at",
+          "db_column": "PublishedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "template_suffix",
+          "db_column": "TemplateSuffix",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "published_scope",
+          "db_column": "PublishedScope",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tags",
+          "db_column": "Tags",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_Products",
+      "staging_table": "SHOPIFY_ProductsSTAGE",
+      "incremental": true,
+      "priority": "high",
+      "nested_extractions": [
+        {
+          "table_name": "ProductsVariants",
+          "source_field": "variants"
+        },
+        {
+          "table_name": "ProductsOptions",
+          "source_field": "options"
+        },
+        {
+          "table_name": "ProductsImages",
+          "source_field": "images"
+        },
+        {
+          "table_name": "ProductsImage",
+          "source_field": "image"
+        }
+      ]
+    },
+    {
+      "name": "PriceRules",
+      "description": "Pricing rules and discount configurations",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/price_rules.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "since_id"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "price_rules",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [
+          "entitled_product_ids",
+          "entitled_variant_ids",
+          "entitled_collection_ids",
+          "entitled_country_ids"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "id",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "created_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "updated_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value_type",
+          "db_column": "value_type",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "value",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "target_type",
+          "db_column": "target_type",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "starts_at",
+          "db_column": "starts_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ends_at",
+          "db_column": "ends_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_PriceRule",
+      "staging_table": "SHOPIFY_PriceRuleSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "DiscountCodes",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "pricerules",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Discount codes associated with price rules",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/price_rules/{price_rule_id}/discount_codes.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "price_rule_id"
+          ],
+          "optional": [
+            "limit"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "discount_codes",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "id",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "price_rule_id",
+          "db_column": "price_rule_id",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "code",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "usage_count",
+          "db_column": "usage_count",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "created_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "updated_at",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_DiscountCode",
+      "staging_table": "SHOPIFY_DiscountCodeSTAGE",
+      "incremental": true,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/price_rules"
+    },
+    {
+      "name": "Locations",
+      "description": "Store locations and inventory locations",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/locations.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "response_structure": {
+        "root_data_field": "locations",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address1",
+          "db_column": "Address1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address2",
+          "db_column": "Address2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "city",
+          "db_column": "City",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "zip",
+          "db_column": "Zip",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "province",
+          "db_column": "Province",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country",
+          "db_column": "Country",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phone",
+          "db_column": "Phone",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_code",
+          "db_column": "CountryCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_name",
+          "db_column": "CountryName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "province_code",
+          "db_column": "ProvinceCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "legacy",
+          "db_column": "Legacy",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "localized_country_name",
+          "db_column": "LocalizedCountryName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "localized_province_name",
+          "db_column": "LocalizedProvinceName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_InventoryLocations",
+      "staging_table": "SHOPIFY_InventoryLocationsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "InventoryItems",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "ProductsVariants",
+          "parent_id_column": "InventoryItemId",
+          "parent_id_source": "inventoryId",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Inventory item details for products",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/inventory_items.json?ids={inventoryId}",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "ids"
+          ],
+          "optional": [
+            "limit"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "inventory_items",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "sku",
+          "db_column": "Sku",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "requires_shipping",
+          "db_column": "RequiresShipping",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cost",
+          "db_column": "Cost",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_code_of_origin",
+          "db_column": "CountryCodeOfOrigin",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "province_code_of_origin",
+          "db_column": "ProvinceCodeOfOrigin",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "harmonized_system_code",
+          "db_column": "HarmonizedSystemCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracked",
+          "db_column": "Tracked",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_harmonized_system_codes",
+          "db_column": "country_harmonized_system_codes",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_InventoryItem",
+      "staging_table": "SHOPIFY_InventoryItemSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "Blog",
+      "description": "Blog entries for content management and marketing",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/blogs.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "handle",
+          "db_column": "Handle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "commentable",
+          "db_column": "Commentable",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "feedburner",
+          "db_column": "Feedburner",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "feedburner_location",
+          "db_column": "FeedburnerLocation",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "template_suffix",
+          "db_column": "TemplateSuffix",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tags",
+          "db_column": "Tags",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "blogs",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_blogstage",
+        "prod_table": "c{clientID}_integration_blog",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Handle"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Metafield",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "blog",
+          "parent_id_column": "Id",
+          "parent_id_source": "blogId",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Additional metadata fields for various Shopify resources",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/blogs/{blog_id}/metafields.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "namespace",
+          "db_column": "Namespace",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "key",
+          "db_column": "Key",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "owner_id",
+          "db_column": "OwnerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "owner_resource",
+          "db_column": "OwnerResource",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "metafields",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_metafieldstage",
+        "prod_table": "c{clientID}_integration_metafield",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "OwnerId",
+          "Namespace"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TenderTransactions",
+      "description": "Tender transaction data for payment reconciliation",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/tender_transactions.json",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "since_id"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "tender_transactions",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "order_id",
+          "db_column": "OrderId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "user_id",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "processed_at",
+          "db_column": "ProcessedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "remote_reference",
+          "db_column": "RemoteReference",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payment_details",
+          "db_column": "payment_details",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payment_method",
+          "db_column": "PaymentMethod",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SHOPIFY_TenderTransactions",
+      "staging_table": "SHOPIFY_TenderTransactionsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomersAddr",
+      "original_name": "CustomersAddresses",
+      "source_path": "addresses",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "customer_id",
+          "db_column": "CustomerId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "first_name",
+          "db_column": "FirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "last_name",
+          "db_column": "LastName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "company",
+          "db_column": "Company",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address1",
+          "db_column": "Address1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address2",
+          "db_column": "Address2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "city",
+          "db_column": "City",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "province",
+          "db_column": "Province",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country",
+          "db_column": "Country",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "zip",
+          "db_column": "Zip",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phone",
+          "db_column": "Phone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "province_code",
+          "db_column": "ProvinceCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_code",
+          "db_column": "CountryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "country_name",
+          "db_column": "CountryName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "default",
+          "db_column": "Default",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customersId",
+          "db_column": "customersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "addresses",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_customersaddrstage",
+        "prod_table": "c{clientID}_customersaddr",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "customersId"
+        ]
+      }
+    },
+    {
+      "name": "OrdersFulfl",
+      "original_name": "OrdersFulfillments",
+      "source_path": "fulfillments",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "location_id",
+          "db_column": "LocationId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_id",
+          "db_column": "OrderId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "receipt.testcase",
+          "db_column": "ReceiptTestcase",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "receipt.authorization",
+          "db_column": "ReceiptAuthorization",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "service",
+          "db_column": "Service",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "shipment_status",
+          "db_column": "ShipmentStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracking_company",
+          "db_column": "TrackingCompany",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracking_number",
+          "db_column": "TrackingNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracking_numbers",
+          "db_column": "TrackingNumbers",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracking_url",
+          "db_column": "TrackingUrl",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tracking_urls",
+          "db_column": "TrackingUrls",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "fulfillments",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersfulflstage",
+        "prod_table": "c{clientID}_ordersfulfl",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ordersId"
+        ]
+      },
+      "nested_extractions": [
+        {
+          "table_name": "OrdersFulfillLinItms",
+          "source_field": "line_items"
+        }
+      ]
+    },
+    {
+      "name": "OrdersFulfillLinItms",
+      "original_name": "OrdersFulfillmentsLine_Items",
+      "source_path": "fulfillments.line_items",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "attributed_staffs",
+          "db_column": "AttributedStaffs",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_quantity",
+          "db_column": "CurrentQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillable_quantity",
+          "db_column": "FulfillableQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_service",
+          "db_column": "FulfillmentService",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_status",
+          "db_column": "FulfillmentStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "gift_card",
+          "db_column": "GiftCard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grams",
+          "db_column": "Grams",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.shop_money",
+          "db_column": "PriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.amount",
+          "db_column": "PriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.currency_code",
+          "db_column": "PriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.presentment_money",
+          "db_column": "PriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.amount",
+          "db_column": "PriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.currency_code",
+          "db_column": "PriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_exists",
+          "db_column": "ProductExists",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "Properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "quantity",
+          "db_column": "Quantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "requires_shipping",
+          "db_column": "RequiresShipping",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sku",
+          "db_column": "Sku",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxable",
+          "db_column": "Taxable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount",
+          "db_column": "TotalDiscount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set.shop_money",
+          "db_column": "TotalDiscountSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_shop_money.amount",
+          "db_column": "TotalDiscountSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_shop_money.currency_code",
+          "db_column": "TotalDiscountSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set.presentment_money",
+          "db_column": "TotalDiscountSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_presentment_money.amount",
+          "db_column": "TotalDiscountSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_presentment_money.currency_code",
+          "db_column": "TotalDiscountSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_id",
+          "db_column": "VariantId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_inventory_management",
+          "db_column": "VariantInventoryManagement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_title",
+          "db_column": "VariantTitle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "vendor",
+          "db_column": "Vendor",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_lines",
+          "db_column": "TaxLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "duties",
+          "db_column": "Duties",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discount_allocations",
+          "db_column": "DiscountAllocations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersfulfillmentsId",
+          "db_column": "ordersfulfillmentsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "line_items",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersfulfilllinitmsstage",
+        "prod_table": "c{clientID}_ordersfulfilllinitms",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "OrdersLine_Items",
+      "original_name": "OrdersLine_Items",
+      "source_path": "line_items",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "attributed_staffs",
+          "db_column": "AttributedStaffs",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "current_quantity",
+          "db_column": "CurrentQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillable_quantity",
+          "db_column": "FulfillableQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_service",
+          "db_column": "FulfillmentService",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_status",
+          "db_column": "FulfillmentStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "gift_card",
+          "db_column": "GiftCard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grams",
+          "db_column": "Grams",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.shop_money",
+          "db_column": "PriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.amount",
+          "db_column": "PriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.currency_code",
+          "db_column": "PriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.presentment_money",
+          "db_column": "PriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.amount",
+          "db_column": "PriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.currency_code",
+          "db_column": "PriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_exists",
+          "db_column": "ProductExists",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "Properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "quantity",
+          "db_column": "Quantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "requires_shipping",
+          "db_column": "RequiresShipping",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sku",
+          "db_column": "Sku",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxable",
+          "db_column": "Taxable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount",
+          "db_column": "TotalDiscount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set.shop_money",
+          "db_column": "TotalDiscountSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_shop_money.amount",
+          "db_column": "TotalDiscountSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_shop_money.currency_code",
+          "db_column": "TotalDiscountSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set.presentment_money",
+          "db_column": "TotalDiscountSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_presentment_money.amount",
+          "db_column": "TotalDiscountSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_discount_set_presentment_money.currency_code",
+          "db_column": "TotalDiscountSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_id",
+          "db_column": "VariantId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_inventory_management",
+          "db_column": "VariantInventoryManagement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_title",
+          "db_column": "VariantTitle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "vendor",
+          "db_column": "Vendor",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_lines",
+          "db_column": "TaxLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "duties",
+          "db_column": "Duties",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discount_allocations",
+          "db_column": "DiscountAllocations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "line_items",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersline_itemsstage",
+        "prod_table": "c{clientID}_ordersline_items",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ordersId"
+        ]
+      }
+    },
+    {
+      "name": "OrdersRefunds",
+      "original_name": "OrdersRefunds",
+      "source_path": "refunds",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "note",
+          "db_column": "Note",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_id",
+          "db_column": "OrderId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "processed_at",
+          "db_column": "ProcessedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "restock",
+          "db_column": "Restock",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set.shop_money",
+          "db_column": "TotalAdditionalFeesSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set_shop_money.amount",
+          "db_column": "TotalAdditionalFeesSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set_shop_money.currency_code",
+          "db_column": "TotalAdditionalFeesSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set.presentment_money",
+          "db_column": "TotalAdditionalFeesSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set_presentment_money.amount",
+          "db_column": "TotalAdditionalFeesSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_additional_fees_set_presentment_money.currency_code",
+          "db_column": "TotalAdditionalFeesSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set.shop_money",
+          "db_column": "TotalDutiesSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set_shop_money.amount",
+          "db_column": "TotalDutiesSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set_shop_money.currency_code",
+          "db_column": "TotalDutiesSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set.presentment_money",
+          "db_column": "TotalDutiesSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set_presentment_money.amount",
+          "db_column": "TotalDutiesSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_duties_set_presentment_money.currency_code",
+          "db_column": "TotalDutiesSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "user_id",
+          "db_column": "UserId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_adjustments",
+          "db_column": "OrderAdjustments",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "duties",
+          "db_column": "Duties",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "additional_fees",
+          "db_column": "AdditionalFees",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "refunds",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersrefundsstage",
+        "prod_table": "c{clientID}_ordersrefunds",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ordersId"
+        ]
+      },
+      "nested_extractions": [
+        {
+          "table_name": "OrdersRefTrans",
+          "source_field": "transactions"
+        },
+        {
+          "table_name": "OrdersRefundItems",
+          "source_field": "refund_line_items"
+        }
+      ]
+    },
+    {
+      "name": "OrdersRefTrans",
+      "original_name": "OrdersRefundsTransactions",
+      "source_path": "refunds.transactions",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "authorization",
+          "db_column": "Authorization",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "device_id",
+          "db_column": "DeviceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "error_code",
+          "db_column": "ErrorCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "gateway",
+          "db_column": "Gateway",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "kind",
+          "db_column": "Kind",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "location_id",
+          "db_column": "LocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "message",
+          "db_column": "Message",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "order_id",
+          "db_column": "OrderId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "parent_id",
+          "db_column": "ParentId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payment_id",
+          "db_column": "PaymentId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "processed_at",
+          "db_column": "ProcessedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "source_name",
+          "db_column": "SourceName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "test",
+          "db_column": "Test",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "user_id",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersrefundsId",
+          "db_column": "ordersrefundsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "transactions",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersreftransstage",
+        "prod_table": "c{clientID}_ordersreftrans",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "OrdersRefundItems",
+      "original_name": "OrdersRefundsRefund_Line_Items",
+      "source_path": "refunds.refund_line_items",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_id",
+          "db_column": "LineItemId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "location_id",
+          "db_column": "LocationId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "quantity",
+          "db_column": "Quantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "restock_type",
+          "db_column": "RestockType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal",
+          "db_column": "Subtotal",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set.shop_money",
+          "db_column": "SubtotalSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set_shop_money.amount",
+          "db_column": "SubtotalSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set_shop_money.currency_code",
+          "db_column": "SubtotalSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set.presentment_money",
+          "db_column": "SubtotalSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set_presentment_money.amount",
+          "db_column": "SubtotalSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "subtotal_set_presentment_money.currency_code",
+          "db_column": "SubtotalSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax",
+          "db_column": "TotalTax",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set.shop_money",
+          "db_column": "TotalTaxSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_shop_money.amount",
+          "db_column": "TotalTaxSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_shop_money.currency_code",
+          "db_column": "TotalTaxSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set.presentment_money",
+          "db_column": "TotalTaxSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_presentment_money.amount",
+          "db_column": "TotalTaxSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "total_tax_set_presentment_money.currency_code",
+          "db_column": "TotalTaxSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.id",
+          "db_column": "LineItemId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.admin_graphql_api_id",
+          "db_column": "LineItemAdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.attributed_staffs",
+          "db_column": "LineItemAttributedStaffs",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.current_quantity",
+          "db_column": "LineItemCurrentQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.fulfillable_quantity",
+          "db_column": "LineItemFulfillableQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.fulfillment_service",
+          "db_column": "LineItemFulfillmentService",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.fulfillment_status",
+          "db_column": "LineItemFulfillmentStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.gift_card",
+          "db_column": "LineItemGiftCard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.grams",
+          "db_column": "LineItemGrams",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.name",
+          "db_column": "LineItemName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.price",
+          "db_column": "LineItemPrice",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.price_set",
+          "db_column": "LineItemPriceSet",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set.shop_money",
+          "db_column": "LineItemPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set_shop_money.amount",
+          "db_column": "LineItemPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set_shop_money.currency_code",
+          "db_column": "LineItemPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set.presentment_money",
+          "db_column": "LineItemPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set_presentment_money.amount",
+          "db_column": "LineItemPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_price_set_presentment_money.currency_code",
+          "db_column": "LineItemPriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.product_exists",
+          "db_column": "LineItemProductExists",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.product_id",
+          "db_column": "LineItemProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.properties",
+          "db_column": "LineItemProperties",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.quantity",
+          "db_column": "LineItemQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.requires_shipping",
+          "db_column": "LineItemRequiresShipping",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.sku",
+          "db_column": "LineItemSku",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.taxable",
+          "db_column": "LineItemTaxable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.title",
+          "db_column": "LineItemTitle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.total_discount",
+          "db_column": "LineItemTotalDiscount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.total_discount_set",
+          "db_column": "LineItemTotalDiscountSet",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set.shop_money",
+          "db_column": "LineItemTotalDiscountSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set_shop_money.amount",
+          "db_column": "LineItemTotalDiscountSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set_shop_money.currency_code",
+          "db_column": "LineItemTotalDiscountSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set.presentment_money",
+          "db_column": "LineItemTotalDiscountSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set_presentment_money.amount",
+          "db_column": "LineItemTotalDiscountSetPresentmentMoneyAmt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_total_discount_set_presentment_money.currency_code",
+          "db_column": "LineItemTotalDiscountSetPresentmentMoneyCurrCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.variant_id",
+          "db_column": "LineItemVariantId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.variant_inventory_management",
+          "db_column": "LineItemVariantInventoryManagement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.variant_title",
+          "db_column": "LineItemVariantTitle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.vendor",
+          "db_column": "LineItemVendor",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.tax_lines",
+          "db_column": "LineItemTaxLines",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_tax_lines",
+          "db_column": "LineItemTaxLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.duties",
+          "db_column": "LineItemDuties",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item.discount_allocations",
+          "db_column": "LineItemDiscountAllocations",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "line_item_discount_allocations",
+          "db_column": "LineItemDiscountAllocations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersrefundsId",
+          "db_column": "ordersrefundsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "refund_line_items",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersrefunditemsstage",
+        "prod_table": "c{clientID}_ordersrefunditems",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "OrdersShipLines",
+      "original_name": "OrdersShipping_Lines",
+      "source_path": "shipping_lines",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "carrier_identifier",
+          "db_column": "CarrierIdentifier",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price",
+          "db_column": "DiscountedPrice",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set.shop_money",
+          "db_column": "DiscountedPriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set_shop_money.amount",
+          "db_column": "DiscountedPriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set_shop_money.currency_code",
+          "db_column": "DiscountedPriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set.presentment_money",
+          "db_column": "DiscountedPriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set_presentment_money.amount",
+          "db_column": "DiscountedPriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discounted_price_set_presentment_money.currency_code",
+          "db_column": "DiscountedPriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "is_removed",
+          "db_column": "IsRemoved",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phone",
+          "db_column": "Phone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.shop_money",
+          "db_column": "PriceSetShopMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.amount",
+          "db_column": "PriceSetShopMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_shop_money.currency_code",
+          "db_column": "PriceSetShopMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set.presentment_money",
+          "db_column": "PriceSetPresentmentMoney",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.amount",
+          "db_column": "PriceSetPresentmentMoneyAmount",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price_set_presentment_money.currency_code",
+          "db_column": "PriceSetPresentmentMoneyCurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "requested_fulfillment_service_id",
+          "db_column": "RequestedFulfillmentServiceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "source",
+          "db_column": "Source",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tax_lines",
+          "db_column": "TaxLines",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "discount_allocations",
+          "db_column": "DiscountAllocations",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ordersId",
+          "db_column": "ordersId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "shipping_lines",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ordersshiplinesstage",
+        "prod_table": "c{clientID}_ordersshiplines",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ordersId"
+        ]
+      }
+    },
+    {
+      "name": "ProductsVariants",
+      "original_name": "ProductsVariants",
+      "source_path": "variants",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "price",
+          "db_column": "Price",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "position",
+          "db_column": "Position",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "inventory_policy",
+          "db_column": "InventoryPolicy",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "compare_at_price",
+          "db_column": "CompareAtPrice",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "option1",
+          "db_column": "Option1",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "option2",
+          "db_column": "Option2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "option3",
+          "db_column": "Option3",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxable",
+          "db_column": "Taxable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "barcode",
+          "db_column": "Barcode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fulfillment_service",
+          "db_column": "FulfillmentService",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grams",
+          "db_column": "Grams",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "inventory_management",
+          "db_column": "InventoryManagement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "requires_shipping",
+          "db_column": "RequiresShipping",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sku",
+          "db_column": "Sku",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "weight",
+          "db_column": "Weight",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "weight_unit",
+          "db_column": "WeightUnit",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "inventory_item_id",
+          "db_column": "InventoryItemId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "inventory_quantity",
+          "db_column": "InventoryQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "old_inventory_quantity",
+          "db_column": "OldInventoryQuantity",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "presentment_prices",
+          "db_column": "PresentmentPrices",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "image_id",
+          "db_column": "ImageId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "productsId",
+          "db_column": "productsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "variants",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_productsvariantsstage",
+        "prod_table": "c{clientID}_productsvariants",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "productsId"
+        ]
+      }
+    },
+    {
+      "name": "ProductsOptions",
+      "original_name": "ProductsOptions",
+      "source_path": "options",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "position",
+          "db_column": "Position",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "values",
+          "db_column": "Values",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "productsId",
+          "db_column": "productsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "options",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_productsoptionsstage",
+        "prod_table": "c{clientID}_productsoptions",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "productsId"
+        ]
+      }
+    },
+    {
+      "name": "ProductsImages",
+      "original_name": "ProductsImages",
+      "source_path": "images",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "alt",
+          "db_column": "Alt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "position",
+          "db_column": "Position",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "width",
+          "db_column": "Width",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "height",
+          "db_column": "Height",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "src",
+          "db_column": "Src",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_ids",
+          "db_column": "VariantIds",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "productsId",
+          "db_column": "productsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "images",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_productsimagesstage",
+        "prod_table": "c{clientID}_productsimages",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "productsId"
+        ]
+      }
+    },
+    {
+      "name": "ProductsImage",
+      "original_name": "ProductsImage",
+      "source_path": "image",
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "alt",
+          "db_column": "Alt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "position",
+          "db_column": "Position",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "product_id",
+          "db_column": "ProductId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "admin_graphql_api_id",
+          "db_column": "AdminGraphqlApiId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "width",
+          "db_column": "Width",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "height",
+          "db_column": "Height",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "src",
+          "db_column": "Src",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "variant_ids",
+          "db_column": "VariantIds",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "productsId",
+          "db_column": "productsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "image",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_productsimagestage",
+        "prod_table": "c{clientID}_productsimage",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "productsId"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "total_api_endpoints": 9,
+    "total_data_entities": 9,
+    "api_endpoints_count": 8,
+    "child_endpoints_count": 1,
+    "regular_endpoints_count": 8,
+    "store_name": "Lack of Color US",
+    "store_url": "lack-of-color-us.myshopify.com",
+    "ssis_package": "UpsertShopifyFeb22new.dtsx",
+    "extraction_source": "SSIS_Package_Analysis",
+    "includes_standard_fields": true,
+    "multi_tenant_support": true,
+    "staging_architecture": true,
+    "insert_only_mode": false,
+    "etl_pattern": "staging_to_production",
+    "authentication_method": "shopify_access_token",
+    "pagination_support": "query_params_limit_page",
+    "database_tables_total": 9,
+    "api_version_supported": "2022-10",
+    "supports_incremental_sync": true,
+    "nested_object_flattening": "dot_notation",
+    "array_field_storage": "json_string",
+    "note": "Schema for single Shopify store (Lack of Color US) extracted from SSIS package UpsertShopifyFeb22new.dtsx. Includes only endpoints with corresponding database tables."
+  }
+}

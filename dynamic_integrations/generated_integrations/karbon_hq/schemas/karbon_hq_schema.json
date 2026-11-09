@@ -1,0 +1,3278 @@
+{
+  "integration_name": "KARBON_HQ",
+  "display_name": "Karbon HQ Practice Management",
+  "category": "practice_management",
+  "api_config": {
+    "base_url": "https://api.karbonhq.com/v3/",
+    "version": "v3",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "authentication": {
+      "type": "dual_key",
+      "header": "AccessKey",
+      "format": "Bearer + AccessKey combo",
+      "access_key": "REDACTED",
+      "tenant_access_key": "REDACTED"
+    },
+    "url_patterns": {
+      "has_company_id": false,
+      "has_realm_id": false,
+      "entity_endpoint": "/{EntityName}",
+      "url_template_vars": [
+        "$skip"
+      ],
+      "requires_trailing_slash": false
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "AccessKey": "{{apiTenantAccessKey}}",
+      "Authorization": "Bearer {{apiAccessKey}}"
+    },
+    "pagination": {
+      "type": "odata",
+      "limit_param": "",
+      "offset_param": "$skip",
+      "default_limit": 100,
+      "max_limit": 100
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Invoices",
+      "description": "Invoice transactions representing billing records with client information, amounts, and payment details",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/Invoices",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$top",
+            "$skip",
+            "$orderby"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "UpdatedAt",
+            "description": "Parameter used for incremental UPSERT synchronization based on last update timestamp"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "InvoiceKey",
+          "db_column": "InvoiceKey",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for invoice"
+        },
+        {
+          "api_name": "InvoiceNumber",
+          "db_column": "InvoiceNumber",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TotalAmountDue",
+          "db_column": "TotalAmountDue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceTotal",
+          "db_column": "InvoiceTotal",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceSubTotal",
+          "db_column": "InvoiceSubTotal",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceTaxTotal",
+          "db_column": "InvoiceTaxTotal",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceDate",
+          "db_column": "InvoiceDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentDueDate",
+          "db_column": "PaymentDueDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UpdatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CurrencyCode",
+          "db_column": "CurrencyCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentInstructions",
+          "db_column": "PaymentInstructions",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceStatus",
+          "db_column": "InvoiceStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ClientKey",
+          "db_column": "ClientClientkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ClientType",
+          "db_column": "ClientClienttype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.Name",
+          "db_column": "ClientName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.AddressLine",
+          "db_column": "ClientAddressline",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.City",
+          "db_column": "ClientCity",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.StateProvinceCounty",
+          "db_column": "ClientStateprovincecounty",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ZipCode",
+          "db_column": "ClientZipcode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.Country",
+          "db_column": "ClientCountry",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.EmailAddress",
+          "db_column": "ClientEmailaddress",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [
+          "Client"
+        ],
+        "array_fields": [
+          "TaxLineItems"
+        ],
+        "jsonb_fields": [
+          "Client",
+          "TaxLineItems"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_invoicesstage",
+        "prod_table": "c{clientID}_integration_invoices",
+        "primary_key": [
+          "InvoiceKey",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "InvoiceNumber",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      },
+      "nested_extractions": [
+        {
+          "table_name": "invoicesTaxItems",
+          "source_field": "TaxLineItems"
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "description": "Payment transactions representing payments made by clients with payment method and amount details",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/Payments",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$top",
+            "$skip"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "PaymentDate",
+            "description": "Parameter used for incremental UPSERT synchronization based on payment date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "PaymentKey",
+          "db_column": "PaymentKey",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for payment"
+        },
+        {
+          "api_name": "PaymentReference",
+          "db_column": "PaymentReference",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentType",
+          "db_column": "PaymentType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentDate",
+          "db_column": "PaymentDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "GrossAmount",
+          "db_column": "GrossAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentMethod",
+          "db_column": "PaymentMethod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientKey",
+          "db_column": "ClientKey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.CardType",
+          "db_column": "KarbonpaymentCardtype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.CardCountry",
+          "db_column": "KarbonpaymentCardcountry",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.CardFunding",
+          "db_column": "KarbonpaymentCardfunding",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.PayoutStatus",
+          "db_column": "KarbonpaymentPayoutstatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.SurchargeAmount",
+          "db_column": "KarbonpaymentSurchargeamount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.SurchargeTaxAmount",
+          "db_column": "KarbonpaymentSurchargetaxamount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.KarbonFeeAmount",
+          "db_column": "KarbonpaymentKarbonfeeamount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.KarbonFeeTaxAmount",
+          "db_column": "KarbonpaymentKarbonfeetaxamount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "KarbonPayment.NetAmount",
+          "db_column": "KarbonpaymentNetamount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ClientKey",
+          "db_column": "ClientClientkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ClientType",
+          "db_column": "ClientClienttype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.Name",
+          "db_column": "ClientName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.AddressLine",
+          "db_column": "ClientAddressline",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.City",
+          "db_column": "ClientCity",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.StateProvinceCounty",
+          "db_column": "ClientStateprovincecounty",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.ZipCode",
+          "db_column": "ClientZipcode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.Country",
+          "db_column": "ClientCountry",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Client.EmailAddress",
+          "db_column": "ClientEmailaddress",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [
+          "KarbonPayment",
+          "Client"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "KarbonPayment",
+          "Client"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_paymentsstage",
+        "prod_table": "c{clientID}_integration_payments",
+        "primary_key": [
+          "PaymentKey",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaymentReference",
+          "PaymentDate"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ClientGroups",
+      "description": "Client group master records with basic information",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/ClientGroups",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "LastModifiedDateTime=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ClientGroupKey",
+          "db_column": "ClientGroupKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "FullName",
+          "db_column": "FullName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PhoneNumber",
+          "db_column": "PhoneNumber",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Website",
+          "db_column": "Website",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastModifiedDateTime",
+          "db_column": "LastModifiedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_ClientGroups",
+      "staging_table": "KARBON_ClientGroupsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "ClientGroupsDetails",
+      "is_child_endpoint": true,
+      "use_pagination": false,
+      "child_endpoint_config": [
+        {
+          "parent_table": "clientgroups",
+          "parent_id_column": "ClientGroupKey",
+          "parent_id_source": "client_group_key",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Detailed client group information with members and accounting details",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/ClientGroups/{client_group_key}?$expand=BusinessCard,ClientTeam",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "client_group_key"
+          ],
+          "optional": [],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "LastModifiedDateTime=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [
+          "Members",
+          "AccountingDetails"
+        ],
+        "array_fields": [
+          "Members",
+          "AccountingDetails"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "ClientGroupKey",
+          "db_column": "ClientGroupKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FullName",
+          "db_column": "FullName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientOwner",
+          "db_column": "ClientOwner",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientManager",
+          "db_column": "ClientManager",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ContactType",
+          "db_column": "ContactType",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserDefinedIdentifier",
+          "db_column": "UserDefinedIdentifier",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RestrictionLevel",
+          "db_column": "RestrictionLevel",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PrimaryContact",
+          "db_column": "PrimaryContact",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EntityDescription",
+          "db_column": "EntityDescription",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Members",
+          "db_column": "Members",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetails",
+          "db_column": "AccountingDetails",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastModifiedDateTime",
+          "db_column": "LastModifiedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.IsPrimaryCard",
+          "db_column": "BusinessCard_IsPrimaryCard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.OrganizationKey",
+          "db_column": "BusinessCard_OrganizationKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.RoleOrTitle",
+          "db_column": "BusinessCard_RoleOrTitle",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.FacebookLink",
+          "db_column": "BusinessCard_FacebookLink",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.LinkedInLink",
+          "db_column": "BusinessCard_LinkedInLink",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.TwitterLink",
+          "db_column": "BusinessCard_TwitterLink",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.SkypeLink",
+          "db_column": "BusinessCard_SkypeLink",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.WebSites",
+          "db_column": "BusinessCard_WebSites",
+          "data_type": "JSON",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.EmailAddresses",
+          "db_column": "BusinessCard_EmailAddresses",
+          "data_type": "JSON",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.Addresses",
+          "db_column": "BusinessCard_Addresses",
+          "data_type": "JSON",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessCard.PhoneNumbers",
+          "db_column": "BusinessCard_PhoneNumbers",
+          "data_type": "JSON",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_ClientGroupsDetails",
+      "staging_table": "KARBON_ClientGroupsDetailsSTAGE",
+      "incremental": true,
+      "priority": "high",
+      "is_nested": true,
+      "parent_endpoint": "/ClientGroups",
+      "nested_extractions": [
+        {
+          "table_name": "ClientGroupsMembers",
+          "source_field": "Members"
+        }
+      ]
+    },
+    {
+      "name": "Contacts",
+      "description": "Contact master records with basic contact information",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/Contacts",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "LastModifiedDateTime=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ContactKey",
+          "db_column": "ContactKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "FullName",
+          "db_column": "FullName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PreferredName",
+          "db_column": "PreferredName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Salutation",
+          "db_column": "Salutation",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientOwner",
+          "db_column": "ClientOwner",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientManager",
+          "db_column": "ClientManager",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address",
+          "db_column": "Address",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmailAddress",
+          "db_column": "EmailAddress",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PhoneNumber",
+          "db_column": "PhoneNumber",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleOrTitle",
+          "db_column": "RoleOrTitle",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserDefinedIdentifier",
+          "db_column": "UserDefinedIdentifier",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastModifiedDateTime",
+          "db_column": "LastModifiedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_Contacts",
+      "staging_table": "KARBON_ContactsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "ContactsDetails",
+      "is_child_endpoint": true,
+      "use_pagination": false,
+      "child_endpoint_config": [
+        {
+          "parent_table": "contacts",
+          "parent_id_column": "ContactKey",
+          "parent_id_source": "contact_key",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Detailed contact information with accounting details",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/Contacts/{contact_key}",
+        "method": "GET",
+        "query_parameters": {
+          "required": {"$expand": "BusinessCards,ClientTeam"},
+          "optional": [],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "LastModifiedDateTime=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "ContactKey",
+          "db_column": "ContactKey",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for contact"
+        },
+        {
+          "api_name": "FirstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MiddleName",
+          "db_column": "MiddleName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PreferredName",
+          "db_column": "PreferredName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Salutation",
+          "db_column": "Salutation",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Suffix",
+          "db_column": "Suffix",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientOwner",
+          "db_column": "ClientOwner",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientManager",
+          "db_column": "ClientManager",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ContactType",
+          "db_column": "ContactType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserDefinedIdentifier",
+          "db_column": "UserDefinedIdentifier",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RestrictionLevel",
+          "db_column": "RestrictionLevel",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AvatarUrl",
+          "db_column": "AvatarUrl",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastModifiedDateTime",
+          "db_column": "LastModifiedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EntityDescription.Text",
+          "db_column": "EntitydescriptionText",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.ContactPermaKey",
+          "db_column": "AccountingdetailContactpermakey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.OrganizationPermaKey",
+          "db_column": "AccountingdetailOrganizationpermakey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.BirthDate",
+          "db_column": "AccountingdetailBirthdate",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.DeathDate",
+          "db_column": "AccountingdetailDeathdate",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Salutation",
+          "db_column": "AccountingdetailSalutation",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Sex",
+          "db_column": "AccountingdetailSex",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.FinancialYearEndDay",
+          "db_column": "AccountingdetailFinancialyearendday",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.FinancialYearEndMonth",
+          "db_column": "AccountingdetailFinancialyearendmonth",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.IncorporationDate",
+          "db_column": "AccountingdetailIncorporationdate",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.IncorporationState",
+          "db_column": "AccountingdetailIncorporationstate",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.LegalName",
+          "db_column": "AccountingdetailLegalname",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.LineOfBusiness",
+          "db_column": "AccountingdetailLineofbusiness",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.EntityType",
+          "db_column": "AccountingdetailEntitytype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.TaxCountryCode",
+          "db_column": "AccountingdetailTaxcountrycode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.TradingName",
+          "db_column": "AccountingdetailTradingname",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.AnnualRevenue",
+          "db_column": "AccountingdetailAnnualrevenue",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.BaseCurrency",
+          "db_column": "AccountingdetailBasecurrency",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.GstBasis",
+          "db_column": "AccountingdetailGstbasis",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.GstPeriod",
+          "db_column": "AccountingdetailGstperiod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.IncomeTaxInstallmentPeriod",
+          "db_column": "AccountingdetailIncometaxinstallmentperiod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.IsVATRegistered",
+          "db_column": "AccountingdetailIsvatregistered",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.OrganizationValuation",
+          "db_column": "AccountingdetailOrganizationvaluation",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.PaysTax",
+          "db_column": "AccountingdetailPaystax",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.PrepareGST",
+          "db_column": "AccountingdetailPreparegst",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.ProvisionalTaxBasic",
+          "db_column": "AccountingdetailProvisionaltaxbasic",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.ProvisionalTaxRatio",
+          "db_column": "AccountingdetailProvisionaltaxratio",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.RevenueModel",
+          "db_column": "AccountingdetailRevenuemodel",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.SalesTaxBasis",
+          "db_column": "AccountingdetailSalestaxbasis",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.SalesTaxPeriod",
+          "db_column": "AccountingdetailSalestaxperiod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Sells",
+          "db_column": "AccountingdetailSells",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.DateSignedEngagement",
+          "db_column": "AccountingdetailDatesignedengagement",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Bank",
+          "db_column": "AccountingdetailBank",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Payroll",
+          "db_column": "AccountingdetailPayroll",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.BillPay",
+          "db_column": "AccountingdetailBillpay",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Benefits",
+          "db_column": "AccountingdetailBenefits",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Revenue",
+          "db_column": "AccountingdetailRevenue",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Expenses",
+          "db_column": "AccountingdetailExpenses",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.FileManagement",
+          "db_column": "AccountingdetailFilemanagement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Accounting",
+          "db_column": "AccountingdetailAccounting",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.RegistrationNumbers",
+          "db_column": "AccountingdetailRegistrationnumbers",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.LegalFirm",
+          "db_column": "AccountingdetailLegalfirm",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail_LegalFirm.Name",
+          "db_column": "AccountingdetailLegalfirmName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail_LegalFirm.OrganizationKey",
+          "db_column": "AccountingdetailLegalfirmOrganizationkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.TaxProvider",
+          "db_column": "AccountingdetailTaxprovider",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail_TaxProvider.Name",
+          "db_column": "AccountingdetailTaxproviderName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail_TaxProvider.OrganizationKey",
+          "db_column": "AccountingdetailTaxproviderOrganizationkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingDetail.Notes",
+          "db_column": "AccountingdetailNotes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": false,
+        "nested_objects": [
+          "EntityDescription",
+          "AccountingDetail",
+          "BusinessCards",
+          "ClientTeam"
+        ],
+        "array_fields": [
+          "BusinessCards",
+          "ClientTeam"
+        ],
+        "jsonb_fields": [
+          "EntityDescription",
+          "AccountingDetail",
+          "BusinessCards",
+          "ClientTeam"
+        ]
+      },
+      "table_name": "KARBON_ContactsDetails",
+      "staging_table": "KARBON_ContactsDetailsSTAGE",
+      "incremental": true,
+      "priority": "high",
+      "is_nested": true,
+      "parent_endpoint": "/Contacts",
+      "nested_extractions": [
+        {
+          "table_name": "contactsAccRegNum",
+          "source_field": "AccountingDetail.AccountingDetail_RegistrationNumbers"
+        },
+        {
+          "table_name": "contactsBizCards",
+          "source_field": "BusinessCards"
+        },
+        {
+          "table_name": "contactsDetTeam",
+          "source_field": "ClientTeam"
+        }
+      ]
+    },
+    {
+      "name": "Organizations",
+      "description": "Organization master records with basic information",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/Organizations",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "LastModifiedDateTime=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "OrganizationKey",
+          "db_column": "OrganizationKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FullName",
+          "db_column": "FullName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PhoneNumber",
+          "db_column": "PhoneNumber",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Website",
+          "db_column": "Website",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastModifiedDateTime",
+          "db_column": "LastModifiedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_Organizations",
+      "staging_table": "KARBON_OrganizationsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Timesheets",
+      "description": "Timesheet records with time entries data",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/Timesheets?$expand=TimeEntries",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "StartDate=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on start date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        },
+        "default_params": {
+          "$expand": "TimeEntries"
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "TimesheetsTimeEntries",
+          "source_field": "TimeEntries"
+        },
+        {
+          "table_name": "TimesheetWorkItems",
+          "source_field": "WorkItemKeys",
+          "extraction_type": "array_to_records",
+          "target_field": "WorkItemKey"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [
+          "TimeEntries"
+        ],
+        "array_fields": [
+          "TimeEntries",
+          "WorkItemKeys"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "TimesheetKey",
+          "db_column": "TimesheetKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserKey",
+          "db_column": "UserKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status",
+          "db_column": "Status",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemKeys",
+          "db_column": "WorkItemKeys",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TimeEntries",
+          "db_column": "TimeEntries",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_Timesheets",
+      "staging_table": "KARBON_TimesheetsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "TimesheetsTimeEntries",
+      "is_virtual_endpoint": true,
+      "description": "Individual time entry records extracted from timesheets",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/Timesheets/{timesheet_key}/TimeEntries",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$expand"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "StartDate=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on start date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "TimeEntryKey",
+          "db_column": "TimeEntryKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TimesheetsKey",
+          "db_column": "TimesheetKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserKey",
+          "db_column": "UserKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status",
+          "db_column": "Status",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EntityKey",
+          "db_column": "EntityKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemKey",
+          "db_column": "WorkItemKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientKey",
+          "db_column": "ClientKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientType",
+          "db_column": "ClientType",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Minutes",
+          "db_column": "Minutes",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HourlyRate",
+          "db_column": "HourlyRate",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleName",
+          "db_column": "RoleName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TaskTypeName",
+          "db_column": "TaskTypeName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Descriptions",
+          "db_column": "Descriptions",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_TimeEntries",
+      "staging_table": "KARBON_TimeEntriesSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Users",
+      "description": "System users and staff member records",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/Users",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ]
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmailAddress",
+          "db_column": "EmailAddress",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_Users",
+      "staging_table": "KARBON_UsersSTAGE",
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "WorkItems",
+      "description": "Work items and task records within the practice",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/WorkItems",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "StartDate=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on start date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "WorkItemKey",
+          "db_column": "WorkItemKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Title",
+          "db_column": "Title",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssigneeEmailAddress",
+          "db_column": "AssigneeEmailAddress",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssigneeKey",
+          "db_column": "AssigneeKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssigneeName",
+          "db_column": "AssigneeName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientKey",
+          "db_column": "ClientKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientName",
+          "db_column": "ClientName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientType",
+          "db_column": "ClientType",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RelatedClientGroupKey",
+          "db_column": "RelatedClientGroupKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientGroupKey",
+          "db_column": "ClientGroupKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RelatedClientGroupName",
+          "db_column": "RelatedClientGroupName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DueDate",
+          "db_column": "DueDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedDate",
+          "db_column": "CompletedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ToDoPeriod",
+          "db_column": "ToDoPeriod",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkType",
+          "db_column": "WorkType",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkStatus",
+          "db_column": "WorkStatus",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PrimaryStatus",
+          "db_column": "PrimaryStatus",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SecondaryStatus",
+          "db_column": "SecondaryStatus",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkTemplateKey",
+          "db_column": "WorkTemplateKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkTemplateTile",
+          "db_column": "WorkTemplateTile",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkScheduleKey",
+          "db_column": "WorkScheduleKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EstimatedBudget",
+          "db_column": "EstimatedBudget",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_WorkItems",
+      "staging_table": "KARBON_WorkItemsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "WorkTemplates",
+      "description": "Work templates for creating standardized work items",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/WorkTemplates",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "$skip",
+            "$top",
+            "$filter"
+          ],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        },
+        "pagination": {
+          "type": "odata",
+          "limit_param": "$top",
+          "offset_param": "$skip",
+          "default_limit": 10,
+          "max_limit": 10
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [
+          "ActorRoles"
+        ]
+      },
+      "fields": [
+        {
+          "api_name": "WorkTemplateKey",
+          "db_column": "WorkTemplateKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Title",
+          "db_column": "Title",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EstimatedBudget",
+          "db_column": "EstimatedBudget",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkTypeKey",
+          "db_column": "WorkTypeKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HasScheduledClientTaskGroups",
+          "db_column": "HasScheduledClientTaskGroups",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EstimatedTime",
+          "db_column": "EstimatedTime",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DraftHasChanges",
+          "db_column": "DraftHasChanges",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PublishedDate",
+          "db_column": "PublishedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "NumberOfWorkItemsCreated",
+          "db_column": "NumberOfWorkItemsCreated",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateLastWorkItemCreated",
+          "db_column": "DateLastWorkItemCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ActorRoles",
+          "db_column": "ActorRoles",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_WorkTemplates",
+      "staging_table": "KARBON_WorkTemplatesSTAGE",
+      "incremental": false,
+      "priority": "low",
+      "nested_extractions": [
+        {
+          "table_name": "WorkTemplatesActorRoles",
+          "source_field": "ActorRoles"
+        }
+      ]
+    },
+    {
+      "name": "WorkSchedules",
+      "is_child_endpoint": true,
+      "use_pagination": false,
+      "child_endpoint_config": [
+        {
+          "parent_table": "workitems",
+          "parent_id_column": "WorkScheduleKey",
+          "parent_id_source": "work_schedule_key",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Recurring work schedules and frequency settings",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/WorkSchedules/{work_schedule_key}",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "work_schedule_key"
+          ],
+          "optional": [],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "ScheduleStartDate=ge({MaxDateString})",
+            "description": "Parameter used for incremental UPSERT synchronization based on schedule start date",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "WorkScheduleKey",
+          "db_column": "WorkScheduleKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientKey",
+          "db_column": "ClientKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientType",
+          "db_column": "ClientType",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CreatedFromWorkItemKey",
+          "db_column": "CreatedFromWorkItemKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurrenceFrequency",
+          "db_column": "RecurrenceFrequency",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFrequencyUnits",
+          "db_column": "CustomFrequencyUnits",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFrequencyMultiple",
+          "db_column": "CustomFrequencyMultiple",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FrequencyDescription",
+          "db_column": "FrequencyDescription",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleStartDate",
+          "db_column": "ScheduleStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleEndDate",
+          "db_column": "ScheduleEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleDueDateMethod",
+          "db_column": "ScheduleDueDateMethod",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleDueDateDays",
+          "db_column": "ScheduleDueDateDays",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleDueDateMonthMultiple",
+          "db_column": "ScheduleDueDateMonthMultiple",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssigneeUserKey",
+          "db_column": "AssigneeUserKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemDescription",
+          "db_column": "WorkItemDescription",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PreventStartEndOnWeekend",
+          "db_column": "PreventStartEndOnWeekend",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InitializeBeforeStartDateUnits",
+          "db_column": "InitializeBeforeStartDateUnits",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InitializeBeforeStartDateMultiple",
+          "db_column": "InitializeBeforeStartDateMultiple",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemTitleDefinition",
+          "db_column": "WorkItemTitleDefinition",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemTitleDisplayText",
+          "db_column": "WorkItemTitleDisplayText",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InitializeTasksBeforeStartDateUnits",
+          "db_column": "InitializeTasksBeforeStartDateUnits",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InitializeTasksBeforeStartDateMultiple",
+          "db_column": "InitializeTasksBeforeStartDateMultiple",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_WorkSchedules",
+      "staging_table": "KARBON_WorkSchedulesSTAGE",
+      "incremental": false,
+      "priority": "low",
+      "is_nested": true,
+      "parent_endpoint": "/WorkSchedules"
+    },
+    {
+      "name": "EstimateSummaries",
+      "is_child_endpoint": true,
+      "use_pagination": false,
+      "child_endpoint_config": [
+        {
+          "parent_table": "workitems",
+          "parent_id_column": "WorkItemKey",
+          "parent_id_source": "work_item_key",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "description": "Budget estimates and actual time tracking for work items",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/EstimateSummaries/{work_item_key}",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "work_item_key"
+          ],
+          "optional": []
+        }
+      },
+      "response_structure": {
+        "root_data_field": "value",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "EstimateSummaryKey",
+          "db_column": "EstimateSummaryKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkItemKey",
+          "db_column": "WorkItemKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UserKey",
+          "db_column": "UserKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleKey",
+          "db_column": "RoleKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleName",
+          "db_column": "RoleName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TaskTypeKey",
+          "db_column": "TaskTypeKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TaskTypeName",
+          "db_column": "TaskTypeName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EstimateMinutes",
+          "db_column": "EstimateMinutes",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ActualMinutes",
+          "db_column": "ActualMinutes",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HourlyRate",
+          "db_column": "HourlyRate",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_EstimateSummaries",
+      "staging_table": "KARBON_EstimateSummariesSTAGE",
+      "incremental": true,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/EstimateSummaries"
+    },
+    {
+      "name": "invoicesTaxItems",
+      "original_name": "InvoicesTaxlineitems",
+      "source_path": "TaxLineItems",
+      "fields": [
+        {
+          "api_name": "TaxName",
+          "db_column": "Taxname",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TaxValue",
+          "db_column": "Taxvalue",
+          "data_type": "DECIMAL(10,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoicesId",
+          "db_column": "invoicesId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "Invoices"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "TaxLineItems",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_invoicestaxitemsstage",
+        "prod_table": "c{clientID}_integration_invoicestaxitems",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "contactsAccRegNum",
+      "original_name": "ContactsDetailsAccountingdetail_Registrationnumbers",
+      "source_path": "AccountingDetail.AccountingDetail_RegistrationNumbers",
+      "fields": [
+        {
+          "api_name": "RegistrationNumber",
+          "db_column": "Registrationnumber",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsId",
+          "db_column": "contactsdetailsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetails"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "AccountingDetail_RegistrationNumbers",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsaccregnumstage",
+        "prod_table": "c{clientID}_integration_contactsaccregnum",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "contactsAccNotes",
+      "original_name": "ContactsDetailsAccountingdetail_Notes",
+      "source_path": "AccountingDetail.AccountingDetail_Notes",
+      "fields": [
+        {
+          "api_name": "Body",
+          "db_column": "Body",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsId",
+          "db_column": "contactsdetailsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetails"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "AccountingDetail_Notes",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsaccnotesstage",
+        "prod_table": "c{clientID}_integration_contactsaccnotes",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "contactsBizCards",
+      "original_name": "ContactsDetailsBusinesscards",
+      "source_path": "BusinessCards",
+      "fields": [
+        {
+          "api_name": "IsPrimaryCard",
+          "db_column": "Isprimarycard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganizationKey",
+          "db_column": "Organizationkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WebSites",
+          "db_column": "Websites",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmailAddresses",
+          "db_column": "Emailaddresses",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleOrTitle",
+          "db_column": "Roleortitle",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FacebookLink",
+          "db_column": "Facebooklink",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LinkedInLink",
+          "db_column": "Linkedinlink",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TwitterLink",
+          "db_column": "Twitterlink",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SkypeLink",
+          "db_column": "Skypelink",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsId",
+          "db_column": "contactsdetailsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetails"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "BusinessCards",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsbizcardsstage",
+        "prod_table": "c{clientID}_integration_contactsbizcards",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      },
+      "nested_extractions": [
+        {
+          "table_name": "contactsBizAddr",
+          "source_field": "BusinessCards.Addresses"
+        },
+        {
+          "table_name": "contactsDetBizPhn",
+          "source_field": "BusinessCards.PhoneNumbers"
+        }
+      ]
+    },
+    {
+      "name": "contactsBizAddr",
+      "original_name": "ContactsDetailsBusinesscardsAddresses",
+      "source_path": "BusinessCards.Addresses",
+      "fields": [
+        {
+          "api_name": "AddressLines",
+          "db_column": "Addresslines",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "City",
+          "db_column": "City",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StateProvinceCounty",
+          "db_column": "Stateprovincecounty",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ZipCode",
+          "db_column": "Zipcode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CountryCode",
+          "db_column": "Countrycode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsbusinesscardsId",
+          "db_column": "contactsdetailsbusinesscardsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetailsBusinesscards"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "Addresses",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsbizaddrstage",
+        "prod_table": "c{clientID}_integration_contactsbizaddr",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "contactsDetBizPhn",
+      "original_name": "ContactsDetailsBusinesscardsPhonenumbers",
+      "source_path": "BusinessCards.PhoneNumbers",
+      "fields": [
+        {
+          "api_name": "Number",
+          "db_column": "Number",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CountryCode",
+          "db_column": "Countrycode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsbusinesscardsId",
+          "db_column": "contactsdetailsbusinesscardsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetailsBusinesscards"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "PhoneNumbers",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsdetbizphnstage",
+        "prod_table": "c{clientID}_integration_contactsdetbizphn",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "contactsDetTeam",
+      "original_name": "ContactsDetailsClientteam",
+      "source_path": "ClientTeam",
+      "fields": [
+        {
+          "api_name": "MemberKey",
+          "db_column": "Memberkey",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MemberType",
+          "db_column": "Membertype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RoleType",
+          "db_column": "Roletype",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contactsdetailsId",
+          "db_column": "contactsdetailsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "parent_table": "ContactsDetails"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "ClientTeam",
+        "is_array": true
+      },
+      "is_virtual_endpoint": true,
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_contactsdetteamstage",
+        "prod_table": "c{clientID}_integration_contactsdetteam",
+        "primary_key": [],
+        "indexes": [
+          "OrganisationID"
+        ]
+      }
+    },
+    {
+      "name": "ClientGroupsMembers",
+      "is_virtual_endpoint": true,
+      "description": "Members extracted from ClientGroupsDetails",
+      "entity_type": "master_data",
+      "parent_endpoint": "ClientGroupsDetails",
+      "api_details": {
+        "path": "/ClientGroups/{client_group_key}/Members",
+        "method": "GET"
+      },
+      "response_structure": {
+        "root_data_field": "Members",
+        "is_array": true
+      },
+      "fields": [
+        {
+          "api_name": "ContactKey",
+          "db_column": "ContactKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganizationKey",
+          "db_column": "OrganizationKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientGroupKey",
+          "db_column": "ClientGroupKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_ClientGroupsDetailsMembers",
+      "staging_table": "KARBON_ClientGroupsDetailsMembersSTAGE"
+    },
+    {
+      "name": "WorkTemplatesActorRoles",
+      "is_virtual_endpoint": true,
+      "description": "Actor roles extracted from WorkTemplates",
+      "entity_type": "setup_data",
+      "parent_endpoint": "WorkTemplates",
+      "api_details": {
+        "path": "/WorkTemplates/{work_template_key}/ActorRoles",
+        "method": "GET"
+      },
+      "response_structure": {
+        "root_data_field": "ActorRoles",
+        "is_array": true
+      },
+      "fields": [
+        {
+          "api_name": "ActorKey",
+          "db_column": "ActorKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ActorName",
+          "db_column": "ActorName",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkTemplatesKey",
+          "db_column": "WorkTemplateKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_WorkTemplatesActorRoles",
+      "staging_table": "KARBON_WorkTemplatesActorRolesSTAGE"
+    },
+    {
+      "name": "TimesheetWorkItems",
+      "is_virtual_endpoint": true,
+      "description": "Work items extracted from Timesheets WorkItemsKey array",
+      "entity_type": "transaction_data",
+      "parent_endpoint": "Timesheets",
+      "api_details": {
+        "path": "/Timesheets/{timesheet_key}/WorkItems",
+        "method": "GET"
+      },
+      "response_structure": {
+        "root_data_field": "WorkItemsKey",
+        "is_array": true,
+        "extraction_type": "array_to_records"
+      },
+      "fields": [
+        {
+          "api_name": "WorkItemKey",
+          "db_column": "WorkItemKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "TimesheetsKey",
+          "db_column": "TimesheetKey",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "KARBON_TimesheetWorkItems",
+      "staging_table": "KARBON_TimesheetWorkItemsSTAGE"
+    }
+  ],
+  "metadata": {
+    "total_api_endpoints": 12,
+    "total_data_entities": 12,
+    "api_endpoints_count": 12,
+    "child_endpoints_count": 4,
+    "regular_endpoints_count": 8,
+    "extraction_source": "SSIS_Package_Analysis",
+    "includes_standard_fields": true,
+    "multi_tenant_support": true,
+    "staging_architecture": true,
+    "insert_only_mode": true,
+    "etl_pattern": "staging_to_production",
+    "authentication_method": "dual_key_bearer",
+    "pagination_support": "odata_skip_next",
+    "database_tables_total": 12,
+    "note": "Schema includes both regular endpoints and child endpoints with exact URLs",
+    "foreign_key_pattern": "Key"
+  }
+}

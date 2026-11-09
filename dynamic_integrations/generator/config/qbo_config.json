@@ -1,0 +1,108 @@
+{
+  "auth_type": "oauth2",
+  "auth_config": {
+    "token_url": "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer",
+    "client_id_env_var": "QBO_CLIENT_ID",
+    "client_secret_env_var": "QBO_CLIENT_SECRET",
+    "additional_params": {},
+    "custom_headers": {}
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "QBO_CLIENT_ID",
+    "QBO_CLIENT_SECRET",
+    "RealmID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "RealmID": "lambda x: x.isdigit()",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "realm_id": {
+      "env_var": "RealmID",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "MetaData.LastUpdatedTime",
+    "domain",
+    "sparse",
+    "CustomField",
+    "PrivateNote",
+    "Memo",
+    "AccountingInfoPrefs_ClassTrackingPerTxn"
+  ],
+  "exclude_endpoints": [
+    "CustomerList",
+    "VendorList",
+    "ItemList",
+    "CustomerSales",
+    "ItemSales",
+    "VendorExpenses",
+    "TaxSummary",
+    "ExchangeRate",
+    "CompanyInfo"
+  ],
+  "additional_fields": {
+    "Line_Id": {
+      "data_type": "integer",
+      "required": true,
+      "default_value": 1,
+      "description": "Line identifier for database records",
+      "fallback_sources": [
+        "LineNum",
+        "Line_LineNum",
+        "LineItem_LineNum"
+      ],
+      "auto_generate": "sequential",
+      "applies_to_endpoints": [
+        "Bill",
+        "Invoice",
+        "Payment",
+        "BillPayment"
+      ]
+    },
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    }
+  },
+  "query_config": {
+    "type": "sql",
+    "sql_template": "SELECT * FROM {endpoint}",
+    "supports_pagination": true,
+    "pagination_keywords": {
+      "start": "STARTPOSITION",
+      "limit": "MAXRESULTS"
+    }
+  }
+}

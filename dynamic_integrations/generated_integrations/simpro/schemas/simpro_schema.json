@@ -1,0 +1,6638 @@
+{
+  "integration_name": "SIMPRO",
+  "display_name": "SimplPro",
+  "category": "erp",
+  "api_config": {
+    "base_url": "https://{domain}/api/v1.0/companies/{company_id}",
+    "version": "v1.0",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "url_patterns": {
+      "has_company_id": true,
+      "has_realm_id": false,
+      "query_endpoint": "/api/v1.0/companies/{company_id}/query",
+      "entity_endpoint": "/api/v1.0/companies/{company_id}/{entity_name}",
+      "reports_endpoint": "/api/v1.0/companies/{company_id}/reports/{report_name}",
+      "url_template_vars": ["domain", "company_id"],
+      "special_query_format": false,
+      "require_trailing_slash": true
+    },
+    "authentication": {
+      "type": "bearer_token",
+      "header": "Authorization",
+      "format": "Bearer {api_key}",
+      "rate_limiting": {
+        "requests_per_minute": 600,
+        "burst_limit": 300
+      }
+    },
+    "pagination": {
+      "type": "page",
+      "limit_param": "pageSize",
+      "offset_param": "page",
+      "default_limit": 250,
+      "max_limit": 1000
+    },
+    "error_handling": {
+      "retry_codes": [429, 500, 502, 503, 504],
+      "max_retries": 3,
+      "backoff_strategy": "exponential"
+    }
+  },
+  "business_logic": {
+    "allowed_execution_statuses": [9, 12],
+    "reset_mode_required": false,
+    "sync_frequency": "daily",
+    "incremental_sync": true,
+    "last_modified_field": "DateModified"
+  },
+  "endpoints": [
+    {
+      "name": "Companies",
+      "description": "Company master records",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/companies/",
+        "exact_url": "https://{domain}/api/v1.0/companies/",
+        "method": "GET",
+        "columns": "ID,Name,Address,Phone,Email,Website",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template", 
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Address"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Company",
+      "staging_table": "SimPro_CompanySTAGE",
+      "incremental": false,
+      "priority": "high"
+    },
+
+    {
+      "name": "Customers",
+      "description": "Customer master records with contact and billing details",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/customers/",
+        "method": "GET",
+        "columns": "ID,CompanyName,GivenName,FamilyName,PreferredTechs,Phone,DoNotCall,AltPhone,Address,BillingAddress,CustomerType,Tags,AmountOwing,Rates,Profile,Banking,Archived,Sites,Contracts,Contacts,ResponseTimes,CustomFields,Email,DateModified,DateCreated,EIN,Website,Fax,CompanyNumber",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter customer records modified since specified date"
+          }
+        }
+      },
+    "is_details": true,
+      "detail_path": "/customers/companies/{ID}",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Address", "BillingAddress", "Rates", "Profile", "Banking"],
+        "array_fields": ["PreferredTechs", "Tags", "Sites", "Contracts", "Contacts", "ResponseTimes", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "CompanyName",
+          "db_column": "CompanyName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "GivenName",
+          "db_column": "GivenName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FamilyName",
+          "db_column": "FamilyName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone",
+          "db_column": "Phone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DoNotCall",
+          "db_column": "DoNotCall",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AltPhone",
+          "db_column": "AltPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.Address",
+          "db_column": "Address_Address",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.City",
+          "db_column": "Address_City",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.State",
+          "db_column": "Address_State",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.PostalCode",
+          "db_column": "Address_PostalCode",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.Country",
+          "db_column": "Address_Country",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BillingAddress.Address",
+          "db_column": "BillingAddress_Address",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BillingAddress.City",
+          "db_column": "BillingAddress_City",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BillingAddress.State",
+          "db_column": "BillingAddress_State",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BillingAddress.PostalCode",
+          "db_column": "BillingAddress_PostalCode",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BillingAddress.Country",
+          "db_column": "BillingAddress_Country",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomerType",
+          "db_column": "CustomerType",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AmountOwing",
+          "db_column": "AmountOwing",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.PartTaxCode.ID",
+          "db_column": "Rates_PartTaxCode_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.PartTaxCode.Code",
+          "db_column": "Rates_PartTaxCode_Code",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.PartTaxCode.Type",
+          "db_column": "Rates_PartTaxCode_Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.PartTaxCode.Rate",
+          "db_column": "Rates_PartTaxCode_Rate",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.PartTaxCode.ReverseTaxEnabled",
+          "db_column": "Rates_PartTaxCode_ReverseTaxEnabled",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.LabourTaxCode.ID",
+          "db_column": "Rates_LabourTaxCode_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.LabourTaxCode.Code",
+          "db_column": "Rates_LabourTaxCode_Code",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.LabourTaxCode.Type",
+          "db_column": "Rates_LabourTaxCode_Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.LabourTaxCode.Rate",
+          "db_column": "Rates_LabourTaxCode_Rate",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.LabourTaxCode.ReverseTaxEnabled",
+          "db_column": "Rates_LabourTaxCode_ReverseTaxEnabled",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.DiscountFee",
+          "db_column": "Rates_DiscountFee",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.AlwaysDeductCIS",
+          "db_column": "Rates_AlwaysDeductCIS",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.ServiceFee.ID",
+          "db_column": "Rates_ServiceFee_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.ServiceFee.Name",
+          "db_column": "Rates_ServiceFee_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.Material.PricingTier.ID",
+          "db_column": "Rates_Material_PricingTier_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.Material.PricingTier.Name",
+          "db_column": "Rates_Material_PricingTier_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.Material.PricingTier.DefaultMarkup",
+          "db_column": "Rates_Material_PricingTier_DefaultMarkup",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Rates.Material.Markup",
+          "db_column": "Rates_Material_Markup",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.Notes",
+          "db_column": "Profile_Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.CustomerProfile.ID",
+          "db_column": "Profile_CustomerProfile_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.CustomerProfile.Name",
+          "db_column": "Profile_CustomerProfile_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.CustomerGroup.ID",
+          "db_column": "Profile_CustomerGroup_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.CustomerGroup.Name",
+          "db_column": "Profile_CustomerGroup_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.AccountManager.ID",
+          "db_column": "Profile_AccountManager_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.AccountManager.Name",
+          "db_column": "Profile_AccountManager_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.Currency",
+          "db_column": "Profile_Currency",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.ServiceJobCostCenter.ID",
+          "db_column": "Profile_ServiceJobCostCenter_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Profile.ServiceJobCostCenter.Name",
+          "db_column": "Profile_ServiceJobCostCenter_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.AccountName",
+          "db_column": "Banking_AccountName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.RoutingNo",
+          "db_column": "Banking_RoutingNo",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.AccountNo",
+          "db_column": "Banking_AccountNo",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.PaymentMethod.ID",
+          "db_column": "Banking_PaymentMethod_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.PaymentMethod.Name",
+          "db_column": "Banking_PaymentMethod_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.PaymentTermID",
+          "db_column": "Banking_PaymentTermID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.PaymentTerms.Days",
+          "db_column": "Banking_PaymentTerms_Days",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.PaymentTerms.Type",
+          "db_column": "Banking_PaymentTerms_Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.CreditLimit",
+          "db_column": "Banking_CreditLimit",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.OnStop",
+          "db_column": "Banking_OnStop",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.Retention",
+          "db_column": "Banking_Retention",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Banking.VendorOrderNoRequired",
+          "db_column": "Banking_VendorOrderNoRequired",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Email",
+          "db_column": "Email",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EIN",
+          "db_column": "EIN",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Website",
+          "db_column": "Website",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Fax",
+          "db_column": "Fax",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompanyNumber",
+          "db_column": "CompanyNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "CustomerPreferredTechs",
+          "source_field": "PreferredTechs"
+        },
+        {
+          "table_name": "CustomerTags",
+          "source_field": "Tags"
+        },
+        {
+          "table_name": "CustomerSites",
+          "source_field": "Sites"
+        },
+        {
+          "table_name": "CustomerContracts",
+          "source_field": "Contracts"
+        },
+        {
+          "table_name": "CustomerContacts",
+          "source_field": "Contacts"
+        },
+        {
+          "table_name": "CustomerResponseTimes",
+          "source_field": "ResponseTimes"
+        },
+        {
+          "table_name": "CustomerCustomFields",
+          "source_field": "CustomFields"
+        }
+      ],
+      "table_name": "SimPro_Customers",
+      "staging_table": "SimPro_CustomersSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "CustomerPreferredTechs",
+      "is_virtual_endpoint": true,
+      "description": "Customer preferred technicians extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "TechnicianID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TypeId",
+          "db_column": "TypeId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerPreferredTechs",
+      "staging_table": "SimPro_CustomerPreferredTechsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomerTags",
+      "is_virtual_endpoint": true,
+      "description": "Customer tags extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tagIndex",
+          "db_column": "TagIndex",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Value",
+          "db_column": "TagValue",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerTags",
+      "staging_table": "SimPro_CustomerTagsSTAGE",
+      "incremental": true,
+      "priority": "low"
+    },
+    {
+      "name": "CustomerSites",
+      "is_virtual_endpoint": true,
+      "description": "Customer sites extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "SiteID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerSites",
+      "staging_table": "SimPro_CustomerSitesSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomerContracts",
+      "is_virtual_endpoint": true,
+      "description": "Customer contracts extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ContractID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndDate",
+          "db_column": "EndDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ContractNo",
+          "db_column": "ContractNo",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Expired",
+          "db_column": "Expired",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerContracts",
+      "staging_table": "SimPro_CustomerContractsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomerContacts",
+      "is_virtual_endpoint": true,
+      "description": "Customer contacts extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ContactID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "GivenName",
+          "db_column": "GivenName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FamilyName",
+          "db_column": "FamilyName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerContacts",
+      "staging_table": "SimPro_CustomerContactsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomerResponseTimes",
+      "is_virtual_endpoint": true,
+      "description": "Customer response times extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ResponseTimeID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerResponseTimes",
+      "staging_table": "SimPro_CustomerResponseTimesSTAGE",
+      "incremental": true,
+      "priority": "low"
+    },
+    {
+      "name": "CustomerCustomFields",
+      "is_virtual_endpoint": true,
+      "description": "Customer custom fields extracted from Customers",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "customersId",
+          "db_column": "CustomerID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customFieldIndex",
+          "db_column": "CustomFieldIndex",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "CustomField.ID",
+          "db_column": "CustomField_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomField.Name",
+          "db_column": "CustomField_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomField.Type",
+          "db_column": "CustomField_Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomField.IsMandatory",
+          "db_column": "CustomField_IsMandatory",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Value",
+          "db_column": "Value",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["CustomField"],
+        "array_fields": []
+      },
+      "table_name": "SimPro_CustomerCustomFields",
+      "staging_table": "SimPro_CustomerCustomFieldsSTAGE",
+      "incremental": true,
+      "priority": "low"
+    },
+
+    {
+      "name": "Employees",
+      "description": "Employee master data with payroll and contact information",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/employees/",
+        "method": "GET",
+        "columns": "ID,Name,Position,Address,DateOfHire,DateOfBirth,MaskedSSN,PrimaryContact,EmergencyContact,AccountSetup,UserProfile,DateCreated,DateModified,Archived,AssignedCostCenters,CustomFields,Banking,PayRates",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Address", "PrimaryContact", "EmergencyContact", "AccountSetup", "UserProfile", "Banking", "PayRates"],
+        "array_fields": ["AssignedCostCenters", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Position",
+          "db_column": "Position",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.Address",
+          "db_column": "Address_Address",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateOfHire",
+          "db_column": "DateOfHire",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PrimaryContact.Email",
+          "db_column": "PrimaryContact_Email",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedCostCenters",
+          "db_column": "AssignedCostCenters",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Employees",
+      "staging_table": "SimPro_EmployeesSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Jobs",
+      "description": "Job/project records with customer and status details",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/jobs/",
+        "method": "GET",
+        "columns": "ID,Type,Customer,CustomerContact,AdditionalContacts,Site,SiteContact,OrderNo,RequestNo,Description,Notes,DateIssued,DueDate,DueTime,Tags,Salesperson,ProjectManager,Technician,Stage,Status,ResponseTime,IsVariation,LinkedVariations,ConvertedFromQuote,DateModified,AutoAdjustStatus,Total,Totals,CustomFields",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter job records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Customer", "Site", "SiteContact", "CustomerContact", "Total", "Totals", "Status", "ConvertedFromQuote", "Salesperson", "ProjectManager"],
+        "array_fields": ["LinkedVariations", "Technicians", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Customer.ID",
+          "db_column": "Customer_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.CompanyName",
+          "db_column": "Customer_CompanyName",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Site.ID",
+          "db_column": "Site_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateIssued",
+          "db_column": "DateIssued",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status.Name",
+          "db_column": "Status_Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Jobs",
+      "staging_table": "SimPro_JobsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Invoices",
+      "description": "Invoices data",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/invoices/",
+        "method": "GET",
+        "columns": "ID,Type,Customer,Jobs,RecurringInvoice,Total,IsPaid",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter job records modified since specified date"
+          }
+        }
+      },
+      "is_details": true,
+      "detail_path": "/invoices/{ID}",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Customer", "RecurringInvoice", "Total"],
+        "array_fields": ["Jobs"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "InternalID",
+          "db_column": "InternalID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.ID",
+          "db_column": "Customer_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.CompanyName",
+          "db_column": "Customer_CompanyName",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.GivenName",
+          "db_column": "Customer_GivenName",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.FamilyName",
+          "db_column": "Customer_FamilyName",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoice.ID",
+          "db_column": "RecurringInvoice_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoice.Description",
+          "db_column": "RecurringInvoice_Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoice.Total.Extax",
+          "db_column": "RecurringInvoice_Total_Extax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoice.Total.Tax",
+          "db_column": "RecurringInvoice_Total_Tax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoice.Total.IncTax",
+          "db_column": "RecurringInvoice_Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateIssued",
+          "db_column": "DateIssued",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Period.StartDate",
+          "db_column": "Period_StartDate",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Period.EndDate",
+          "db_column": "Period_EndDate",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentTermID",
+          "db_column": "PaymentTermID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentTerms.Days",
+          "db_column": "PaymentTerms_Days",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "PaymentTerms.Type",
+          "db_column": "PaymentTerms_Type",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaymentTerms.DueDate",
+          "db_column": "PaymentTerms_DueDate",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ProgressClaimNumber",
+          "db_column": "ProgressClaimNumber",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsFinalClaim",
+          "db_column": "IsFinalClaim",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Stage",
+          "db_column": "Stage",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PerItem",
+          "db_column": "PerItem",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrderNo",
+          "db_column": "OrderNo",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LatePaymentFee",
+          "db_column": "LatePaymentFee",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CISDeductionRate",
+          "db_column": "CISDeductionRate",
+          "data_type": "DECIMAL",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ExchangeRate",
+          "db_column": "ExchangeRate",
+          "data_type": "DECIMAL",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingCategory.ID",
+          "db_column": "AccountingCategory_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AccountingCategory.Name",
+          "db_column": "AccountingCategory_Name",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status.ID",
+          "db_column": "Status_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status.Name",
+          "db_column": "Status_Name",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AutoAdjustStatus",
+          "db_column": "AutoAdjustStatus",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.Tax",
+          "db_column": "Total_Tax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "Total.ReverseChargeTax",
+          "db_column": "Total_ReverseChargeTax",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "Total.AmountApplied",
+          "db_column": "Total_AmountApplied",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "Total.BalanceDue",
+          "db_column": "Total_BalanceDue",
+          "data_type": "FLOAT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsRetainage",
+          "db_column": "IsRetainage",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Retainage",
+          "db_column": "Retainage",
+          "data_type": "JSON",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsPaid",
+          "db_column": "IsPaid",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DatePaid",
+          "db_column": "DatePaid",
+          "data_type": "DATE",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Currency",
+          "db_column": "Currency",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "InvoicesJobs",
+          "source_field": "Jobs"
+        },
+        {
+          "table_name": "InvoiceCostCenters",
+          "source_field": "CostCenters"
+        }
+      ],
+      "table_name": "SimPro_Jobs",
+      "staging_table": "SimPro_JobsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Quotes",
+      "description": "Quote/estimate records with customer and pricing details",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/quotes/",
+        "method": "GET",
+        "columns": "ID,Customer,CustomerContact,Site,SiteContact,Description,Notes,Type,Salesperson,ProjectManager,Technician,DateIssued,DueDate,ValidityDays,OrderNo,RequestNo,IsClosed,Stage,CustomerStage,JobNo,IsVariation,Forecast,Total,Totals,Status,Tags,DateModified,AutoAdjustStatus,CustomFields",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Customer", "CustomerContact", "Site", "SiteContact", "Total", "Totals"],
+        "array_fields": ["CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Customer.ID",
+          "db_column": "Customer_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateIssued",
+          "db_column": "DateIssued",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Quotes",
+      "staging_table": "SimPro_QuotesSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Leads",
+      "description": "Lead/prospect records with sales pipeline information",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/leads/",
+        "method": "GET",
+        "columns": "ID,Customer,CustomerContact,AdditionalContacts,Site,SiteContact,Stage,FollowUpDate,DateCreated,Description,Notes,CostCenter,Tags,Salesperson,ProjectManager,Status,Forecast,AutoAdjustStatus,CustomFields",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Customer", "CustomerContact", "Site", "SiteContact"],
+        "array_fields": ["CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Customer.ID",
+          "db_column": "Customer_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Leads",
+      "staging_table": "SimPro_LeadsSTAGE",
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "Contractors",
+      "description": "Contractor information and contact details",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/contractors/",
+        "method": "GET",
+        "columns": "ID,Name,Position,Address,DateOfHire,DateOfBirth,MaskedSSN,PrimaryContact,EmergencyContact,AccountSetup,UserProfile,DateCreated,DateModified,Archived,AssignedCostCenters,CustomFields,ContactName,Banking,Rates,DisplayOrder",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Address", "PrimaryContact", "EmergencyContact", "Banking"],
+        "array_fields": ["AssignedCostCenters", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Position",
+          "db_column": "Position",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.Address",
+          "db_column": "Address_Address",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateOfHire",
+          "db_column": "DateOfHire",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Contractors",
+      "staging_table": "SimPro_ContractorsSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "Sites",
+      "description": "Customer site locations and addresses",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/sites/",
+        "method": "GET",
+        "default_params": {
+          "Archived": "True"
+        },
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "Archived"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Customer", "Address", "PrimaryContact", "BillingAddress"],
+        "array_fields": ["CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Customer.ID",
+          "db_column": "Customer_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address.Address",
+          "db_column": "Address_Address",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsActive",
+          "db_column": "IsActive",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Sites",
+      "staging_table": "SimPro_SitesSTAGE",
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "Catalogs",
+      "description": "Product catalog with pricing and inventory details",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/catalogs/",
+        "method": "GET",
+        "columns": "ID,PartNo,Name,IsFavorite,IsInventory,UPC,Manufacturer,CountryOfOrigin,EstimatedTime,TradePrice,SplitPrice,TradeSplitQty,MinPackQty,Markup,BasePrice,SellPrice,StorageLocation,UOM,PurchaseTaxCode,SalesTaxCode,Group,SearchTerm,Notes,LinkedCatalogs,DisplayOrder,DateModified,Archived,CustomFields",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["PurchaseTaxCode", "SalesTaxCode", "Group"],
+        "array_fields": ["LinkedCatalogs", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "PartNo",
+          "db_column": "PartNo",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TradePrice",
+          "db_column": "TradePrice",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SellPrice",
+          "db_column": "SellPrice",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UOM",
+          "db_column": "UOM",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Group.Name",
+          "db_column": "Group_Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomFields",
+          "db_column": "CustomFields",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Catalogs",
+      "staging_table": "SimPro_CatalogsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "Schedules",
+      "description": "Work schedule and appointment data",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/schedules/",
+        "method": "GET",
+        "columns": "ID,Type,Reference,TotalHours,Staff,Date,Blocks,DateModified",
+        "query_parameters": {
+          "required": ["Date"],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter schedule records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Staff"],
+        "array_fields": ["Blocks"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.ID",
+          "db_column": "Staff_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TotalHours",
+          "db_column": "TotalHours",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Schedules",
+      "staging_table": "SimPro_SchedulesSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "CustomerPayments",
+      "description": "Customer payment records and invoice associations",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/customerPayments/",
+        "method": "GET",
+        "columns": "ID,Payment,DateModified,Invoices",
+        "query_parameters": {
+          "required": ["DateModified"],
+          "optional": ["columns", "pageSize", "page"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter customer payment records modified since specified date (required parameter)"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Payment"],
+        "array_fields": ["Invoices"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Payment.Date",
+          "db_column": "Payment_Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Payment.PaymentMethod.Name",
+          "db_column": "Payment_PaymentMethod_Name",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Payment.PaymentMethod.ID",
+          "db_column": "Payment_PaymentMethod_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Status",
+          "db_column": "Status",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DepositAccount",
+          "db_column": "DepositAccount",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FinanceCharge",
+          "db_column": "FinanceCharge",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+           {
+          "api_name": "CheckNo",
+          "db_column": "CheckNo",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Details",
+          "db_column": "Details",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "FinanceFeeBreakdown",
+          "db_column": "FinanceFeeBreakdown",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_CustomerPayments",
+      "staging_table": "SimPro_CustomerPaymentsSTAGE",
+      "incremental": true,
+      "priority": "high"
+    },
+    {
+      "name": "StorageDevices",
+      "description": "Storage device master data",
+      "entity_type": "master_data",
+      "api_details": {
+        "path": "/storageDevices/",
+        "method": "GET",
+        "columns": "ID,Name,IsDefault,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsDefault",
+          "db_column": "IsDefault",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_StorageDevices",
+      "staging_table": "SimPro_StorageDevicesSTAGE",
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "VendorOrders",
+      "description": "Vendor order records",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/vendorOrders/",
+        "method": "GET",
+        "columns": "ID,StorageDevice,AssignedTo,Stage,Status,StatusAutoAdjust,DateIssued,Vendor,QuoteNo,Reference,DueDate,VendorQuote,VendorNotes,PrivateNotes,Archived,CustomFields,DateModified",
+        "date_filter": "DateModified=ge({MaxDateString})",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Vendor", "Total"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Vendor.ID",
+          "db_column": "Vendor_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrderNo",
+          "db_column": "OrderNo",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateIssued",
+          "db_column": "DateIssued",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_VendorOrders",
+      "staging_table": "SimPro_VendorOrdersSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "EmployeeTimesheets",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employees",
+        "parent_id_column": "ID",
+        "parent_id_source": "employee_id",
+        "map_id_to_column": "EmployeeID",
+        "child_endpoint_type": "url_based"
+      }],
+      "use_pagination": false,
+      "description": "Employee timesheet records",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/employees/10/timesheets/",
+        "method": "GET",
+        "columns": "Date,StartTime,EndTime,TotalHrs,ScheduleType,Reference,Cost",
+        "query_parameters": {
+           "required": {
+            "StartDate": "1970-01-01"
+          },
+          "optional": ["pageSize", "page"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "StartDate={timestamp}",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+          {
+          "api_name": "ScheduleType",
+          "db_column": "ScheduleType",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+          {
+          "api_name": "Reference",
+          "db_column": "Reference",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "_href",
+          "db_column": "h_ref",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "datetime",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartTime",
+          "db_column": "StartTime",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndTime",
+          "db_column": "EndTime",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TotalHrs",
+          "db_column": "TotalHrs",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "type": "split",
+          "api_name": "_href.jobs",
+          "db_column": "JobID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "type": "split",
+          "api_name": "_href.sections",
+          "db_column": "SectionsID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+       {
+          "type": "split",
+          "api_name": "_href.costCenters",
+          "db_column": "CostCentersID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+       {
+          "type": "split",
+          "api_name": "_href.schedules",
+          "db_column": "SchedulesID",
+          "data_type": "NVARCHAR(5)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "ScheduleRate.ID",
+          "db_column": "ScheduleRateID",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleRate.Name",
+          "db_column": "ScheduleRateName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Cost",
+          "db_column": "Cost",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmployeeID",
+          "db_column": "EmployeeID",
+          "data_type": "NVARCHAR(5)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Timesheets",
+      "staging_table": "SimPro_TimesheetsSTAGE",
+      "incremental": false,
+      "priority": "high",
+      "is_nested": true,
+      "parent_endpoint": "/employees"
+    },
+
+    {
+      "name": "ContractorTimesheets",
+      "is_child_endpoint": true,
+      "use_pagination": false,
+      "child_endpoint_config": [{
+        "parent_table": "contractors",
+        "parent_id_column": "ID",
+        "parent_id_source": "contractor_id",
+        "map_id_to_column": "ContractorID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "Employee timesheet records",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/contractors/{contractor_id}/timesheets/",
+        "method": "contractors",
+        "columns": "Date,StartTime,EndTime,TotalHrs,ScheduleType,Reference,Cost",
+        "query_parameters": {
+            "required": {
+            "StartDate": "1970-01-01"
+          },
+          "optional": ["pageSize", "page"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "StartDate={timestamp}",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+          {
+          "api_name": "ScheduleType",
+          "db_column": "ScheduleType",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+          {
+          "api_name": "Reference",
+          "db_column": "Reference",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "_href",
+          "db_column": "h_ref",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "datetime",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartTime",
+          "db_column": "StartTime",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndTime",
+          "db_column": "EndTime",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TotalHrs",
+          "db_column": "TotalHrs",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "type": "split",
+          "api_name": "_href.jobs",
+          "db_column": "JobID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "type": "split",
+          "api_name": "_href.sections",
+          "db_column": "SectionsID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+       {
+          "type": "split",
+          "api_name": "_href.costCenters",
+          "db_column": "CostCentersID",
+          "data_type": "NVARCHAR(10)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+       {
+          "type": "split",
+          "api_name": "_href.schedules",
+          "db_column": "SchedulesID",
+          "data_type": "NVARCHAR(5)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "ScheduleRate.ID",
+          "db_column": "ScheduleRateID",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleRate.Name",
+          "db_column": "ScheduleRateName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Cost",
+          "db_column": "Cost",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "TotalCost",
+          "db_column": "TotalCost",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ContractorID",
+          "db_column": "ContractorID",
+          "data_type": "NVARCHAR(5)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Timesheets",
+      "staging_table": "SimPro_TimesheetsSTAGE",
+      "incremental": false,
+      "priority": "high",
+      "is_nested": true,
+      "parent_endpoint": "/employees"
+    },
+    {
+      "name": "InvoiceCostCenters",
+      "is_virtual_endpoint": true,
+      "description": "SimPro Invoice CostCenters data extracted from Invoices",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+           "api_name": "invoicesId",
+          "db_column": "invoicesId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "JobID",
+          "db_column": "JobID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecurringInvoiceID",
+          "db_column": "RecurringInvoiceID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SectionID",
+          "db_column": "SectionID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenter.ID",
+          "db_column": "CostCenter_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenter.Name",
+          "db_column": "CostCenter_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Claim.ExTax",
+          "db_column": "Claim_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Claim.IncTax",
+          "db_column": "Claim_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Claim.Percent",
+          "db_column": "Claim_Percent",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "InvoiceCostCenterItems",
+          "source_field": "Items"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["CostCenter", "Total", "Claim"],
+        "array_fields": ["Items"]
+      },
+      "table_name": "SimPro_InvoiceCostCenters",
+      "staging_table": "SimPro_InvoiceCostCentersSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "InvoiceCostCenterItems",
+      "is_virtual_endpoint": true,
+      "description": "SimPro Invoice CostCenter Items extracted from CostCenters",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "invoicesId",
+          "db_column": "invoicesId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoicecostcentersId",
+          "db_column": "CostCentersID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Item.ID",
+          "db_column": "Item_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Item.PartNo",
+          "db_column": "Item_PartNo",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Item.Name",
+          "db_column": "Item_Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Item.Type",
+          "db_column": "Item_Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quantity.Total",
+          "db_column": "Quantity_Total",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quantity.Remaining",
+          "db_column": "Quantity_Remaining",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quantity.Claimed",
+          "db_column": "Quantity_Claimed",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UnitPrice.ExTax",
+          "db_column": "UnitPrice_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UnitPrice.IncTax",
+          "db_column": "UnitPrice_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Item", "Quantity", "UnitPrice", "Total"],
+        "array_fields": []
+      },
+      "table_name": "SimPro_InvoiceCostCenterItems",
+      "staging_table": "SimPro_InvoiceCostCenterItemsSTAGE",
+      "incremental": true,
+      "priority": "low"
+    },
+    {
+      "name": "InvoicesJobs",
+      "is_virtual_endpoint": true,
+      "description": "Invoices associated with specific jobs",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Total", "Currency", "Status"],
+        "array_fields": ["CostCenters", "CustomFields"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "invoicesId",
+          "db_column": "invoicesId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.ExTax",
+          "db_column": "Total_ExTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "Total.Tax",
+          "db_column": "Total_Tax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "JobSections",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "jobs",
+        "parent_id_column": "ID",
+        "parent_id_source": "job_id",
+        "map_id_to_column": "JobID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "Job section breakdown and organization",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/jobs/{job_id}/sections/",
+        "method": "GET",
+        "columns": "ID,Name,Description,DisplayOrder,DateModified",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DisplayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "JobID",
+          "db_column": "JobID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_JobSections",
+      "staging_table": "SimPro_JobSectionsSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/jobs"
+    },
+    {
+      "name": "JobCostCenters",
+      "description": "Job cost center breakdown by section",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/jobCostCenters/",
+        "method": "GET",
+        "columns": "ID,CostCenter,Name,Job,Section,DateModified,_href",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["CostCenter", "Total", "Totals"],
+        "array_fields": ["VendorOrders"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "CostCenter.ID",
+          "db_column": "CostCenter_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenter.Name",
+          "db_column": "CostCenter_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Job.ID",
+          "db_column": "Job_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Job.Type",
+          "db_column": "Job_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Job.Name",
+          "db_column": "Job_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Job.Stage",
+          "db_column": "Job_Stage",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Job.Status",
+          "db_column": "Job_Status",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Section.ID",
+          "db_column": "Section_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Section.Name",
+          "db_column": "Section_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "_href",
+          "db_column": "_href",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_JobCostCenters",
+      "staging_table": "SimPro_JobCostCentersSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/jobs/{job_id}/sections"
+    },
+    {
+      "name": "JobCostCentersSchedules",
+      "is_child_endpoint": true,
+      "skip_recursive_query": true,
+      "child_endpoint_config": [{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "Job_ID",
+        "parent_id_source": "job_id",
+        "map_id_to_column": "JobID",
+        "child_endpoint_type": "url_based"
+      },{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "Section_ID",
+        "parent_id_source": "section_id",
+        "map_id_to_column": "SectionID",
+        "child_endpoint_type": "url_based"
+      },{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "ID",
+        "parent_id_source": "costCenter_id",
+        "map_id_to_column": "CostCentersID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "JobCostCentersSchedules",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/jobs/{job_id}/sections/{section_id}/costCenters/{costCenter_id}/schedules/",
+        "method": "GET",
+        "columns": "ID,Name,Description,DisplayOrder,DateModified",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "TotalHours",
+          "db_column": "TotalHours",
+          "data_type": "Float",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.ID",
+          "db_column": "Staff_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.Name",
+          "db_column": "Staff_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.Type",
+          "db_column": "Staff_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+
+        {
+          "api_name": "Staff.TypeId",
+          "db_column": "Staff_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "JobID",
+          "db_column": "JobID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SectionID",
+          "db_column": "SectionID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCentersID",
+          "db_column": "CostCentersID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_JobCostCentersSchedules",
+      "staging_table": "SimPro_JobCostCentersSchedulesSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/jobs"
+    },
+    {
+      "name": "JobCostCentersLabourateItems",
+      "is_child_endpoint": true,
+      "skip_recursive_query": true,
+      "child_endpoint_config": [{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "Job_ID",
+        "parent_id_source": "job_id",
+        "map_id_to_column": "JobID",
+        "child_endpoint_type": "url_based"
+      },{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "Section_ID",
+        "parent_id_source": "section_id",
+        "map_id_to_column": "SectionID",
+        "child_endpoint_type": "url_based"
+      },{
+        "parent_table": "jobcostcenters",
+        "parent_id_column": "ID",
+        "parent_id_source": "costCenter_id",
+        "map_id_to_column": "CostCentersID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "JobCostCentersLabourateItems",
+      "entity_type": "transaction_data",
+      "is_details": true,
+      "detail_path": "/jobs/{job_id}/sections/{section_id}/costCenters/{costCenter_id}/labor/{ID}",
+      "api_details": {
+        "path": "/jobs/{job_id}/sections/{section_id}/costCenters/{costCenter_id}/labor/",
+        "method": "GET",
+        "columns": "ID,Name,Description,DisplayOrder,DateModified",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+    {
+      "api_name": "ID",
+      "db_column": "ID",
+      "data_type": "BIGINT",
+      "nullable": false,
+      "is_primary_key": true
+    },
+    {
+      "api_name": "LaborType.ID",
+      "db_column": "LaborType_ID",
+      "data_type": "BIGINT",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "LaborType.Name",
+      "db_column": "LaborType_Name",
+      "data_type": "NVARCHAR(400)",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "LaborRate",
+      "db_column": "LaborRate",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "LaborMarkup",
+      "db_column": "LaborMarkup",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SalesTaxCode.ID",
+      "db_column": "SalesTaxCode_ID",
+      "data_type": "BIGINT",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SalesTaxCode.Code",
+      "db_column": "SalesTaxCode_Code",
+      "data_type": "NVARCHAR(200)",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SalesTaxCode.Type",
+      "db_column": "SalesTaxCode_Type",
+      "data_type": "NVARCHAR(200)",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SalesTaxCode.Rate",
+      "db_column": "SalesTaxCode_Rate",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "ProjectedTime",
+      "db_column": "ProjectedTime",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Ticked",
+      "db_column": "Ticked",
+      "data_type": "BIT",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "DateModified",
+      "db_column": "DateModified",
+      "data_type": "DATETIME",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Discount",
+      "db_column": "Discount",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SellPrice.ExTax",
+      "db_column": "SellPrice_ExTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SellPrice.IncTax",
+      "db_column": "SellPrice_IncTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SellPrice.ExDiscountExTax",
+      "db_column": "SellPrice_ExDiscountExTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "SellPrice.ExDiscountIncTax",
+      "db_column": "SellPrice_ExDiscountIncTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Total.Qty",
+      "db_column": "Total_Qty",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Total.Amount.ExTax",
+      "db_column": "Total_Amount_ExTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Total.Amount.IncTax",
+      "db_column": "Total_Amount_IncTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.ToDate.Qty",
+      "db_column": "Claimed_ToDate_Qty",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.ToDate.Amount.ExTax",
+      "db_column": "Claimed_ToDate_Amount_ExTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.ToDate.Amount.IncTax",
+      "db_column": "Claimed_ToDate_Amount_IncTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.Remaining.Qty",
+      "db_column": "Claimed_Remaining_Qty",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.Remaining.Amount.ExTax",
+      "db_column": "Claimed_Remaining_Amount_ExTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "Claimed.Remaining.Amount.IncTax",
+      "db_column": "Claimed_Remaining_Amount_IncTax",
+      "data_type": "Float",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "IncomeAccount.ID",
+      "db_column": "IncomeAccount_ID",
+      "data_type": "BIGINT",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "IncomeAccount.Name",
+      "db_column": "IncomeAccount_Name",
+      "data_type": "NVARCHAR(400)",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+      "api_name": "IncomeAccount.Number",
+      "db_column": "IncomeAccount_Number",
+      "data_type": "NVARCHAR(200)",
+      "nullable": true,
+      "is_primary_key": false
+    },
+    {
+          "api_name": "JobID",
+          "db_column": "JobID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SectionID",
+          "db_column": "SectionID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCentersID",
+          "db_column": "CostCentersID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/jobs"
+    },
+    {
+      "name": "QuoteSections",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "quotes",
+        "parent_id_column": "ID",
+        "parent_id_source": "quote_id",
+        "map_id_to_column": "QuoteID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "Quote section breakdown and organization",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/quotes/{quote_id}/sections/",
+        "method": "GET",
+        "columns": "ID,Name,Description,DisplayOrder,DateModified",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "QuoteID",
+          "db_column": "QuoteID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_QuoteSections",
+      "staging_table": "SimPro_QuoteSectionsSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/quotes"
+    },
+    {
+      "name": "QuoteCostCenters",
+      "description": "Quote cost center breakdown by section",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/quoteCostCenters/",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["CostCenter", "Total", "Totals"],
+        "array_fields": ["VendorOrders"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+         {
+          "api_name": "CostCenter.ID",
+          "db_column": "CostCenter_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenter.Name",
+          "db_column": "CostCenter_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+       {
+          "api_name": "Quote.ID",
+          "db_column": "Quote_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quote.Type",
+          "db_column": "Quote_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quote.Name",
+          "db_column": "Quote_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quote.Stage",
+          "db_column": "Quote_Stage",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Quote.Status",
+          "db_column": "Quote_Status",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+         {
+          "api_name": "Section.ID",
+          "db_column": "Section_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Section.Name",
+          "db_column": "Section_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "_href",
+          "db_column": "_href",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_QuoteCostCenters",
+      "staging_table": "SimPro_QuoteCostCentersSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/quotes/{quote_id}/sections"
+    },
+    {
+      "name": "StorageDeviceStock",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "storagedevices",
+        "parent_id_column": "ID",
+        "parent_id_source": "device_id",
+        "map_id_to_column": "StorageDeviceID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "Stock levels by storage device",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/storageDevices/{device_id}/stock/",
+        "method": "GET",
+        "columns": "Catalog,InventoryCount,StorageLocation,AssignedToJobs,AssignedValue,InventoryValue,OnOrder,OrderValue,InTransit,OnOrderAssigned,TransitInventoryValue,OrderAssignedValue,Total,TotalValue,DaysInInventory,MinimumLevel,RestockLevel",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Catalog"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "Catalog.ID",
+          "db_column": "Catalog_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "StorageDeviceID",
+          "db_column": "StorageDeviceID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "InventoryCount",
+          "db_column": "InventoryCount",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InventoryValue",
+          "db_column": "InventoryValue",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OnOrder",
+          "db_column": "OnOrder",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TotalValue",
+          "db_column": "TotalValue",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MinimumLevel",
+          "db_column": "MinimumLevel",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_StorageStock",
+      "staging_table": "SimPro_StorageStockSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/storageDevices"
+    },
+    {
+      "name": "VendorOrderReceipts",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "vendororders",
+        "parent_id_column": "ID",
+        "parent_id_source": "order_id",
+        "map_id_to_column": "VendorOrderID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "Vendor order receipt records",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/vendorOrders/{order_id}/receipts/",
+        "method": "GET",
+        "columns": "ID,VendorInvoiceNo,PackingSlipNo,Notes,ExchangeRate,DateIssued,DueDate,Category,DateCreated,DateModified,TaxAdjustment,FreightTaxCode,Freight,FreightBilledTo,Total,ItemsReceivedDate",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Total"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "VendorOrderID",
+          "db_column": "VendorOrderID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "VendorInvoiceNo",
+          "db_column": "VendorInvoiceNo",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateIssued",
+          "db_column": "DateIssued",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Total.IncTax",
+          "db_column": "Total_IncTax",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ItemsReceivedDate",
+          "db_column": "ItemsReceivedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_VendorReceipts",
+      "staging_table": "SimPro_VendorReceiptsSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true,
+      "parent_endpoint": "/vendorOrders"
+    },
+
+
+    {
+      "name": "Activities",
+      "description": "Service activities and billable items",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/activities/",
+        "method": "GET",
+        "columns": "ID,Name,Billable,ScheduleRate,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "Archived"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Billable",
+          "db_column": "Billable",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ScheduleRate",
+          "db_column": "ScheduleRate",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Activities",
+      "staging_table": "SimPro_ActivitiesSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "ActivitySchedules",
+      "description": "ActivitySchedules",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/activitySchedules/",
+        "method": "GET",
+        "columns": "ID,TotalHours,Staff,Date,Activity",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "Date=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "TotalHours",
+          "db_column": "TotalHours",
+          "data_type": "Float",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.ID",
+          "db_column": "Staff_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.Name",
+          "db_column": "Staff_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.Type",
+          "db_column": "Staff_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Staff.TypeId",
+          "db_column": "Staff_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Activity.ID",
+          "db_column": "Activity_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Activity.Name",
+          "db_column": "Activity_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_ActivitySchedules",
+      "staging_table": "SimPro_JActivitySchedulesSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true
+    },
+    {
+      "name": "AssetTypes",
+      "description": "Asset type definitions and configurations",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/assetTypes/",
+        "method": "GET",
+        "columns": "ID,Name,Reference,RegType,JobCostCenter,QuoteCostCenter,DefaultTechnician,Description,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["JobCostCenter", "QuoteCostCenter", "DefaultTechnician"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Reference",
+          "db_column": "Reference",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_AssetTypes",
+      "staging_table": "SimPro_AssetTypesSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CostCenters",
+      "description": "Cost center setup and budget information",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/accounts/costCenters/",
+        "method": "GET",
+        "columns": "ID,Name,IncomeAccountNo,ExpenseAccountNo,MonthlySalesBudget,MonthlyExpenditureBudget,Archived,IsMembershipCostCenter",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncomeAccountNo",
+          "db_column": "IncomeAccountNo",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ExpenseAccountNo",
+          "db_column": "ExpenseAccountNo",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MonthlySalesBudget",
+          "db_column": "MonthlySalesBudget",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MonthlyExpenditureBudget",
+          "db_column": "MonthlyExpenditureBudget",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsMembershipCostCenter",
+          "db_column": "IsMembershipCostCenter",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_CostCenters",
+      "staging_table": "SimPro_CostCentersSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "BusinessGroups",
+      "description": "Business group and cost center organization",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/accounts/businessGroups/",
+        "method": "GET",
+        "columns": "ID,Name,CostCenters",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": ["CostCenters"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenters",
+          "db_column": "CostCenters",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_BusinessGroup",
+      "staging_table": "SimPro_BusinessGroupSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+    {
+      "name": "CustomerGroups",
+      "description": "Customer grouping and categorization",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/customerGroups/",
+        "method": "GET",
+        "columns": "ID,Name,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_CustomerGroups",
+      "staging_table": "SimPro_CustomerGroupsSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "CustomerProfiles",
+      "description": "Customer profile templates and settings",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/customerProfiles/",
+        "method": "GET",
+        "columns": "ID,Name,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_CustomerProfiles",
+      "staging_table": "SimPro_CustomerProfilesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "SecurityGroups",
+      "description": "Security group definitions and permissions",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/securityGroups/",
+        "method": "GET",
+        "columns": "ID,Name,BusinessGroup,Dashboards",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["BusinessGroup"],
+        "array_fields": ["Dashboards"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BusinessGroup.ID",
+          "db_column": "BusinessGroup_ID",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Dashboards",
+          "db_column": "Dashboards",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_SecurityGroups",
+      "staging_table": "SimPro_SecurityGroupsSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "LaborRates",
+      "description": "Labor rate definitions and calculations",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/labor/laborRates/",
+        "method": "GET",
+        "columns": "ID,Name,CostRate,Markup,Multiplier,TaxCode,IsDefault,IncOverhead,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["TaxCode"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostRate",
+          "db_column": "CostRate",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Markup",
+          "db_column": "Markup",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsDefault",
+          "db_column": "IsDefault",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_LaborRates",
+      "staging_table": "SimPro_LaborRatesSTAGE",
+      "incremental": false,
+      "priority": "medium"
+    },
+    {
+      "name": "ScheduleRates",
+      "description": "Schedule rate definitions and multipliers",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/labor/scheduleRates/",
+        "method": "GET",
+        "columns": "ID,Name,Multiplier,ShowInMobile,ShowInConnect,IncOverhead,ActivityOnly,ScheduleColor,DisplayOrder,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Multiplier",
+          "db_column": "Multiplier",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ShowInMobile",
+          "db_column": "ShowInMobile",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DisplayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_ScheduleRates",
+      "staging_table": "SimPro_ScheduleRatesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "ServiceFees",
+      "description": "Service fee definitions and pricing",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/labor/serviceFees/",
+        "method": "GET",
+        "columns": "ID,Name,SalesTaxCode,LaborTime,Price,DisplayOrder,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["SalesTaxCode"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LaborTime",
+          "db_column": "LaborTime",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Price",
+          "db_column": "Price",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DisplayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_ServiceFees",
+      "staging_table": "SimPro_ServiceFeesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "UnitOfMeasurement",
+      "description": "Unit of measurement definitions",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/materials/uoms/",
+        "columns": "ID,Name,WholeNoOnly",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Symbol",
+          "db_column": "Symbol",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_UnitOfMeasurement",
+      "staging_table": "SimPro_UnitOfMeasurementSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "ContractorInvoices",
+      "description": "Contractor invoice records with payment details",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/contractorInvoices/",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": ["Contractor", "Total"],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ContractorJobs",
+          "db_column": "ContractorJobs",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoiceNo",
+          "db_column": "InvoiceNo",
+          "data_type": "NVARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_ContractorInvoices",
+      "staging_table": "SimPro_ContractorInvoicesSTAGE",
+      "incremental": true,
+      "priority": "medium"
+    },
+
+    {
+      "name": "AccountCategories",
+      "description": "Account category setup data",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/accounts/accCategories/",
+        "method": "GET",
+        "columns": "ID,Name,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+             "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_AccountCategories",
+      "staging_table": "SimPro_AccountCategoriesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "FitTimes",
+      "description": "Labor fit time setup data",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/labor/fitTimes/",
+        "method": "GET",
+        "columns": "ID,Name,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_FitTimes",
+      "staging_table": "SimPro_FitTimesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "Prebuilds",
+      "description": "Prebuild assembly setup data",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/prebuilds/",
+        "method": "GET",
+        "columns": "ID,Name,Description,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_Prebuilds",
+      "staging_table": "SimPro_PrebuildsSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "InventoryJournals",
+      "description": "Inventory journal records from external system",
+      "entity_type": "external_data",
+      "api_details": {
+        "path": "/inventoryJournals/",
+        "method": "GET",
+        "columns": "ID,JournalDate,Amount,CostCenter,Memo,ExportDate,SecondaryAccount",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page", "DateModified"],
+          "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "JournalDate",
+          "db_column": "JournalDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Amount",
+          "db_column": "Amount",
+          "data_type": "FLOAT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostCenter.ID",
+          "db_column": "CostCenter_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+         {
+          "api_name": "CostCenter.Name",
+          "db_column": "CostCenter_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Memo",
+          "db_column": "Memo",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ExportDate",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SecondaryAccount",
+          "db_column": "SecondaryAccount",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateModified",
+          "db_column": "DateModified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_InventoryJournals",
+      "staging_table": "SimPro_InventoryJournalsSTAGE",
+      "incremental": true,
+      "priority": "medium",
+      "special_domain": "upg.simprosuite.com"
+    },
+
+    {
+      "name": "Teams",
+      "description": "Team setup data with availability and member information",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/teams/",
+        "method": "GET",
+        "columns": "ID,Name,Availability,CostCenters,Members,Zones",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+       "is_details": true,
+      "detail_path": "/setup/teams/{ID}",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": ["Availability", "CostCenters", "Members", "Zones"]
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "TeamAvailability",
+          "source_field": "Availability"
+        },
+        {
+          "table_name": "TeamCostCenters",
+          "source_field": "CostCenters"
+        },
+        {
+          "table_name": "TeamMembers",
+          "source_field": "Members"
+        },
+        {
+          "table_name": "TeamZones",
+          "source_field": "Zones"
+        }
+      ],
+      "table_name": "SimPro_Teams",
+      "staging_table": "SimPro_TeamsSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "TeamAvailability",
+      "is_virtual_endpoint": true,
+      "description": "Team availability schedules extracted from Teams",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "teamsId",
+          "db_column": "TeamID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "availabilityIndex",
+          "db_column": "AvailabilityIndex",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "StartDay",
+          "db_column": "StartDay",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartTime",
+          "db_column": "StartTime",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndDay",
+          "db_column": "EndDay",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndTime",
+          "db_column": "EndTime",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_TeamAvailability",
+      "staging_table": "SimPro_TeamAvailabilitySTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "TeamCostCenters",
+      "is_virtual_endpoint": true,
+      "description": "Team cost center associations extracted from Teams",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "teamsId",
+          "db_column": "TeamID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "CostCenterID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_TeamCostCenters",
+      "staging_table": "SimPro_TeamCostCentersSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "TeamMembers",
+      "is_virtual_endpoint": true,
+      "description": "Team member assignments extracted from Teams",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "teamsId",
+          "db_column": "TeamID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "MemberID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TypeId",
+          "db_column": "TypeId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_TeamMembers",
+      "staging_table": "SimPro_TeamMembersSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+    {
+      "name": "TeamZones",
+      "is_virtual_endpoint": true,
+      "description": "Team zone assignments extracted from Teams",
+      "entity_type": "detail_data",
+      "fields": [
+        {
+          "api_name": "teamsId",
+          "db_column": "TeamID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ZoneID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "table_name": "SimPro_TeamZones",
+      "staging_table": "SimPro_TeamZonesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "ResponseTimes",
+      "description": "Response time setup data with days, hours, and minutes",
+      "entity_type": "setup_data",
+      "api_details": {
+        "path": "/setup/responseTimes/",
+        "method": "GET",
+        "columns": "ID,Name,Days,Hours,Minutes,Archived",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns", "pageSize", "page"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(4000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Days",
+          "db_column": "Days",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Hours",
+          "db_column": "Hours",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Minutes",
+          "db_column": "Minutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Archived",
+          "db_column": "Archived",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "table_name": "SimPro_ResponseTimes",
+      "staging_table": "SimPro_ResponseTimesSTAGE",
+      "incremental": false,
+      "priority": "low"
+    },
+
+    {
+      "name": "Tasks",
+      "description": "Tasks",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/tasks/",
+        "method": "GET",
+        "columns": "ID,Subject,AssignedTo,Assignees,CompletedBy,DueDate,PercentComplete",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Subject",
+          "db_column": "Subject",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.ID",
+          "db_column": "AssignedTo_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.Name",
+          "db_column": "AssignedTo_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.Type",
+          "db_column": "AssignedTo_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.TypeId",
+          "db_column": "AssignedTo_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.ID",
+          "db_column": "CompletedBy_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.Name",
+          "db_column": "CompletedBy_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.Type",
+          "db_column": "CompletedBy_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.TypeId",
+          "db_column": "CompletedBy_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DueDate",
+          "db_column": "DueDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PercentComplete",
+          "db_column": "PercentComplete",
+          "data_type": "Float",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "TaskAssignees",
+          "source_field": "Assignees"
+        }
+      ],
+      "table_name": "SimPro_Tasks",
+      "staging_table": "SimPro_TasksSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true
+    },
+    {
+      "name": "TaskAssignees",
+      "is_virtual_endpoint": true,
+      "description": "TaskAssignees",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TypeId",
+          "db_column": "TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tasksId",
+          "db_column": "TaskId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "incremental": false,
+      "priority": "medium"
+    },
+
+    {
+      "name": "JobTasks",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "jobs",
+        "parent_id_column": "ID",
+        "parent_id_source": "job_id",
+        "map_id_to_column": "JobID",
+        "child_endpoint_type": "url_based"
+      }],
+      "description": "JobTasks",
+      "entity_type": "transaction_data",
+      "api_details": {
+        "path": "/jobs/{job_id}/tasks/",
+        "method": "GET",
+        "columns": "ID,Subject,AssignedTo,Assignees,CompletedBy,DueDate,PercentComplete",
+        "query_parameters": {
+          "required": [],
+          "optional": ["columns"],
+           "incremental_sync": {
+            "type": "template",
+            "timestamp_field": "DateModified=ge({timestamp})",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Filter records modified since specified date"
+          }
+        }
+      },
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Subject",
+          "db_column": "Subject",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.ID",
+          "db_column": "AssignedTo_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.Name",
+          "db_column": "AssignedTo_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.Type",
+          "db_column": "AssignedTo_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AssignedTo.TypeId",
+          "db_column": "AssignedTo_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.ID",
+          "db_column": "CompletedBy_ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.Name",
+          "db_column": "CompletedBy_Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.Type",
+          "db_column": "CompletedBy_Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompletedBy.TypeId",
+          "db_column": "CompletedBy_TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DueDate",
+          "db_column": "DueDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PercentComplete",
+          "db_column": "PercentComplete",
+          "data_type": "Float",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "JobID",
+          "db_column": "JobID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "nested_extractions": [
+        {
+          "table_name": "JobTaskAssignees",
+          "source_field": "Assignees"
+        }
+      ],
+      "table_name": "SimPro_JobTasks",
+      "staging_table": "SimPro_JobTasksSTAGE",
+      "incremental": false,
+      "priority": "medium",
+      "is_nested": true
+    },
+    {
+      "name": "JobTaskAssignees",
+      "is_virtual_endpoint": true,
+      "description": "JobTaskAssignees",
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ID",
+          "db_column": "ID",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "NVARCHAR(400)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TypeId",
+          "db_column": "TypeId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tasksId",
+          "db_column": "TaskId",
+          "data_type": "BIGINT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "incremental": false,
+      "priority": "medium"
+    }
+  ],
+  "stored_procedures": {
+    "operation_mode": "UPSERT",
+    "key_fields": [
+      "Id",
+      "OrganisationID"
+    ],
+    "update_strategy": "full_replace"
+  },
+  "integration_class": {
+    "capabilities": "UPSERT",
+    "required_methods": [
+      "integration_name",
+      "capabilities",
+      "allowed_execution_statuses",
+      "validate_configuration",
+      "get_endpoints_list",
+      "run_full_sync"
+    ],
+    "custom_methods": [
+      "get_access_token",
+      "make_api_request",
+      "_transform_data"
+    ]
+  },
+  "generation_config": {
+    "include_error_handling": true,
+    "include_logging": true,
+    "include_rate_limiting": true,
+    "include_pagination": true,
+    "include_data_validation": true
+  }
+}

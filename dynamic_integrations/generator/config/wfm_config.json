@@ -1,0 +1,275 @@
+{
+  "integration_name": "wfm",
+  "auth_type": "wfm_oauth2",
+  "auth_config": {
+    "token_source": "authorization_code_refresh",
+    "client_id_env_var": "WFM_CLIENT_ID",
+    "client_secret_env_var": "WFM_CLIENT_SECRET",
+    "token_url": "https://oauth.workflowmax2.com/oauth/token",
+    "authorization_url": "https://oauth.workflowmax2.com/oauth/authorize",
+    "access_token_expiry": 1800,
+    "refresh_token_expiry": 5184000,
+    "grant_type": "authorization_code",
+    "redirect_uri": "https://etani.com/oauth/callback",
+    "scopes": [
+      "openid",
+      "workflowmax",
+      "offline_access"
+    ],
+    "additional_params": {
+      "response_type": "code"
+    },
+    "custom_headers": {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "WFM_CLIENT_ID",
+    "WFM_CLIENT_SECRET",
+    "WFM2_TENANT_ID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "WFM_CLIENT_ID": "lambda x: len(x) > 30 and '-' in x",
+    "WFM_CLIENT_SECRET": "lambda x: len(x) > 30",
+    "WFM_REFRESH_TOKEN": "lambda x: len(x) > 50 if x else True",
+    "WFM_ACCESS_TOKEN": "lambda x: len(x) > 50 if x else True",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "wfm_client_id": {
+      "env_var": "WFM_CLIENT_ID",
+      "default_value": ""
+    },
+    "wfm_client_secret": {
+      "env_var": "WFM_CLIENT_SECRET",
+      "default_value": ""
+    },
+    "wfm_access_token": {
+      "env_var": "WFM_ACCESS_TOKEN",
+      "default_value": ""
+    },
+    "wfm_refresh_token": {
+      "env_var": "WFM_REFRESH_TOKEN",
+      "default_value": ""
+    },
+    "wfm2_tenant_id": {
+      "env_var": "WFM2_TENANT_ID",
+      "default_value": ""
+    },
+    "storage_account_name": {
+      "env_var": "STORAGE_ACCOUNT_NAME",
+      "default_value": ""
+    },
+    "storage_access_key": {
+      "env_var": "STORAGE_ACCESS_KEY",
+      "default_value": ""
+    },
+    "file_share_name": {
+      "env_var": "FILE_SHARE_NAME",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "LastModifiedDateTime",
+    "CreatedDateTime",
+    "UpdatedDateTime",
+    "ModifiedDate",
+    "CreatedDate",
+    "Links",
+    "Href",
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Status",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Notes",
+    "Comments",
+    "Debug",
+    "Health"
+  ],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    },
+    "LastSyncDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Last synchronization timestamp for incremental loads"
+    }
+  },
+  "query_config": {
+    "type": "rest_pagination",
+    "supports_filter": true,
+    "supports_expand": false,
+    "supports_select": false,
+    "date_filter_format": "yyyy-MM-ddTHH:mm:ss+00:00",
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst_limit": 10,
+      "retry_after_seconds": 60
+    },
+    "custom_fields": {
+      "page": {
+        "default_value": 1,
+        "required": false,
+        "description": "Page number for pagination"
+      },
+      "pagesize": {
+        "default_value": 100,
+        "max_value": 100,
+        "required": false,
+        "description": "Number of records per page"
+      },
+      "lastModified": {
+        "default_value": null,
+        "source_attr": "last_sync_timestamp",
+        "required": false,
+        "description": "Filter for incremental synchronization"
+      }
+    }
+  },
+  "field_transformations": {
+    "UUID_fields": {
+      "type": "uuid_validation",
+      "description": "Validate and standardize UUID fields"
+    },
+    "nested_objects": {
+      "type": "dot_notation_flattening",
+      "description": "Flatten nested objects using dot notation (Job.ID -> Job_ID)"
+    },
+    "datetime_fields": {
+      "type": "datetime_standardization",
+      "format": "YYYY-MM-DDTHH:mm:ss+00:00",
+      "description": "Standardize datetime format across all endpoints"
+    },
+    "decimal_fields": {
+      "type": "decimal_precision",
+      "precision": 18,
+      "scale": 2,
+      "description": "Standardize decimal precision for financial amounts"
+    }
+  },
+  "endpoint_priorities": {
+    "high": [
+      "Me",
+      "Clients",
+      "Staff",
+      "Jobs",
+      "Timesheets",
+      "Invoices"
+    ],
+    "medium": [
+      "Tasks",
+      "Quotes",
+      "Suppliers",
+      "Costs",
+      "Leads"
+    ],
+    "low": [
+      "Categories",
+      "ClientGroups",
+      "Templates",
+      "CustomFields"
+    ]
+  },
+  "incremental_endpoints": [
+    "Jobs",
+    "Timesheets",
+    "Invoices",
+    "Quotes",
+    "Costs",
+    "Leads"
+  ],
+  "nested_extraction_endpoints": [
+    "Clients",
+    "Invoices"
+  ],
+  "error_handling": {
+    "max_retries": 3,
+    "retry_delay_seconds": 5,
+    "exponential_backoff": true,
+    "ignore_ssl_errors": false,
+    "timeout_seconds": 30
+  },
+  "data_validation": {
+    "required_fields_validation": true,
+    "data_type_validation": true,
+    "null_value_handling": "skip_record",
+    "duplicate_key_handling": "update_existing"
+  },
+  "performance": {
+    "batch_size": 100,
+    "parallel_requests": false,
+    "connection_pooling": true,
+    "request_timeout": 30,
+    "max_records_per_endpoint": null
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_api_calls": true,
+    "log_response_size": true,
+    "log_processing_time": true,
+    "sensitive_fields_to_mask": [
+      "access_token",
+      "refresh_token",
+      "client_secret",
+      "password"
+    ]
+  },
+  "reconciliation": {
+    "enabled": true,
+    "type": "api_calculated_count",
+    "field_mapping": {
+      "total_pages_field": "meta.pagination.total_pages",
+      "per_page_field": "meta.pagination.per_page"
+    },
+    "endpoints": [
+      "CustomFields"
+    ],
+    "mismatch_tolerance": 0,
+    "retry_attempts": 2
+  }
+}

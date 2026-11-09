@@ -1,0 +1,258 @@
+{
+  "integration_name": "payroll_au",
+  "auth_type": "xero_oauth2",
+  "auth_config": {
+    "token_source": "authorization_code_refresh",
+    "client_id_env_var": "XERO_CLIENT_ID",
+    "client_secret_env_var": "XERO_CLIENT_SECRET",
+    "token_url": "https://identity.xero.com/connect/token",
+    "authorization_url": "https://identity.xero.com/connect/authorize",
+    "access_token_expiry": 1800,
+    "refresh_token_expiry": 5184000,
+    "grant_type": "authorization_code",
+    "redirect_uri": "https://etani.com/oauth/callback",
+    "scopes": [
+      "openid",
+      "practicemanager",
+      "offline_access"
+    ],
+    "additional_params": {
+      "response_type": "code"
+    },
+    "custom_headers": {
+      "Content-Type": "application/json",
+      "Xero-tenant-id": "{tenant_id}"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "XERO_CLIENT_ID",
+    "XERO_CLIENT_SECRET",
+    "XeroTenantID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "XERO_CLIENT_ID": "lambda x: len(x) == 32 and x.isalnum()",
+    "XERO_CLIENT_SECRET": "lambda x: len(x) > 30",
+    "XERO_REFRESH_TOKEN": "lambda x: len(x) >= 40 if x else True",
+    "XERO_ACCESS_TOKEN": "lambda x: len(x) >= 100 if x else True",
+    "XeroTenantID": "lambda x: len(x) == 36 and '-' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "xero_client_id": {
+      "env_var": "XERO_CLIENT_ID",
+      "default_value": "",
+      "source": "AWS Secrets Manager (etani/xero/oauth-app)"
+    },
+    "xero_client_secret": {
+      "env_var": "XERO_CLIENT_SECRET",
+      "default_value": "",
+      "source": "AWS Secrets Manager (etani/xero/oauth-app)"
+    },
+    "xero_access_token": {
+      "env_var": "XERO_ACCESS_TOKEN",
+      "default_value": ""
+    },
+    "xero_refresh_token": {
+      "env_var": "XERO_REFRESH_TOKEN",
+      "default_value": ""
+    },
+    "xero_tenant_id": {
+      "env_var": "XeroTenantID",
+      "default_value": ""
+    },
+    "storage_account_name": {
+      "env_var": "STORAGE_ACCOUNT_NAME",
+      "default_value": ""
+    },
+    "storage_access_key": {
+      "env_var": "STORAGE_ACCESS_KEY",
+      "default_value": ""
+    },
+    "file_share_name": {
+      "env_var": "FILE_SHARE_NAME",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded",
+    "Links",
+    "Href"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Notes",
+    "Comments",
+    "Debug",
+    "Health",
+    "Metadata"
+  ],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    },
+    "LastSyncDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Last synchronization timestamp for incremental loads"
+    }
+  },
+  "query_config": {
+    "type": "rest_pagination",
+    "supports_filter": true,
+    "supports_expand": false,
+    "supports_select": false,
+    "date_filter_format": "/Date(timestamp+0000)/",
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst_limit": 60,
+      "retry_after_seconds": 60
+    },
+    "custom_fields": {
+      "limit": {
+        "default_value": 100,
+        "max_value": 100,
+        "required": false,
+        "description": "Number of records per page"
+      },
+      "offset": {
+        "default_value": 0,
+        "required": false,
+        "description": "Pagination offset"
+      },
+      "UpdatedDateUTC": {
+        "default_value": null,
+        "source_attr": "last_sync_timestamp",
+        "required": false,
+        "description": "Filter for incremental synchronization using Xero date format"
+      }
+    }
+  },
+  "field_transformations": {
+    "UUID_fields": {
+      "type": "uuid_validation",
+      "description": "Validate and standardize UUID fields for Xero entity IDs"
+    },
+    "nested_objects": {
+      "type": "dot_notation_flattening",
+      "description": "Flatten nested objects using dot notation (HomeAddress.City -> HomeAddressCity)"
+    },
+    "datetime_fields": {
+      "type": "xero_datetime_standardization",
+      "format": "/Date(timestamp+0000)/",
+      "description": "Standardize Xero date format across all endpoints"
+    },
+    "decimal_fields": {
+      "type": "decimal_precision",
+      "precision": 18,
+      "scale": 6,
+      "description": "Standardize decimal precision for financial amounts and rates"
+    }
+  },
+  "endpoint_priorities": {
+    "high": [
+      "Employees",
+      "Payslips",
+      "PayRuns"
+    ],
+    "medium": [
+      "Timesheets",
+      "LeaveApplications",
+      "PayItems"
+    ],
+    "low": [
+      "PayrollCalendars",
+      "SuperFunds",
+      "Settings"
+    ]
+  },
+  "incremental_endpoints": [
+    "Employees",
+    "Timesheets",
+    "Payslips",
+    "PayRuns",
+    "LeaveApplications"
+  ],
+  "nested_extraction_endpoints": [
+    "Employees",
+    "Payslips",
+    "PayItems",
+    "PayRuns",
+    "LeaveApplications",
+    "Timesheets"
+  ],
+  "error_handling": {
+    "max_retries": 3,
+    "retry_delay_seconds": 5,
+    "exponential_backoff": true,
+    "ignore_ssl_errors": false,
+    "timeout_seconds": 30
+  },
+  "data_validation": {
+    "required_fields_validation": true,
+    "data_type_validation": true,
+    "null_value_handling": "skip_record",
+    "duplicate_key_handling": "update_existing"
+  },
+  "performance": {
+    "batch_size": 100,
+    "parallel_requests": false,
+    "connection_pooling": true,
+    "request_timeout": 30,
+    "max_records_per_endpoint": null
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_api_calls": true,
+    "log_response_size": true,
+    "log_processing_time": true,
+    "sensitive_fields_to_mask": [
+      "access_token",
+      "refresh_token",
+      "client_secret",
+      "password"
+    ]
+  }
+}

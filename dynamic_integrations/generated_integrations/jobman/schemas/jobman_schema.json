@@ -1,0 +1,2645 @@
+{
+  "integration_name": "JOBMAN",
+  "display_name": "JobMan",
+  "category": "erp",
+  "api_config": {
+    "base_url": "https://api.jobmanapp.com",
+    "version": "v1",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "url_patterns": {
+      "has_company_id": false,
+      "has_realm_id": false,
+      "has_organisation_id": true,
+      "query_endpoint": "/api/v1/organisations/{organisationId}/query",
+      "entity_endpoint": "/api/v1/{entity_name}",
+      "entity_with_org_endpoint": "/api/v1/organisations/{organisationId}/{entity_name}",
+      "reports_endpoint": "/api/v1/organisations/{organisationId}/reports/{report_name}",
+      "url_template_vars": [
+        "organisationId"
+      ],
+      "special_query_format": false
+    },
+    "pagination": {
+      "type": "page",
+      "limit_param": "limit",
+      "offset_param": "page",
+      "default_limit": 100,
+      "max_limit": 500
+    },
+    "authentication": {
+      "type": "oauth2",
+      "oauth2_config": {
+        "authorization_url": "https://identity.jobmanapp.com/oauth/authorize",
+        "token_url": "https://identity.jobmanapp.com/oauth/token",
+        "scopes": [
+          "read",
+          "write"
+        ]
+      },
+      "rate_limiting": {
+        "requests_per_minute": 100,
+        "requests_per_hour": 5000
+      }
+    },
+    "error_handling": {
+      "retry_codes": [
+        429,
+        500,
+        502,
+        503,
+        504
+      ],
+      "max_retries": 3,
+      "backoff_strategy": "exponential"
+    }
+  },
+  "business_logic": {
+    "allowed_execution_statuses": [
+      "SUCCESS",
+      "WARNING"
+    ],
+    "reset_mode_required": false,
+    "sync_frequency": "daily",
+    "incremental_sync": true,
+    "last_modified_field": "updated_at"
+  },
+  "endpoints": [
+    {
+      "name": "Accounts",
+      "description": "Active accounts for an organization",
+      "path": "/api/v1/accounts",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_accountsstage",
+        "prod_table": "c{clientID}_jobman_accounts",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Organisation",
+      "description": "Organization details and information",
+      "path": "/api/v1/organisations/{orgID}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_organisationstage",
+        "prod_table": "c{clientID}_jobman_organisation",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Users",
+      "description": "Users within an organization",
+      "path": "/api/v1/organisations/{orgID}/users",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_usersstage",
+        "prod_table": "c{clientID}_jobman_users",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Catalogue Materials",
+      "description": "Catalogue material items for an organization",
+      "path": "/api/v1/organisations/{orgID}/catalogue/materials",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_catalogue materialsstage",
+        "prod_table": "c{clientID}_jobman_catalogue materials",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Catalogue Material Detail",
+      "description": "Specific catalogue material item details",
+      "path": "/api/v1/organisations/{orgID}/catalogue/materials/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_catalogue material detailstage",
+        "prod_table": "c{clientID}_jobman_catalogue material detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Catalogue Products",
+      "description": "Catalogue products for an organization",
+      "path": "/api/v1/organisations/{orgID}/catalogue/products",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_catalogue productsstage",
+        "prod_table": "c{clientID}_jobman_catalogue products",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Catalogue Product Detail",
+      "description": "Specific catalogue product details",
+      "path": "/api/v1/organisations/{orgID}/catalogue/products/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_catalogue product detailstage",
+        "prod_table": "c{clientID}_jobman_catalogue product detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Catalogue Services",
+      "description": "Catalogue services for an organization",
+      "path": "/api/v1/organisations/{orgID}/catalogue/services",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_catalogue servicesstage",
+        "prod_table": "c{clientID}_jobman_catalogue services",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Contacts",
+      "description": "All contacts for an organization",
+      "path": "/api/v1/organisations/{orgID}/contacts",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_contactsstage",
+        "prod_table": "c{clientID}_jobman_contacts",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Contact Detail",
+      "description": "Specific contact details",
+      "path": "/api/v1/organisations/{orgID}/contacts/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_contact detailstage",
+        "prod_table": "c{clientID}_jobman_contact detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Customers",
+      "description": "All customers for an organization",
+      "path": "/api/v1/organisations/{orgID}/customers",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_customersstage",
+        "prod_table": "c{clientID}_jobman_customers",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Customer Detail",
+      "description": "Specific customer details",
+      "path": "/api/v1/organisations/{orgID}/customers/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_customer detailstage",
+        "prod_table": "c{clientID}_jobman_customer detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Employees",
+      "description": "All employees for an organization",
+      "path": "/api/v1/organisations/{orgID}/employees",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_employeesstage",
+        "prod_table": "c{clientID}_jobman_employees",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Employee Detail",
+      "description": "Specific employee details",
+      "path": "/api/v1/organisations/{orgID}/employees/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_employee detailstage",
+        "prod_table": "c{clientID}_jobman_employee detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Locations",
+      "description": "All locations for an organization",
+      "path": "/api/v1/organisations/{orgID}/locations",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_locationsstage",
+        "prod_table": "c{clientID}_jobman_locations",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Location Detail",
+      "description": "Specific location details",
+      "path": "/api/v1/organisations/{orgID}/locations/{id}",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_location detailstage",
+        "prod_table": "c{clientID}_jobman_location detail",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Categories",
+      "description": "Categories for organizing data",
+      "path": "/api/v1/organisations/{orgID}/categories",
+      "method": "GET",
+      "category": "master_data",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "organisations",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_categoriesstage",
+        "prod_table": "c{clientID}_jobman_categories",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Jobs",
+      "description": "List all jobs/projects",
+      "path": "/api/jobs",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_jobsstage",
+        "prod_table": "c{clientID}_jobman_jobs",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Job Details",
+      "description": "Get specific job details",
+      "path": "/api/jobs/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_job detailsstage",
+        "prod_table": "c{clientID}_jobman_job details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Invoices",
+      "description": "List all invoices",
+      "path": "/api/invoices",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_invoicesstage",
+        "prod_table": "c{clientID}_jobman_invoices",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Invoice Details",
+      "description": "Get specific invoice details",
+      "path": "/api/invoices/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_invoice detailsstage",
+        "prod_table": "c{clientID}_jobman_invoice details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Time Entries",
+      "description": "List all time entries",
+      "path": "/api/time-entries",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_time entriesstage",
+        "prod_table": "c{clientID}_jobman_time entries",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Time Entry Details",
+      "description": "Get specific time entry details",
+      "path": "/api/time-entries/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "high",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_time entry detailsstage",
+        "prod_table": "c{clientID}_jobman_time entry details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Estimates",
+      "description": "List all estimates/quotes",
+      "path": "/api/estimates",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_estimatesstage",
+        "prod_table": "c{clientID}_jobman_estimates",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Estimate Details",
+      "description": "Get specific estimate details",
+      "path": "/api/estimates/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_estimate detailsstage",
+        "prod_table": "c{clientID}_jobman_estimate details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Purchase Orders",
+      "description": "List all purchase orders",
+      "path": "/api/purchase-orders",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_purchase ordersstage",
+        "prod_table": "c{clientID}_jobman_purchase orders",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Purchase Order Details",
+      "description": "Get specific purchase order details",
+      "path": "/api/purchase-orders/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_purchase order detailsstage",
+        "prod_table": "c{clientID}_jobman_purchase order details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Expenses",
+      "description": "List all expenses",
+      "path": "/api/expenses",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_expensesstage",
+        "prod_table": "c{clientID}_jobman_expenses",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Expense Details",
+      "description": "Get specific expense details",
+      "path": "/api/expenses/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_expense detailsstage",
+        "prod_table": "c{clientID}_jobman_expense details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Payments",
+      "description": "List all payments",
+      "path": "/api/payments",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_paymentsstage",
+        "prod_table": "c{clientID}_jobman_payments",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Payment Details",
+      "description": "Get specific payment details",
+      "path": "/api/payments/{id}",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_payment detailsstage",
+        "prod_table": "c{clientID}_jobman_payment details",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Job Tasks",
+      "description": "List tasks for a specific job",
+      "path": "/api/jobs/{jobId}/tasks",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "jobs",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_job tasksstage",
+        "prod_table": "c{clientID}_jobman_job tasks",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Job Time Entries",
+      "description": "List time entries for a specific job",
+      "path": "/api/jobs/{jobId}/time-entries",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "medium",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "jobs",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_job time entriesstage",
+        "prod_table": "c{clientID}_jobman_job time entries",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    },
+    {
+      "name": "Job Expenses",
+      "description": "List expenses for a specific job",
+      "path": "/api/jobs/{jobId}/expenses",
+      "method": "GET",
+      "category": "transactional",
+      "priority": "low",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "jobs",
+          "parent_id_column": "id",
+          "parent_id_source": "id",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": []
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created_at",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updated_at",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_jobman_job expensesstage",
+        "prod_table": "c{clientID}_jobman_job expenses",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      }
+    }
+  ],
+  "stored_procedures": {
+    "operation_mode": "UPSERT",
+    "key_fields": [
+      "id",
+      "organisation_id"
+    ],
+    "update_strategy": "full_replace"
+  },
+  "integration_class": {
+    "capabilities": "UPSERT",
+    "required_methods": [
+      "integration_name",
+      "capabilities",
+      "allowed_execution_statuses",
+      "validate_configuration",
+      "get_endpoints_list",
+      "run_full_sync"
+    ],
+    "custom_methods": [
+      "get_access_token",
+      "make_api_request",
+      "_transform_data"
+    ]
+  },
+  "generation_config": {
+    "include_error_handling": true,
+    "include_logging": true,
+    "include_rate_limiting": true,
+    "include_pagination": true,
+    "include_data_validation": true
+  },
+  "schema_version": "2.0",
+  "last_updated": "2025-01-08",
+  "total_endpoints": 34
+}

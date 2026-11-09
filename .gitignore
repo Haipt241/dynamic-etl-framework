@@ -1,0 +1,17 @@
+.env
+.env.*
+.venv/
+__pycache__/
+*.py[cod]
+*.log
+*.pem
+*.pfx
+*.key
+.DS_Store
+token/
+logs/
+fiddler_log/
+sample_data/
+retry_failures/
+analysis_generated/
+reconciliation_failures_*.json

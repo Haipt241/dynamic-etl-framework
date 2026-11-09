@@ -1,0 +1,72 @@
+{
+  "integration_name": "tidywork",
+  "auth_type": "basic_auth",
+  "auth_config": {
+    "api_key_env_var": "TIDYWORK_API_KEY",
+    "username_field": "token",
+    "password_field": "",
+    "encoding": "base64_with_colon",
+    "reuse_existing_base64": true
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "TIDYWORK_API_KEY",
+    "TIDYWORK_DOMAIN"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "TIDYWORK_API_KEY": "lambda x: len(x) > 20 if x else True",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "tidywork_api_key": {
+      "env_var": "TIDYWORK_API_KEY",
+      "default_value": ""
+    },
+    "tidywork_domain": {
+      "env_var": "TIDYWORK_DOMAIN",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Debug",
+    "Health"
+  ]
+}

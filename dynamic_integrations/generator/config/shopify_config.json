@@ -1,0 +1,109 @@
+{
+  "auth_type": "header_token",
+  "auth_config": {
+    "access_token_env_var": "SHOPIFY_ACCESS_TOKEN",
+    "header_name": "X-Shopify-Access-Token",
+    "token_format": "{access_token}",
+    "additional_params": {},
+    "custom_headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "SHOPIFY_ACCESS_TOKEN"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "SHOPIFY_ACCESS_TOKEN": "lambda x: len(x) > 20",
+    "SHOPIFY_STORE_URL": "lambda x: any('.myshopify.com' in store or len(store) > 5 for store in (x if isinstance(x, list) else [x]))",
+    "SHOPIFY_API_VERSION": "lambda x: len(x) >= 7 and '-' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "shopify_access_token": {
+      "env_var": "SHOPIFY_ACCESS_TOKEN",
+      "default_value": ""
+    },
+    "store_url": {
+      "env_var": "SHOPIFY_STORE_URL",
+      "default_value": ""
+    },
+    "api_version": {
+      "env_var": "SHOPIFY_API_VERSION",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "created_at",
+    "updated_at",
+    "published_at",
+    "vendor",
+    "product_type",
+    "tags",
+    "handle",
+    "template_suffix"
+  ],
+  "exclude_endpoints": [],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    }
+  },
+  "query_config": {
+    "type": "rest",
+    "supports_filter": true,
+    "supports_expand": false,
+    "supports_select": false,
+    "date_filter_format": "yyyy-MM-ddTHH:mm:ssZ",
+    "custom_fields": {
+      "limit": {
+        "default_value": 250,
+        "required": false
+      },
+      "page": {
+        "default_value": 1,
+        "required": false
+      },
+      "since_id": {
+        "default_value": null,
+        "required": false
+      },
+      "updated_at_min": {
+        "default_value": null,
+        "source_attr": "date_filter",
+        "required": false
+      }
+    }
+  }
+}

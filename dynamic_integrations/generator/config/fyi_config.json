@@ -1,0 +1,121 @@
+{
+  "integration_name": "FYI_ELITE",
+  "display_name": "FYI Elite - FYI API",
+  "description": "FYI Elite integration for Vision BI - Document management and workflow automation",
+  "api_base_url": "https://api-ap-southeast-2.fyi.app",
+  "auth_type": "custom_request",
+  "auth_config": {
+    "method": "POST",
+    "custom_headers": {
+      "x-fyi-access-id": "x-fyi-access-id",
+      "x-fyi-access-secret": "x-fyi-access-secret"
+    },
+    "request_body": {
+      "type": "json_payload",
+      "structure": {
+        "metadata": {
+          "action": {
+            "value": "list"
+          },
+          "data": {
+            "page": 1,
+            "per_page": 50,
+            "modified_on_gte": "{incremental_field}",
+            "modified_on_lte": "{current_timestamp}"
+          }
+        }
+      }
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "FYI_ELITE_ACCESS_ID",
+    "FYI_ELITE_ACCESS_SECRET"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "FYI_ELITE_ACCESS_ID": "lambda x: len(x) > 30",
+    "FYI_ELITE_ACCESS_SECRET": "lambda x: len(x) > 40",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "x-fyi-access-id": {
+      "env_var": "FYI_ELITE_ACCESS_ID",
+      "default_value": ""
+    },
+    "x-fyi-access-secret": {
+      "env_var": "FYI_ELITE_ACCESS_SECRET",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "error_handling": {
+    "retry_codes": [
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "max_retries": 3,
+    "backoff_strategy": "exponential"
+  },
+  "rate_limiting": {
+    "requests_per_minute": 60,
+    "burst_limit": 10
+  },
+  "client_credentials": {
+    "note": "Store actual credentials in environment variables",
+    "access_id": "60769807-d42b-4022-844e-efaa9a235a58",
+    "access_secret": "REDACTED"
+  },
+  "sync_settings": {
+    "full_sync_frequency": "daily",
+    "incremental_sync": true,
+    "batch_size": 50,
+    "parallel_requests": 2
+  },
+  "data_mapping": {
+    "primary_key": "id",
+    "timestamp_fields": [
+      "created_at",
+      "updated_at"
+    ],
+    "client_id_field": "organisation_id",
+    "soft_delete_field": "deleted_at"
+  },
+  "response_config": {
+    "response_type": "dict",
+    "response_data_field": "results"
+  },
+  "exclude_fields": [
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "metadata",
+    "internal_id"
+  ],
+  "created_date": "2025-08-05",
+  "version": "1.0",
+  "status": "active"
+}

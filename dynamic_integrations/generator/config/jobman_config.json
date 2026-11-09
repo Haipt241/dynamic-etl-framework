@@ -1,0 +1,76 @@
+{
+  "auth_type": "oauth2",
+  "auth_config": {
+    "token_source": "client_credentials",
+    "token_url": "https://identity.jobmanapp.com/oauth/token",
+    "client_id_env_var": "JobmanClientID",
+    "client_secret_env_var": "JobmanClientSecret",
+    "additional_params": {
+      "grant_type": "client_credentials"
+    },
+    "custom_headers": {
+      "Accept": "application/json"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "JobmanClientID",
+    "JobmanClientSecret"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "JobmanClientID": "lambda x: len(x) > 10",
+    "JobmanClientSecret": "lambda x: len(x) > 20",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "jobman_client_id": {
+      "env_var": "JobmanClientID",
+      "default_value": ""
+    },
+    "jobman_client_secret": {
+      "env_var": "JobmanClientSecret",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    },
+    "EtaniClientID": {
+      "env_var": "ETANI_CLIENT_ID",
+      "default_value": ""
+    },
+    "EtaniOrganisationID": {
+      "env_var": "ETANI_ORGANISATION_ID",
+      "default_value": ""
+    },
+    "ApiToken": {
+      "env_var": "APITOKEN",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "metadata",
+    "internal_id"
+  ]
+}

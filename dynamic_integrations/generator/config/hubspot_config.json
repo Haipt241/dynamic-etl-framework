@@ -1,0 +1,249 @@
+{
+  "integration_name": "hubspot",
+  "auth_type": "bearer_token",
+  "auth_config": {
+    "api_key_env_var": "HUBSPOT_ACCESS_TOKEN"
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "HUBSPOT_TOKEN",
+    "HUBSPOT_PORTAL_ID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "HUBSPOT_CLIENT_ID": "lambda x: len(x) > 30 and '-' in x",
+    "HUBSPOT_CLIENT_SECRET": "lambda x: len(x) > 30",
+    "HUBSPOT_REFRESH_TOKEN": "lambda x: len(x) > 50 if x else True",
+    "HUBSPOT_ACCESS_TOKEN": "lambda x: (x.startswith('pat-') and len(x) >= 40) or len(x) > 50 if x else True",
+    "HUBSPOT_PORTAL_ID": "lambda x: x.isdigit() and len(x) >= 5",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "hubspot_client_id": {
+      "env_var": "HUBSPOT_CLIENT_ID",
+      "default_value": ""
+    },
+    "hubspot_client_secret": {
+      "env_var": "HUBSPOT_CLIENT_SECRET",
+      "default_value": ""
+    },
+    "hubspot_token": {
+      "env_var": "HUBSPOT_TOKEN",
+      "default_value": ""
+    },
+    "hubspot_refresh_token": {
+      "env_var": "HUBSPOT_REFRESH_TOKEN",
+      "default_value": ""
+    },
+    "hubspot_portal_id": {
+      "env_var": "HUBSPOT_PORTAL_ID",
+      "default_value": ""
+    },
+    "storage_account_name": {
+      "env_var": "STORAGE_ACCOUNT_NAME",
+      "default_value": ""
+    },
+    "storage_access_key": {
+      "env_var": "STORAGE_ACCESS_KEY",
+      "default_value": ""
+    },
+    "file_share_name": {
+      "env_var": "FILE_SHARE_NAME",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "LastModifiedDateTime",
+    "CreatedDateTime",
+    "UpdatedDateTime",
+    "ModifiedDate",
+    "CreatedDate",
+    "associations",
+    "archived",
+    "archivedAt",
+    "_links",
+    "_embedded",
+    "hs_merged_object_ids",
+    "hs_calculated_form_submissions",
+    "hs_all_owner_ids",
+    "hs_all_team_ids",
+    "hs_all_accessible_team_ids"
+  ],
+  "exclude_endpoints": [
+    "Owners",
+    "Pipelines",
+    "Stages",
+    "Properties",
+    "Associations",
+    "Webhooks",
+    "Settings",
+    "BatchRead",
+    "BatchUpdate",
+    "Search"
+  ],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    },
+    "LastSyncDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Last synchronization timestamp for incremental loads"
+    }
+  },
+  "query_config": {
+    "type": "rest_pagination",
+    "supports_filter": true,
+    "supports_expand": false,
+    "supports_select": true,
+    "date_filter_format": "timestamp_ms",
+    "rate_limit": {
+      "requests_per_10_seconds": 110,
+      "daily_limit_free": 250000,
+      "daily_limit_professional": 625000,
+      "daily_limit_enterprise": 1000000,
+      "burst_limit": 110,
+      "retry_after_seconds": 10
+    },
+    "custom_fields": {
+      "after": {
+        "default_value": null,
+        "required": false,
+        "description": "Pagination cursor for next page"
+      },
+      "limit": {
+        "default_value": 100,
+        "max_value": 500,
+        "required": false,
+        "description": "Number of records per page"
+      },
+      "properties": {
+        "default_value": null,
+        "required": true,
+        "description": "Comma-separated list of properties to retrieve"
+      },
+      "archived": {
+        "default_value": false,
+        "required": false,
+        "description": "Include archived records"
+      }
+    }
+  },
+  "field_transformations": {
+    "hs_object_id_fields": {
+      "type": "object_id_validation",
+      "description": "Validate and standardize HubSpot object ID fields"
+    },
+    "nested_properties": {
+      "type": "dot_notation_flattening",
+      "description": "Flatten properties object using dot notation (properties.firstname -> firstname)"
+    },
+    "datetime_fields": {
+      "type": "datetime_standardization",
+      "format": "YYYY-MM-DD HH:mm:ss",
+      "description": "Convert HubSpot timestamps to standard datetime format"
+    },
+    "decimal_fields": {
+      "type": "decimal_precision",
+      "precision": 15,
+      "scale": 2,
+      "description": "Standardize decimal precision for amounts and prices"
+    }
+  },
+  "endpoint_priorities": {
+    "high": [
+      "Contacts",
+      "Companies",
+      "Deals"
+    ],
+    "medium": [
+      "Tickets",
+      "Products",
+      "Line Items"
+    ],
+    "low": [
+      "Quotes"
+    ]
+  },
+  "incremental_endpoints": [
+    "Contacts",
+    "Companies",
+    "Deals",
+    "Tickets",
+    "Products",
+    "Line Items",
+    "Quotes"
+  ],
+  "nested_extraction_endpoints": [],
+  "error_handling": {
+    "max_retries": 3,
+    "retry_delay_seconds": 10,
+    "exponential_backoff": true,
+    "ignore_ssl_errors": false,
+    "timeout_seconds": 30,
+    "rate_limit_error_codes": [
+      429
+    ],
+    "server_error_codes": [
+      500,
+      502,
+      503,
+      504
+    ]
+  },
+  "data_validation": {
+    "required_fields_validation": true,
+    "data_type_validation": true,
+    "null_value_handling": "skip_record",
+    "duplicate_key_handling": "update_existing"
+  },
+  "performance": {
+    "batch_size": 100,
+    "parallel_requests": true,
+    "max_parallel_threads": 5,
+    "connection_pooling": true,
+    "request_timeout": 30,
+    "max_records_per_endpoint": null
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_api_calls": true,
+    "log_response_size": true,
+    "log_processing_time": true,
+    "sensitive_fields_to_mask": [
+      "access_token",
+      "refresh_token",
+      "client_secret",
+      "private_app_token"
+    ]
+  }
+}

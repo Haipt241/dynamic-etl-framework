@@ -1,0 +1,163 @@
+{
+  "integration_name": "simpro",
+  "auth_type": "bearer_token",
+  "auth_config": {
+    "api_key_env_var": "SIMPRO_API_KEY",
+    "client_id_env_var": "SIMPRO_CLIENT_ID",
+    "additional_params": {},
+    "custom_headers": {}
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "SIMPRO_COMPANY_ID",
+    "SIMPRO_DOMAIN",
+    "SIMPRO_API_KEY",
+    "SIMPRO_CLIENT_ID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "SIMPRO_API_KEY": "lambda x: len(x) > 10",
+    "SIMPRO_CLIENT_ID": "lambda x: len(x) > 5",
+    "SIMPRO_UPG_API_KEY": "lambda x: len(x) > 10",
+    "SIMPRO_UPG_CLIENT_ID": "lambda x: len(x) > 5",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "simpro_token": {
+      "env_var": "SIMPRO_API_KEY",
+      "default_value": ""
+    },
+    "simpro_client_id": {
+      "env_var": "SIMPRO_CLIENT_ID",
+      "default_value": ""
+    },
+    "simpro_company_id": {
+      "env_var": "SIMPRO_COMPANY_ID",
+      "default_value": ""
+    },
+    "simpro_domain": {
+      "env_var": "SIMPRO_DOMAIN",
+      "default_value": ""
+    },
+    "simpro_upg_api_key": {
+      "env_var": "SIMPRO_UPG_API_KEY",
+      "default_value": ""
+    },
+    "simpro_upg_client_id": {
+      "env_var": "SIMPRO_UPG_CLIENT_ID",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "MetaData.LastUpdatedTime",
+    "CreatedDate",
+    "ModifiedDate",
+    "Links",
+    "Href",
+    "ValidationErrors",
+    "HasValidationErrors"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail"
+  ],
+  "query_config": {
+    "type": "custom",
+    "custom_fields": {
+      "columns": {
+        "default_value": "ID,Payment,DateModified,Invoices",
+        "required": true
+      },
+      "DateModified": {
+        "default_value": "ge(2023-01-01)",
+        "source_attr": "max_date_filter",
+        "required": false
+      }
+    }
+  },
+  "reconciliation": {
+    "enabled": true,
+    "type": "api_header_count",
+    "field_mapping": {
+      "total_count_header": "Result-Total"
+    },
+    "fallback_headers": [
+      "Result-Count"
+    ],
+    "mismatch_tolerance": 0,
+    "retry_attempts": 2,
+    "endpoints": [
+      "Companies",
+      "Customers",
+      "Employees",
+      "Jobs",
+      "Invoices",
+      "Quotes",
+      "Leads",
+      "Contractors",
+      "Sites",
+      "Catalogs",
+      "Schedules",
+      "CustomerPayments",
+      "StorageDevices",
+      "VendorOrders",
+      "EmployeeTimesheets",
+      "ContractorTimesheets",
+      "InvoicesJobs",
+      "JobSections",
+      "JobCostCenters",
+      "JobCostCentersSchedules",
+      "JobCostCentersLabourateItems",
+      "QuoteSections",
+      "QuoteCostCenters",
+      "StorageDeviceStock",
+      "VendorOrderReceipts",
+      "Activities",
+      "ActivitySchedules",
+      "AssetTypes",
+      "CostCenters",
+      "BusinessGroups",
+      "CustomerGroups",
+      "CustomerProfiles",
+      "SecurityGroups",
+      "LaborRates",
+      "ScheduleRates",
+      "ServiceFees",
+      "UnitOfMeasurement",
+      "ContractorInvoices",
+      "AccountCategories",
+      "FitTimes",
+      "Prebuilds",
+      "InventoryJournals",
+      "Teams",
+      "ResponseTimes",
+      "Tasks",
+      "TaskAssignees",
+      "JobTasks",
+      "JobTaskAssignees"
+    ]
+  }
+}

@@ -1,0 +1,3387 @@
+{
+  "integration_name": "HUBSPOT",
+  "display_name": "HubSpot CRM",
+  "category": "crm",
+  "api_config": {
+    "base_url": "https://api.hubapi.com",
+    "version": "v3",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "pagination": {
+      "type": "after",
+      "limit_param": "limit",
+      "offset_param": "after",
+      "default_limit": 100,
+      "max_limit": 100
+    },
+    "authentication": {
+      "type": "oauth2",
+      "oauth2_config": {
+        "authorization_url": "https://app.hubspot.com/oauth/authorize",
+        "token_url": "https://api.hubapi.com/oauth/v1/token",
+        "scopes": [
+          "crm.objects.contacts.read",
+          "crm.objects.companies.read",
+          "crm.objects.deals.read",
+          "crm.objects.tickets.read",
+          "crm.objects.products.read",
+          "crm.objects.line_items.read",
+          "crm.objects.quotes.read",
+          "crm.schemas.contacts.read",
+          "crm.schemas.companies.read",
+          "crm.schemas.deals.read",
+          "crm.schemas.tickets.read",
+          "crm.objects.custom.read"
+        ]
+      }
+    },
+    "rate_limiting": {
+      "requests_per_10_seconds": 110,
+      "daily_limit_free": 250000,
+      "daily_limit_professional": 625000,
+      "daily_limit_enterprise": 1000000,
+      "search_requests_per_second": 5,
+      "search_max_records_per_page": 200,
+      "burst_limit": 110,
+      "burst_window_seconds": 10
+    },
+    "error_handling": {
+      "retry_codes": [429, 500, 502, 503, 504],
+      "max_retries": 3,
+      "backoff_strategy": "exponential",
+      "rate_limit_error_code": 429,
+      "rate_limit_policy_header": "X-HubSpot-RateLimit-Policy-Name"
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Companies",
+      "description": "HubSpot CRM company records containing business information and contact details",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/companies?associations=contacts,calls,companies,emails,meetings",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "CompanyContactsAssoc",
+          "source_field": "associations.contacts.results"
+        },
+         {
+          "table_name": "ParentChildCompanyAssoc",
+          "source_field": "associations.companies.results"
+        },
+         {
+          "table_name": "CompanyCallsAssoc",
+          "source_field": "associations.calls.results"
+        },
+         {
+          "table_name": "CompanyEmailsAssoc",
+          "source_field": "associations.emails.results"
+        },
+         {
+          "table_name": "CompanyMeetingsAssoc",
+          "source_field": "associations.meetings.results"
+        }
+      ],
+
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the company"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.createdate",
+          "db_column": "PropertiesCreateDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_object_id",
+          "db_column": "PropertiesHsObjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_lastmodifieddate",
+          "db_column": "PropertiesHsLastModifiedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.domain",
+          "db_column": "PropertiesDomain",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.name",
+          "db_column": "PropertiesName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "url",
+          "db_column": "Url",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_hubspot_companiesstage",
+        "prod_table": "c{clientID}_hubspot_companies",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+    "name": "Deals",
+    "description": "HubSpot CRM deal records containing sales opportunity information and pipeline data",
+    "category": "transactional",
+    "priority": "medium",
+    "api_details": {
+      "path": "/crm/v3/objects/0-3",
+      "method": "GET",
+      "query_parameters": {
+        "required": [],
+        "optional": [
+          "after",
+          "archived",
+          "associations",
+          "limit",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "incremental_sync": {
+          "timestamp_field": "updatedAt",
+          "type": "simple",
+          "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+          "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+        }
+      }
+    },
+    "fields": [
+      {
+        "api_name": "id",
+        "db_column": "Id",
+        "data_type": "VARCHAR(255)",
+        "nullable": false,
+        "is_primary_key": true,
+        "comment": "Unique identifier for the deal"
+      },
+      {
+        "api_name": "archived",
+        "db_column": "Archived",
+        "data_type": "BOOLEAN",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "createdAt",
+        "db_column": "CreatedAt",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "updatedAt",
+        "db_column": "UpdatedAt",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "archivedAt",
+        "db_column": "ArchivedAt",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.createdate",
+        "db_column": "PropertiesCreateDate",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.hs_object_id",
+        "db_column": "PropertiesHsObjectId",
+        "data_type": "VARCHAR(255)",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.amount",
+        "db_column": "PropertiesAmount",
+        "data_type": "VARCHAR(255)",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.closedate",
+        "db_column": "PropertiesCloseDate",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.dealname",
+        "db_column": "PropertiesDealName",
+        "data_type": "TEXT",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.dealstage",
+        "db_column": "PropertiesDealStage",
+        "data_type": "VARCHAR(255)",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.hs_lastmodifieddate",
+        "db_column": "PropertiesHsLastModifiedDate",
+        "data_type": "DATETIME",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "properties.pipeline",
+        "db_column": "PropertiesPipeline",
+        "data_type": "VARCHAR(255)",
+        "nullable": true,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "ClientID",
+        "db_column": "ClientID",
+        "data_type": "VARCHAR(255)",
+        "nullable": false,
+        "is_primary_key": false
+      },
+      {
+        "api_name": "OrganisationID",
+        "db_column": "OrganisationID",
+        "data_type": "VARCHAR(255)",
+        "nullable": false,
+        "is_primary_key": false
+      }
+    ],
+    "response_structure": {
+      "root_data_field": "results",
+      "is_array": true,
+      "nested_objects": [
+        "associations",
+        "properties",
+        "propertiesWithHistory"
+      ],
+      "array_fields": [],
+      "jsonb_fields": [
+        "associations",
+        "properties",
+        "propertiesWithHistory"
+      ]
+    },
+    "database_schema": {
+      "stage_table": "c{clientID}_{orgID}_hubspot_dealsstage",
+      "prod_table": "c{clientID}_hubspot_deals",
+      "primary_key": [
+        "Id",
+        "OrganisationID"
+      ],
+      "indexes": [
+        "OrganisationID",
+        "CreatedAt",
+        "UpdatedAt"
+      ]
+    },
+    "transformation": {
+      "type": "simple",
+      "nested_handling": "flatten",
+      "array_handling": "expand_to_rows",
+      "date_format": "iso8601",
+      "null_handling": "preserve"
+    }
+  },
+    {
+      "name": "Contacts",
+      "description": "HubSpot CRM contact records containing individual person information and contact details",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/contacts",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "url",
+          "db_column": "Url",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.company",
+          "db_column": "PropertiesCompany",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.createdate",
+          "db_column": "PropertiesCreateDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_object_id",
+          "db_column": "PropertiesHsObjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.lastmodifieddate",
+          "db_column": "PropertiesLastModifiedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.phone",
+          "db_column": "PropertiesPhone",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.website",
+          "db_column": "PropertiesWebsite",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.email",
+          "db_column": "PropertiesEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.firstname",
+          "db_column": "PropertiesFirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.lastname",
+          "db_column": "PropertiesLastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_all_assigned_business_unit_ids",
+          "db_column": "PropertiesHsAllAssignedBusinessUnitIds",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_hubspot_contactsstage",
+        "prod_table": "c{clientID}_hubspot_contacts",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+     {
+      "name": "FeedbackSubmissions",
+      "description": "HubSpot feedback submission records containing customer feedback and survey responses",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/feedback_submissions",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the feedback submission"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_hubspot_feedbacksubmissionsstage",
+        "prod_table": "c{clientID}_hubspot_feedbacksubmissions",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "LineItems",
+      "description": "HubSpot CRM line items representing individual products or services within deals or quotes",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/line_items",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": [
+          "properties",
+          "associations",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_lineitemsstage",
+        "prod_table": "c{clientID}_integration_lineitems",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Products",
+      "description": "HubSpot CRM products representing items or services that can be sold",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/products",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.createdate",
+          "db_column": "PropertiesCreateDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_object_id",
+          "db_column": "PropertiesHsObjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.price",
+          "db_column": "PropertiesPrice",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_lastmodifieddate",
+          "db_column": "PropertiesHsLastModifiedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.description",
+          "db_column": "PropertiesDescription",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_cost_of_goods_sold",
+          "db_column": "PropertiesHsCostOfGoodsSold",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_recurring_billing_period",
+          "db_column": "PropertiesHsRecurringBillingPeriod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_sku",
+          "db_column": "PropertiesHsSku",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.name",
+          "db_column": "PropertiesName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": [
+          "properties",
+          "associations",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_productsstage",
+        "prod_table": "c{clientID}_integration_products",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+     {
+      "name": "Quotes",
+      "description": "HubSpot CRM quotes representing price quotes or proposals sent to prospects or customers",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/quotes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": [
+          "properties",
+          "associations",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_quotesstage",
+        "prod_table": "c{clientID}_integration_quotes",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+     {
+      "name": "Discounts",
+      "description": "HubSpot CRM discounts representing price reductions or promotional offers applied to products or services",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/discounts",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": [
+          "properties",
+          "associations",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_discountsstage",
+        "prod_table": "c{clientID}_integration_discounts",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Fees",
+      "description": "HubSpot CRM fees representing additional charges or fees applied to products or services",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/fees",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": [
+          "properties",
+          "associations",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_feesstage",
+        "prod_table": "c{clientID}_integration_fees",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+       {
+      "name": "Tickets",
+      "description": "Support tickets and service requests in HubSpot CRM",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/tickets",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.createdate",
+          "db_column": "PropertiesCreateDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_object_id",
+          "db_column": "PropertiesHsObjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_lastmodifieddate",
+          "db_column": "PropertiesHsLastModifiedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hubspot_owner_id",
+          "db_column": "PropertiesHubspotOwnerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_pipeline",
+          "db_column": "PropertiesHsPipeline",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_pipeline_stage",
+          "db_column": "PropertiesHsPipelineStage",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.hs_ticket_priority",
+          "db_column": "PropertiesHsTicketPriority",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties.subject",
+          "db_column": "PropertiesSubject",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_ticketsstage",
+        "prod_table": "c{clientID}_integration_tickets",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "GoalTargets",
+      "description": "Goal targets and objectives tracking in HubSpot CRM",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/goal_targets",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Can be int, uuid, or string - use VARCHAR for flexibility"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_goaltargetsstage",
+        "prod_table": "c{clientID}_integration_goaltargets",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Taxes",
+      "description": "HubSpot CRM taxes representing tax calculations and tax information applied to products or services",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/taxes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the tax"
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archivedAt",
+          "db_column": "ArchivedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "properties",
+          "db_column": "properties",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "associations",
+          "db_column": "associations",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "propertiesWithHistory",
+          "db_column": "propertiesWithHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "objectWriteTraceId",
+          "db_column": "ObjectWriteTraceId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_hubspot_taxesstage",
+        "prod_table": "c{clientID}_hubspot_taxes",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+{
+      "name": "Calls",
+      "description": "HubSpot CRM call records and phone activity data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/calls",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_callsstage",
+        "prod_table": "c{clientID}_calls",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Emails",
+      "description": "HubSpot CRM email records and email activity data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/emails",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_emailsstage",
+        "prod_table": "c{clientID}_emails",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Meetings",
+      "description": "HubSpot CRM meeting records and calendar activity data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/meetings",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_meetingsstage",
+        "prod_table": "c{clientID}_meetings",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Notes",
+      "description": "HubSpot CRM note records and text activity data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/notes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_notesstage",
+        "prod_table": "c{clientID}_notes",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Tasks",
+      "description": "HubSpot CRM task records and todo activity data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/objects/tasks",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "after",
+            "archived",
+            "associations",
+            "limit",
+            "properties",
+            "propertiesWithHistory"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "associations",
+          "properties",
+          "propertiesWithHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_tasksstage",
+        "prod_table": "c{clientID}_tasks",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Owners",
+      "description": "HubSpot owners (users) who can be assigned to CRM objects",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/crm/v3/owners/",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "limit",
+            "archived"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedAt",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "createdAt",
+          "db_column": "CreatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedAt",
+          "db_column": "UpdatedAt",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "archived",
+          "db_column": "Archived",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email",
+          "db_column": "Email",
+          "data_type": "NVARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "firstName",
+          "db_column": "FirstName",
+          "data_type": "NVARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "lastName",
+          "db_column": "LastName",
+          "data_type": "NVARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "BIGINT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "teams",
+          "db_column": "Teams",
+          "data_type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [
+          "teams"
+        ],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_owners_stage",
+        "prod_table": "c{clientID}_owners",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CreatedAt",
+          "UpdatedAt",
+          "Email"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "CompanyContactsAssoc",
+      "is_virtual_endpoint": true,
+      "description": "HubSpot associations between Companies and Contacts",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "companiesId",
+          "db_column": "CompanyID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "id",
+          "db_column": "ContactID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_associationscompaniescontacts_stage",
+        "prod_table": "c{clientID}_associationscompaniescontacts",
+        "primary_key": [
+          "CompaniesID",
+          "ContactID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CompaniesID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ParentChildCompanyAssoc",
+      "is_virtual_endpoint": true,
+      "description": "HubSpot associations between Parent and Child Companies",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "companiesId",
+          "db_column": "CompanyID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "id",
+          "db_column": "ChildID",
+         "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_associationsparentcompanychild_stage",
+        "prod_table": "c{clientID}_associationsparentcompanychild",
+        "primary_key": [
+          "ParentID",
+          "ChildID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ParentID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "CompanyCallsAssoc",
+      "is_virtual_endpoint": true,
+      "description": "HubSpot associations between Calls and Companies",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "companiesId",
+          "db_column": "CompanyID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "id",
+          "db_column": "CallID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+         "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_associationscallscompanies_stage",
+        "prod_table": "c{clientID}_associationscallscompanies",
+        "primary_key": [
+          "CallID",
+          "CompanyID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CallID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "CompanyEmailsAssoc",
+      "is_virtual_endpoint": true,
+      "description": "HubSpot associations between Emails and Companies",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+       {
+          "api_name": "companiesId",
+          "db_column": "CompanyID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "id",
+          "db_column": "EmailID",
+         "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_associationsemailscompanies_stage",
+        "prod_table": "c{clientID}_associationsemailscompanies",
+        "primary_key": [
+          "EmailID",
+          "CompanyID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmailID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "CompanyMeetingsAssoc",
+      "is_virtual_endpoint": true,
+      "description": "HubSpot associations between Meetings and Companies",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+       {
+          "api_name": "companiesId",
+          "db_column": "CompanyID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "id",
+          "db_column": "MeetingID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_associationsmeetingscompanies_stage",
+        "prod_table": "c{clientID}_associationsmeetingscompanies",
+        "primary_key": [
+          "MeetingID",
+          "CompanyID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "MeetingID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "CompaniesProperties",
+      "description": "HubSpot Companies properties metadata",
+      "category": "metadata",
+      "priority": "low",
+      "api_details": {
+        "path": "/crm/v3/properties/companies/",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "archived"
+          ]
+        }
+      },
+      "fields": [
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "groupName",
+          "db_column": "GroupName",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fieldType",
+          "db_column": "FieldType",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculated",
+          "db_column": "Calculated",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "externalOptions",
+          "db_column": "ExternalOptions",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "showCurrencySymbol",
+          "db_column": "ShowCurrencySymbol",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hubspotDefined",
+          "db_column": "HubspotDefined",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hasUniqueValue",
+          "db_column": "HasUniqueValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hidden",
+          "db_column": "Hidden",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "displayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "formField",
+          "db_column": "FormField",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "readOnlyValue",
+          "db_column": "ReadOnlyValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_companiesproperties_stage",
+        "prod_table": "c{clientID}_companiesproperties",
+        "primary_key": [
+          "Name",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "DealProperties",
+      "description": "HubSpot Deals properties metadata",
+      "category": "metadata",
+      "priority": "low",
+      "api_details": {
+        "path": "/crm/v3/properties/deals",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "archived"
+          ]
+        }
+      },
+      "fields": [
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "groupName",
+          "db_column": "GroupName",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fieldType",
+          "db_column": "FieldType",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculated",
+          "db_column": "Calculated",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "externalOptions",
+          "db_column": "ExternalOptions",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "showCurrencySymbol",
+          "db_column": "ShowCurrencySymbol",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hubspotDefined",
+          "db_column": "HubspotDefined",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hasUniqueValue",
+          "db_column": "HasUniqueValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hidden",
+          "db_column": "Hidden",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "displayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "formField",
+          "db_column": "FormField",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "readOnlyValue",
+          "db_column": "ReadOnlyValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_dealproperties_stage",
+        "prod_table": "c{clientID}_dealproperties",
+        "primary_key": [
+          "Name",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TicketsProperties",
+      "description": "HubSpot Tickets properties metadata",
+      "category": "metadata",
+      "priority": "low",
+      "api_details": {
+        "path": "/crm/v3/properties/tickets",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "archived"
+          ]
+        }
+      },
+      "fields": [
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "groupName",
+          "db_column": "GroupName",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fieldType",
+          "db_column": "FieldType",
+          "data_type": "VARCHAR(1000)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculated",
+          "db_column": "Calculated",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "externalOptions",
+          "db_column": "ExternalOptions",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "showCurrencySymbol",
+          "db_column": "ShowCurrencySymbol",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hubspotDefined",
+          "db_column": "HubspotDefined",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hasUniqueValue",
+          "db_column": "HasUniqueValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hidden",
+          "db_column": "Hidden",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "displayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "formField",
+          "db_column": "FormField",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "readOnlyValue",
+          "db_column": "ReadOnlyValue",
+          "data_type": "BIT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "NVARCHAR(34)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "results",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_ticketsproperties_stage",
+        "prod_table": "c{clientID}_ticketsproperties",
+        "primary_key": [
+          "Name",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    }
+  ]
+}

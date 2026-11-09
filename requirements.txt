@@ -1,0 +1,88 @@
+# Requirements for ETL packages
+# Includes all dependencies for:
+# - run_dynamic_integration.py (dynamic integration runner)
+# - XPM workers and other ETL scripts
+# - Database connectivity (SQLAlchemy, pyodbc, pymysql)
+# - Cloud services (AWS boto3, Azure storage)
+# - Authentication (OAuth, JWT, MSAL)
+# - Data processing (pandas, numpy)
+
+# Core data processing libraries
+pandas>=1.5.0
+numpy>=1.21.0
+
+# Database connectivity
+sqlalchemy>=1.4.0
+pyodbc>=4.0.0
+pymysql>=1.0.0
+mysql-connector-python>=8.0.0
+
+# HTTP requests and web scraping
+requests>=2.25.0
+requests_toolbelt>=0.9.0
+beautifulsoup4>=4.9.0
+
+# Azure cloud storage
+azure-storage-file-share>=12.0.0
+
+# AWS cloud services
+boto3>=1.26.0
+
+# Authentication and security
+msal>=1.20.0
+
+# File handling and concurrency
+filelock>=3.0.0
+
+# Reliability and retry logic
+tenacity>=8.0.0
+
+# Optional web scraping enhancement
+lxml>=4.6.0
+
+# Optional YAML parsing support (for OpenAPI specs)
+PyYAML>=5.4.0
+
+# Development and testing
+pytest>=6.0.0
+pytest-mock>=3.6.0
+
+# Type checking support
+typing-extensions>=4.0.0
+
+# Data validation
+marshmallow>=3.17.0
+
+# Configuration management
+python-dotenv>=0.19.0
+
+# Progress bars and CLI enhancement
+tqdm>=4.60.0
+click>=8.0.0
+
+# Date/time handling
+python-dateutil>=2.8.0
+
+# JSON handling enhancement
+jsonschema>=3.2.0
+
+# Excel file support (if needed)
+openpyxl>=3.0.0
+xlrd>=2.0.0
+
+# Cryptography and JWT support
+cryptography>=3.4.0
+PyJWT>=2.4.0
+
+# OAuth and authentication
+oauthlib>=3.2.0
+authlib>=1.0.0
+
+# Logging enhancements
+colorlog>=6.6.0
+
+# Performance monitoring
+psutil>=5.8.0
+
+# Data serialization
+msgpack>=1.0.0

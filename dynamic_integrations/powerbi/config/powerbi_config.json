@@ -1,0 +1,30 @@
+{
+    "powerbi": {
+        "base_url": "REDACTED",
+        "api_base_url": "https://api.powerbi.com/v1.0/myorg",
+        "username": "REDACTED",
+        "password": "REDACTED",
+        "scope": "https://analysis.windows.net/powerbi/api",
+        "client_id": "REDACTED",
+        "client_secret": "REDACTED",
+        "default_template_path": "templates/BIG OLE SHOE COMPANY - XERO BLUE - MASTER - FEB 2025.pbix"
+    },
+    "dataset_patterns": {
+        "xero_blue": {
+            "name_contains": ["MASTER", "XERO BLUE"],
+            "template_path": "templates/BIG OLE SHOE COMPANY - XERO BLUE - MASTER - FEB 2025.pbix"
+        },
+        "qbo": {
+            "name_contains": ["MASTER", "QBO"],
+            "template_path": "templates/QBO-MASTER-TEMPLATE.pbix"
+        },
+       "fyi": {
+            "name_contains": ["MASTER", "FYI"],
+            "template_path": "templates/FYI_TEST.pbix"
+        },
+        "generic": {
+            "name_contains": ["MASTER"],
+            "template_path": "templates/GENERIC-MASTER-TEMPLATE.pbix"
+        }
+    }
+}

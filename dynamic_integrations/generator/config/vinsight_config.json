@@ -1,0 +1,161 @@
+{
+  "integration_name": "vinsight",
+  "display_name": "VinSight - Wine Management Integration",
+  "description": "VinSight integration for wine and beverage management data synchronization using API Key as URL query parameter",
+  "api_base_url": "https://app.vinsight.net",
+  "auth_type": "api_key_param",
+  "auth_config": {
+    "api_key": {
+      "type": "query_param",
+      "param_name": "api-key",
+      "env_var": "VINSIGHT_API_KEY",
+      "description": "API Key authentication as query parameter"
+    },
+    "custom_headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "VINSIGHT_API_KEY"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "vinsight_api_key": {
+      "env_var": "VINSIGHT_API_KEY",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "error_handling": {
+    "retry_codes": [
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "max_retries": 5,
+    "backoff_strategy": "exponential"
+  },
+  "rate_limiting": {
+    "requests_per_minute": 60,
+    "requests_per_day": 5000,
+    "concurrent_requests": 5,
+    "burst_limit": 5,
+    "max_request_size": "10MB",
+    "recommended_batch_size": 50
+  },
+  "client_credentials": {
+    "note": "Store actual OAuth credentials in environment variables. API Key and Basic Auth available as alternatives.",
+    "access_id": "",
+    "access_secret": ""
+  },
+  "sync_settings": {
+    "full_sync_frequency": "daily",
+    "incremental_sync": true,
+    "batch_size": 50,
+    "parallel_requests": 5
+  },
+  "data_mapping": {
+    "primary_key": "UID",
+    "timestamp_fields": [
+      "CreatedDate",
+      "ModifiedDate",
+      "UpdatedDate"
+    ],
+    "client_id_field": "ClientID",
+    "soft_delete_field": "IsDeleted"
+  },
+  "response_config": {
+    "response_type": "json",
+    "response_data_field": "",
+    "supported_formats": [
+      "json",
+      "xml",
+      "html",
+      "excel",
+      "csv"
+    ]
+  },
+  "pagination_config": {
+    "type": "odata",
+    "limit_param": "$top",
+    "offset_param": "$skip",
+    "default_limit": 20,
+    "max_limit": 1000,
+    "supports_filter": true,
+    "supports_orderby": true,
+    "filter_operations": [
+      "eq",
+      "ne",
+      "lt",
+      "le",
+      "gt",
+      "ge",
+      "and",
+      "or",
+      "not"
+    ]
+  },
+  "query_options": {
+    "odata_support": true,
+    "grouping_support": true,
+    "linq_aggregations": true,
+    "custom_query_extensions": true
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded",
+    "Debug",
+    "SystemInfo"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Debug",
+    "Health",
+    "Login",
+    "Logout"
+  ],
+  "total_endpoints": 0,
+  "total_tables": 0,
+  "created_date": "2026-01-05",
+  "version": "1.0",
+  "status": "active",
+  "notes": "VinSight wine management integration using API Key authentication as query parameter. Supports OData query conventions with custom extensions for grouping and LINQ aggregations. API key is automatically added as 'api-key' parameter to all requests."
+}

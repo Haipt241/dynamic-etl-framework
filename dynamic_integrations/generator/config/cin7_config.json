@@ -1,0 +1,101 @@
+{
+  "integration_name": "CIN7",
+  "display_name": "Cin7 - Multi API Integration",
+  "description": "Cin7 integration with Cin7, Dear Systems, and Etani APIs for inventory and sales data synchronization",
+  "api_base_url": "https://api.cin7.com/api",
+  "auth_type": "basic_auth",
+  "auth_config": {
+    "username_env_var": "API_USERNAME",
+    "password_env_var": "API_KEY",
+    "method": "GET",
+    "custom_headers": {},
+    "request_body": {
+      "type": "",
+      "structure": {}
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "API_USERNAME",
+    "API_KEY"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    },
+    "api_username": {
+      "env_var": "API_USERNAME",
+      "default_value": ""
+    },
+    "api_key": {
+      "env_var": "API_KEY",
+      "default_value": ""
+    }
+  },
+  "error_handling": {
+    "retry_codes": [
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "max_retries": 5,
+    "backoff_strategy": "exponential"
+  },
+  "rate_limiting": {
+    "requests_per_minute": "",
+    "burst_limit": ""
+  },
+  "client_credentials": {
+    "note": "Store actual credentials in environment variables",
+    "access_id": "",
+    "access_secret": ""
+  },
+  "sync_settings": {
+    "full_sync_frequency": "",
+    "incremental_sync": true,
+    "batch_size": 250,
+    "parallel_requests": ""
+  },
+  "data_mapping": {
+    "primary_key": "id",
+    "timestamp_fields": [
+      "createdDate",
+      "modifiedDate"
+    ],
+    "client_id_field": "ClientID",
+    "soft_delete_field": ""
+  },
+  "response_config": {
+    "response_type": "",
+    "response_data_field": ""
+  },
+  "exclude_fields": [],
+  "total_endpoints": 20,
+  "total_tables": 65,
+  "created_date": "2025-09-17",
+  "version": "1.0",
+  "status": "active"
+}

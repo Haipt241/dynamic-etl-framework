@@ -1,0 +1,85 @@
+{
+  "integration_name": "deputy",
+  "auth_type": "oauth2_custom_prefix",
+  "auth_config": {
+    "token_source": "authorization_code_refresh",
+    "authorization_prefix": "OAuth",
+    "client_id_env_var": "DEPUTY_CLIENT_ID",
+    "client_secret_env_var": "DEPUTY_CLIENT_SECRET",
+    "token_url": "https://once.deputy.com/my/oauth/access_token",
+    "authorization_url": "https://once.deputy.com/my/oauth/login",
+    "refresh_token_url": "https://{deputy_subdomain}.{deputy_geo}.deputy.com/oauth/access_token",
+    "access_token_expiry": 86400,
+    "grant_type": "authorization_code",
+    "scopes": [
+      "longlife_refresh_token"
+    ],
+    "additional_params": {
+      "response_type": "code"
+    },
+    "custom_headers": {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Accept": "application/json"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "DEPUTY_ACCESS_TOKEN",
+    "DEPUTY_DOMAIN"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "deputy_access_token": {
+      "env_var": "DEPUTY_ACCESS_TOKEN",
+      "default_value": ""
+    },
+    "deputy_domain": {
+      "env_var": "DEPUTY_DOMAIN",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Debug",
+    "Health"
+  ]
+}

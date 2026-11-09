@@ -1,0 +1,143 @@
+{
+  "integration_name": "keypay",
+  "auth_type": "basic_auth",
+  "auth_config": {
+    "base_url": "https://api.yourpayroll.com.au/api/v2/",
+    "custom_headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Basic {api_key_base64}",
+      "Accept": "application/json"
+    },
+    "encoding": "base64",
+    "timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 1
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "KEYPAY_API_KEY",
+    "KEYPAY_TOKEN"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "KEYPAY_BUSINESS_ID": "lambda x: x.isdigit() and len(x) > 0",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "api_username": {
+      "env_var": "API_USERNAME",
+      "default_value": ""
+    },
+    "api_key": {
+      "env_var": "API_KEY",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "api_config": {
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "requests_per_hour": 1000,
+      "burst_limit": 10
+    },
+    "pagination": {
+      "type": "odata",
+      "limit_param": "$top",
+      "offset_param": "$skip",
+      "default_limit": 100,
+      "max_limit": 500
+    },
+    "error_handling": {
+      "retry_on_status": [
+        429,
+        500,
+        502,
+        503,
+        504
+      ],
+      "max_retries": 3,
+      "backoff_factor": 2
+    }
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded",
+    "Links",
+    "Href",
+    "Errors",
+    "IsSuccess",
+    "Message",
+    "ResponseStatus"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Notes",
+    "Comments",
+    "Debug",
+    "Health",
+    "Metadata",
+    "Webhook",
+    "Notifications"
+  ],
+  "field_mappings": {
+    "common_fields": {
+      "ClientID": {
+        "source": "env",
+        "env_var": "EtaniClientID"
+      },
+      "OrganisationID": {
+        "source": "env",
+        "env_var": "EtaniOrganisationID"
+      }
+    }
+  },
+  "data_types": {
+    "string_max_length": 4000,
+    "decimal_precision": 19,
+    "decimal_scale": 4,
+    "datetime_format": "YYYY-MM-DDTHH:mm:ss.fffZ",
+    "boolean_true_values": [
+      "true",
+      "1",
+      "yes",
+      "on"
+    ],
+    "boolean_false_values": [
+      "false",
+      "0",
+      "no",
+      "off"
+    ]
+  }
+}

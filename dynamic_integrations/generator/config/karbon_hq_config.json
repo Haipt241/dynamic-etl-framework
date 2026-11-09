@@ -1,0 +1,109 @@
+{
+  "auth_type": "dual_key",
+  "auth_config": {
+    "access_key_env_var": "KARBON_ACCESS_KEY",
+    "tenant_access_key_env_var": "KARBON_TENANT_ACCESS_KEY",
+    "additional_params": {},
+    "custom_headers": {}
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "KARBON_ACCESS_KEY",
+    "KARBON_TENANT_ACCESS_KEY"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "KARBON_ACCESS_KEY": "lambda x: len(x) > 30 and '-' in x",
+    "KARBON_TENANT_ACCESS_KEY": "lambda x: x.startswith('eyJ') and len(x) > 100",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "karbon_access_key": {
+      "env_var": "KARBON_ACCESS_KEY",
+      "default_value": ""
+    },
+    "karbon_tenant_access_key": {
+      "env_var": "KARBON_TENANT_ACCESS_KEY",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "LastModifiedDateTime",
+    "CreatedDateTime",
+    "UpdatedDateTime",
+    "Links",
+    "Href",
+    "AvatarUrl",
+    "ValidationErrors",
+    "HasValidationErrors",
+    "EntityDescription"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Notes"
+  ],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    }
+  },
+  "query_config": {
+    "type": "odata",
+    "supports_filter": true,
+    "supports_expand": true,
+    "supports_select": true,
+    "date_filter_format": "yyyy-MM-ddTHH:mm:ssZ",
+    "custom_fields": {
+      "$skip": {
+        "default_value": 0,
+        "required": false
+      },
+      "$top": {
+        "default_value": 100,
+        "required": false
+      },
+      "$filter": {
+        "default_value": null,
+        "source_attr": "date_filter",
+        "required": false
+      },
+      "$expand": {
+        "default_value": null,
+        "required": false
+      }
+    }
+  }
+}

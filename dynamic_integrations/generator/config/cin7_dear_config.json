@@ -1,0 +1,115 @@
+{
+  "integration_name": "DEAR",
+  "display_name": "Dear Inventory (Cin7 Core)",
+  "description": "Dear Inventory API integration for inventory management, customer data, and sales synchronization",
+  "api_base_url": "https://inventory.dearsystems.com/ExternalApi",
+  "auth_type": "dual_header_auth",
+  "auth_config": {
+    "custom_headers": {
+      "api-auth-accountid": "dear_account_id",
+      "api-auth-applicationkey": "dear_application_key"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "DEAR_ACCOUNT_ID",
+    "DEAR_APPLICATION_KEY"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "dear_account_id": {
+      "env_var": "DEAR_ACCOUNT_ID",
+      "default_value": ""
+    },
+    "dear_application_key": {
+      "env_var": "DEAR_APPLICATION_KEY",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "error_handling": {
+    "retry_codes": [
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "max_retries": 5,
+    "backoff_strategy": "exponential"
+  },
+  "rate_limiting": {
+    "requests_per_minute": "60",
+    "burst_limit": "10"
+  },
+  "sync_settings": {
+    "incremental_sync": true,
+    "batch_size": 100,
+    "parallel_requests": ""
+  },
+  "data_mapping": {
+    "primary_key": "ID",
+    "timestamp_fields": [
+      "CreatedDate",
+      "ModifiedDate"
+    ],
+    "client_id_field": "ClientID"
+  },
+  "pagination": {
+    "type": "page_number",
+    "page_param": "page",
+    "limit_param": "limit",
+    "default_limit": 100,
+    "max_limit": 250,
+    "supported_endpoints": [
+      "customers",
+      "suppliers",
+      "products",
+      "productfamilies",
+      "productavailability",
+      "sales"
+    ],
+    "response_total_field": "Total"
+  },
+  "date_format": {
+    "format": "ISO8601_UTC",
+    "pattern": "yyyy-MM-ddTHH:mm:ss.fff",
+    "timezone": "UTC"
+  },
+  "reconciliation": {
+    "enabled": true,
+    "type": "api_total_count",
+    "field_mapping": {
+      "total_count_field": "Total"
+    },
+    "endpoints": [
+      "Sale",
+      "Purchase",
+      "Product"
+    ]
+  },
+  "version": "2.0",
+  "status": "active"
+}

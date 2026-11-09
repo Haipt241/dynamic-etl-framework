@@ -1,0 +1,1210 @@
+{
+  "integration_name": "XEROPROJECT",
+  "display_name": "Xero Projects API",
+  "category": "project_management",
+  "api_config": {
+    "base_url": "https://api.xero.com/projects.xro/2.0",
+    "version": "2.0",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "authentication": {
+      "type": "oauth2",
+      "grant_type": "authorization_code",
+      "token_url": "https://identity.xero.com/connect/token",
+      "authorization_url": "https://login.xero.com/identity/connect/authorize",
+      "access_token_expiry": 1800,
+      "refresh_token_expiry": 5184000,
+      "rate_limit": "60",
+      "scopes": [
+        "projects",
+        "offline_access"
+      ],
+      "client_id": "{{xero_client_id}}",
+      "client_secret": "{{xero_client_secret}}",
+      "access_token": "{{xero_access_token}}",
+      "refresh_token": "{{xero_refresh_token}}",
+       "rate_limiting": {
+        "requests_per_minute": 60,
+        "burst_limit": 60,
+        "daily_limit": 5000
+      }
+    },
+    "rate_limiting": {
+      "requests_per_minute": 60,
+      "burst_limit": 60,
+      "daily_limit": 5000,
+      "concurrent_limit": 5,
+      "window_seconds": 60,
+      "description": "60 requests per minute, 5,000 requests per day, maximum 5 concurrent requests. If exceeded, returns 429 Too Many Requests with Retry-After header."
+    },
+    "url_patterns": {
+      "has_company_id": false,
+      "has_realm_id": false,
+      "has_tenant_id": true,
+      "entity_endpoint": "/{EntityName}",
+      "url_template_vars": [
+        "page",
+        "pageSize"
+      ],
+      "requires_trailing_slash": false
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer {{xero_access_token}}",
+      "Xero-tenant-id": "{{xero_tenant_id}}",
+      "User-Agent": "Etani-XeroProjects-Integration/1.0"
+    },
+    "pagination": {
+      "type": "page_based",
+      "limit_param": "pageSize",
+      "offset_param": "page",
+      "default_limit": 100,
+      "max_limit": 100
+    },
+    "response_wrapper": {
+      "data_key": null,
+      "meta_key": null,
+      "pagination_key": null,
+      "direct_array": true
+    }
+  },
+  "transform_config": {
+    "response_format": "xero_projects",
+    "field_transformations": {},
+    "date_format": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+    "timezone": "UTC"
+  },
+  "endpoints": [
+    {
+      "name": "Projects",
+      "description": "Project management entity representing individual projects with financial tracking, invoicing, and status management",
+      "category": "master_data",
+      "priority": "high",
+      "api_details": {
+        "path": "/projects",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "ProjectTaskAmounts",
+          "source_field": "totalTaskAmount"
+        },
+        {
+          "table_name": "ProjectExpenseAmounts",
+          "source_field": "totalExpenseAmount"
+        },
+        {
+          "table_name": "ProjectInvoiceAmounts",
+          "source_field": "totalInvoiced"
+        }
+      ],
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the project"
+        },
+        {
+          "api_name": "contactId",
+          "db_column": "ContactId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyCode",
+          "db_column": "CurrencyCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "minutesLogged",
+          "db_column": "MinutesLogged",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalTaskAmount",
+          "db_column": "TotalTaskAmount",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalExpenseAmount",
+          "db_column": "TotalExpenseAmount",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "minutesToBeInvoiced",
+          "db_column": "MinutesToBeInvoiced",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskAmountToBeInvoiced",
+          "db_column": "TaskAmountToBeInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskAmountInvoiced",
+          "db_column": "TaskAmountInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseAmountToBeInvoiced",
+          "db_column": "ExpenseAmountToBeInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseAmountInvoiced",
+          "db_column": "ExpenseAmountInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectAmountInvoiced",
+          "db_column": "ProjectAmountInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deposit",
+          "db_column": "Deposit",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "depositApplied",
+          "db_column": "DepositApplied",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "creditNoteAmount",
+          "db_column": "CreditNoteAmount",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deadlineUtc",
+          "db_column": "DeadlineUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalInvoiced",
+          "db_column": "TotalInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalToBeInvoiced",
+          "db_column": "TotalToBeInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "estimate",
+          "db_column": "Estimate",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "items",
+        "is_array": true,
+        "nested_objects": [
+          "totalTaskAmount",
+          "totalExpenseAmount",
+          "taskAmountToBeInvoiced",
+          "taskAmountInvoiced",
+          "expenseAmountToBeInvoiced",
+          "expenseAmountInvoiced",
+          "projectAmountInvoiced",
+          "deposit",
+          "depositApplied",
+          "creditNoteAmount",
+          "totalInvoiced",
+          "totalToBeInvoiced",
+          "estimate"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "totalTaskAmount",
+          "totalExpenseAmount",
+          "taskAmountToBeInvoiced",
+          "taskAmountInvoiced",
+          "expenseAmountToBeInvoiced",
+          "expenseAmountInvoiced",
+          "projectAmountInvoiced",
+          "deposit",
+          "depositApplied",
+          "creditNoteAmount",
+          "totalInvoiced",
+          "totalToBeInvoiced",
+          "estimate"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectsstage",
+        "prod_table": "c{clientID}_integration_projects",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "Status"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Tasks",
+      "description": "Project task entity representing individual tasks within projects with time tracking and billing information",
+      "category": "transactional",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "projects",
+        "parent_id_column": "projectId",
+        "parent_id_source": "ProjectId",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": true
+      }],
+      "api_details": {
+        "path": "/projects/{projectId}/tasks",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "projectId"
+          ],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "TaskRates",
+          "source_field": "rate"
+        },
+        {
+          "table_name": "TaskTotalAmounts",
+          "source_field": "totalAmount"
+        },
+        {
+          "table_name": "TaskInvoicedAmounts",
+          "source_field": "amountInvoiced"
+        }
+      ],
+      "fields": [
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the task"
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rate",
+          "db_column": "Rate",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "chargeType",
+          "db_column": "ChargeType",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "estimateMinutes",
+          "db_column": "EstimateMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalMinutes",
+          "db_column": "TotalMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalAmount",
+          "db_column": "TotalAmount",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "minutesToBeInvoiced",
+          "db_column": "MinutesToBeInvoiced",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "minutesInvoiced",
+          "db_column": "MinutesInvoiced",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "nonChargeableMinutes",
+          "db_column": "NonChargeableMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amountToBeInvoiced",
+          "db_column": "AmountToBeInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amountInvoiced",
+          "db_column": "AmountInvoiced",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "items",
+        "is_array": true,
+        "nested_objects": [
+          "rate",
+          "totalAmount",
+          "amountToBeInvoiced",
+          "amountInvoiced"
+        ],
+        "array_fields": [],
+        "jsonb_fields": [
+          "rate",
+          "totalAmount",
+          "amountToBeInvoiced",
+          "amountInvoiced"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_tasksstage",
+        "prod_table": "c{clientID}_integration_tasks",
+        "primary_key": [
+          "TaskId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "Status"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "nested_extraction",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TimeEntries",
+      "description": "Time entry entity representing time logged against specific tasks and projects",
+      "category": "transactional",
+      "priority": "high",
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "projects",
+        "parent_id_column": "projectId",
+        "parent_id_source": "ProjectId",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": true
+      }],
+      "api_details": {
+        "path": "/projects/{projectId}/time",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "projectId"
+          ],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "timeEntryId",
+          "db_column": "TimeEntryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the time entry"
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateUtc",
+          "db_column": "DateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateEnteredUtc",
+          "db_column": "DateEnteredUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "duration",
+          "db_column": "Duration",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Duration in minutes"
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "items",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_timeentriesstage",
+        "prod_table": "c{clientID}_integration_timeentries",
+        "primary_key": [
+          "TimeEntryId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "TaskId",
+          "UserId",
+          "DateUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "nested_extraction",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectUsers",
+      "description": "Project user entity representing users who can log time against projects",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/projectsusers",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ssZ",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the user"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email",
+          "db_column": "Email",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "items",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectusersstage",
+        "prod_table": "c{clientID}_integration_projectusers",
+        "primary_key": [
+          "UserId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Email",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectTaskAmounts",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Project total task amount details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projecttaskamountsstage",
+        "prod_table": "c{clientID}_integration_projecttaskamounts",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectExpenseAmounts",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Project total expense amount details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectexpenseamountsstage",
+        "prod_table": "c{clientID}_integration_projectexpenseamounts",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectInvoiceAmounts",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Project total invoiced amount details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectinvoiceamountsstage",
+        "prod_table": "c{clientID}_integration_projectinvoiceamounts",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TaskRates",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Task rate details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_taskratesstage",
+        "prod_table": "c{clientID}_integration_taskrates",
+        "primary_key": [
+          "TaskId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TaskTotalAmounts",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Task total amount details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_tasktotalamountsstage",
+        "prod_table": "c{clientID}_integration_tasktotalamounts",
+        "primary_key": [
+          "TaskId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TaskInvoicedAmounts",
+      "is_virtual_endpoint": true,
+      "description": "Virtual endpoint for Task invoiced amount details from nested JSON",
+      "category": "financial_details",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currency",
+          "db_column": "Currency",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientId",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationId",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_taskinvoicedamountsstage",
+        "prod_table": "c{clientID}_integration_taskinvoicedamounts",
+        "primary_key": [
+          "TaskId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "Currency"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    }
+  ]
+}

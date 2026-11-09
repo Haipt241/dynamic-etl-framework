@@ -1,0 +1,214 @@
+{
+  "integration_name": "accredo",
+  "display_name": "Accredo - Business Management Integration",
+  "description": "Accredo integration for accounting and ERP data synchronization using access token as URL query parameter",
+  "api_base_url": "https://{domain}/Company('{company_name}')",
+  "auth_type": "oauth2_password_grant",
+  "auth_config": {
+    "type": "oauth2",
+    "grant_type": "password",
+    "token_url": "https://{oauth_domain}/oauth2/v1/token",
+    "token_method": "POST",
+    "token_source": "password_grant",
+    "client_id_env_var": "ACCREDO_CLIENT_ID",
+    "username_env_var": "ACCREDO_USERNAME",
+    "password_env_var": "ACCREDO_PASSWORD",
+    "token_usage": "query_param",
+    "token_param_name": "access_token",
+    "custom_headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": "Etani-ETL/1.0"
+    },
+    "additional_params": {},
+    "ssl_verify": false
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "ACCREDO_CLIENT_ID",
+    "ACCREDO_USERNAME",
+    "ACCREDO_PASSWORD",
+    "ACCREDO_DOMAIN",
+    "ACCREDO_OAUTH_DOMAIN",
+    "ACCREDO_COMPANY_NAME"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "accredo_client_id": {
+      "env_var": "ACCREDO_CLIENT_ID",
+      "default_value": "",
+      "description": "Accredo API Client ID for OAuth2 authentication"
+    },
+    "accredo_username": {
+      "env_var": "ACCREDO_USERNAME",
+      "default_value": "",
+      "description": "Accredo username for OAuth2 password grant flow"
+    },
+    "accredo_password": {
+      "env_var": "ACCREDO_PASSWORD",
+      "default_value": "",
+      "description": "Accredo password for OAuth2 password grant flow"
+    },
+    "accredo_domain": {
+      "env_var": "ACCREDO_DOMAIN",
+      "default_value": "",
+      "description": "Accredo domain with port and path (without https://)"
+    },
+    "accredo_company_name": {
+      "env_var": "ACCREDO_COMPANY_NAME",
+      "default_value": "",
+      "description": "Accredo company name/code for API access"
+    },
+    "accredo_oauth_domain": {
+      "env_var": "ACCREDO_OAUTH_DOMAIN",
+      "default_value": "",
+      "description": "Accredo OAuth domain (without https:// and without /odata4/v1 path)"
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "error_handling": {
+    "retry_codes": [
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "max_retries": 3,
+    "backoff_strategy": "exponential"
+  },
+  "rate_limiting": {
+    "requests_per_minute": 100,
+    "requests_per_hour": 5000,
+    "concurrent_requests": 3,
+    "burst_limit": 5,
+    "max_request_size": "10MB",
+    "recommended_batch_size": 50,
+    "license_consumption": "Each OAuth2 token consumes one user license during its lifetime"
+  },
+  "client_credentials": {
+    "note": "Store actual access token in environment variables. OAuth2 and API Key available as alternatives.",
+    "access_token": "",
+    "domain": "",
+    "company_name": ""
+  },
+  "sync_settings": {
+    "full_sync_frequency": "daily",
+    "incremental_sync": true,
+    "batch_size": 50,
+    "parallel_requests": 3
+  },
+  "data_mapping": {
+    "primary_key": "ID",
+    "timestamp_fields": [
+      "CreatedDate",
+      "ModifiedDate",
+      "UpdatedDate"
+    ],
+    "client_id_field": "ClientID",
+    "soft_delete_field": "IsDeleted"
+  },
+  "response_config": {
+    "response_type": "json",
+    "response_data_field": "",
+    "supported_formats": [
+      "json"
+    ]
+  },
+  "pagination_config": {
+    "type": "odata",
+    "limit_param": "$top",
+    "offset_param": "$skip",
+    "default_limit": 50,
+    "max_limit": 1000,
+    "supports_filter": true,
+    "supports_orderby": true,
+    "supports_select": true,
+    "supports_expand": true,
+    "filter_operations": [
+      "eq",
+      "ne",
+      "lt",
+      "le",
+      "gt",
+      "ge",
+      "and",
+      "or",
+      "not",
+      "contains",
+      "startswith",
+      "endswith"
+    ]
+  },
+  "query_options": {
+    "odata_support": true,
+    "odata_version": "4.0",
+    "functions_support": true,
+    "expand_support": true,
+    "select_support": true,
+    "orderby_support": true,
+    "groupby_support": false,
+    "custom_query_extensions": false
+  },
+  "special_endpoints": {
+    "metadata": "/$metadata/Types",
+    "openapi": "/openapi.json",
+    "developer_docs": "/developerdoc",
+    "period_lookup": "/PeriodForDate(Date={date})",
+    "custom_scripts": "/PlayScript",
+    "sql_execution": "/ExecuteSQL"
+  },
+  "exclude_fields": [
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded",
+    "Debug",
+    "SystemInfo"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Debug",
+    "Health",
+    "Login",
+    "Logout"
+  ],
+  "total_endpoints": 0,
+  "total_tables": 0,
+  "created_date": "2026-01-13",
+  "version": "1.0",
+  "status": "active",
+  "notes": "Accredo business management integration using access token authentication as query parameter. Supports OData v4 query conventions. API base URL includes dynamic domain and company name placeholders. Access token is automatically added as 'access_token' parameter to all requests."
+}

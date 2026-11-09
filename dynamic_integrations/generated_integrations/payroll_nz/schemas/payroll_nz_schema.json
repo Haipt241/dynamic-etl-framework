@@ -1,0 +1,4272 @@
+{
+  "integration_name": "payroll_nz",
+  "display_name": "Xero Payroll NZ",
+  "category": "payroll",
+  "api_config": {
+    "base_url": "https://api.xero.com/payroll.xro/2.0",
+    "version": "2.0",
+    "protocol": "REST",
+    "data_format": "JSON",
+    "authentication": {
+      "type": "oauth2",
+      "grant_type": "authorization_code",
+      "token_url": "https://identity.xero.com/connect/token",
+      "authorization_url": "https://identity.xero.com/connect/authorize",
+      "scopes": [
+        "payroll.employees",
+        "payroll.superfunds",
+        "payroll.leaveapplications",
+        "payroll.payitems",
+        "payroll.payrollcalendars",
+        "payroll.payruns",
+        "payroll.payslip",
+        "payroll.timesheets",
+        "payroll.settings",
+        "offline_access"
+      ],
+      "client_id_env_var": "XERO_CLIENT_ID",
+      "client_secret_env_var": "XERO_CLIENT_SECRET",
+      "tenant_id_env_var": "XeroTenantID",
+      "access_token_expiry": 1800,
+      "refresh_token_expiry": 5184000,
+      "description": "OAuth2 authentication for Xero Payroll NZ API with tenant-specific access. Requires payroll admin permissions and NZ-specific scopes."
+    },
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Xero-tenant-id": "{tenant_id}"
+    },
+    "rate_limiting": {
+      "requests_per_day": 5000,
+      "reset_time": "midnight_utc",
+      "strategy": "daily_limit",
+      "description": "5,000 API calls per day per organisation, resets at midnight UTC"
+    },
+    "pagination": {
+      "type": "page",
+      "limit_param": "",
+      "offset_param": "page",
+      "default_limit": 100,
+      "max_limit": 100
+    }
+  },
+  "endpoints": [
+    {
+      "name": "Employee",
+      "description": "Employee master data containing personal information, employment details and address information",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedDateUTC",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique employee identifier"
+        },
+        {
+          "api_name": "firstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "lastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateOfBirth",
+          "db_column": "DateOfBirth",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "gender",
+          "db_column": "Gender",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "email",
+          "db_column": "Email",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "phoneNumber",
+          "db_column": "PhoneNumber",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.line1",
+          "db_column": "AddressLine1",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.line2",
+          "db_column": "AddressLine2",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.city",
+          "db_column": "AddressCity",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.region",
+          "db_column": "AddressRegion",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.postalCode",
+          "db_column": "AddressPostalCode",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "address.country",
+          "db_column": "AddressCountry",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payrollCalendarID",
+          "db_column": "PayrollCalendarID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedDateUTC",
+          "db_column": "UpdatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "createdDateUTC",
+          "db_column": "CreatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "engagementType",
+          "db_column": "EngagementType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fixedTermEndDate",
+          "db_column": "FixedTermEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employmentType",
+          "db_column": "EmploymentType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "jobTitle",
+          "db_column": "JobTitle",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "employees",
+        "is_array": true,
+        "nested_objects": [
+          "address"
+        ],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_employeestage",
+        "prod_table": "c{clientID}_payroll_nz_employee",
+        "primary_key": [
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "UpdatedDateUTC",
+          "CreatedDateUTC"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+         {
+      "name": "EmployeeLeave",
+      "description": "Employee leave records containing leave details, periods and leave type information",
+      "category": "transactional",
+      "priority": "medium",
+           "use_pagination": false,
+      "api_details": {
+        "path": "/employees/{EmployeeID}/leave",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "updatedDateUTC",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental UPSERT synchronization based on leave update date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "EmployeeLeavePeriods",
+          "source_field": "periods"
+        }
+      ],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "leaveID",
+          "db_column": "LeaveID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique leave record identifier"
+        },
+        {
+          "api_name": "EmployeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Employee ID from URL parameter"
+        },
+        {
+          "api_name": "leaveTypeID",
+          "db_column": "LeaveTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedDateUTC",
+          "db_column": "UpdatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leave",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_employeeleavestage",
+        "prod_table": "c{clientID}_payroll_nz_employeeleave",
+        "primary_key": [
+          "LeaveID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "LeaveTypeID",
+          "UpdatedDateUTC"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "LeaveBalances",
+      "description": "Employee leave balances showing different leave types and their current balances",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/leaveBalances",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveTypeID",
+          "db_column": "LeaveTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "balance",
+          "db_column": "Balance",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "typeOfUnits",
+          "db_column": "TypeOfUnits",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leaveBalances",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_leavebalancesstage",
+        "prod_table": "c{clientID}_payroll_nz_leavebalances",
+        "primary_key": [
+          "LeaveTypeID",
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaymentMethods",
+      "description": "Employee payment method details including bank account information",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/paymentMethods",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "paymethodbankacct",
+          "source_field": "bankAccounts"
+        }
+      ],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "paymentMethod",
+          "db_column": "PaymentMethod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "paymentMethod",
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paymentmethodsstage",
+        "prod_table": "c{clientID}_payroll_nz_paymentmethods",
+        "primary_key": [
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "EmployeeLeavePeriods",
+      "is_virtual_endpoint": true,
+      "description": "Leave periods extracted from EmployeeLeave periods array",
+      "category": "transactional",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "leaveID",
+          "db_column": "LeaveID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Parent leave record identifier"
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "PeriodStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "PeriodEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "periodStatus",
+          "db_column": "PeriodStatus",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "periods",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_employeeleaveperiodsstage",
+        "prod_table": "c{clientID}_payroll_nz_employeeleaveperiods",
+        "primary_key": [
+          "LeaveID",
+          "PeriodStartDate",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "LeaveID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "paymethodbankacct",
+      "is_virtual_endpoint": true,
+      "description": "Bank accounts extracted from PaymentMethods bankAccounts array",
+      "category": "master_data",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Parent employee identifier"
+        },
+        {
+          "api_name": "accountName",
+          "db_column": "AccountName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "accountNumber",
+          "db_column": "AccountNumber",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "sortCode",
+          "db_column": "SortCode",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(5,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "bankAccounts",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paymethodbankacctstage",
+        "prod_table": "c{clientID}_payroll_nz_paymethodbankacct",
+        "primary_key": [
+          "EmployeeID",
+          "AccountNumber",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+      {
+      "name": "PayRunCalendars",
+      "description": "Payroll calendar configurations including pay periods and payment dates",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/payrunCalendars",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page"
+          ],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "payrollCalendarID",
+          "db_column": "PayrollCalendarID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calendarType",
+          "db_column": "CalendarType",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "periodStartDate",
+          "db_column": "PeriodStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "periodEndDate",
+          "db_column": "PeriodEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paymentDate",
+          "db_column": "PaymentDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedDateUTC",
+          "db_column": "UpdatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "payRunCalendars",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payruncalendarsstage",
+        "prod_table": "c{clientID}_payroll_nz_payruncalendars",
+        "primary_key": [
+          "PayrollCalendarID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "CalendarType",
+          "UpdatedDateUTC"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "OpeningBalances",
+      "description": "Employee opening balances for payroll periods",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/openingBalances",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "periodEndDate",
+          "db_column": "PeriodEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "daysPaid",
+          "db_column": "DaysPaid",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unpaidWeeks",
+          "db_column": "UnpaidWeeks",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grossEarnings",
+          "db_column": "GrossEarnings",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "openingBalances",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_openingbalancesstage",
+        "prod_table": "c{clientID}_payroll_nz_openingbalances",
+        "primary_key": [
+          "PeriodEndDate",
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "PeriodEndDate"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "LeaveTypes",
+      "description": "Employee leave types configuration including accrual settings",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/leaveTypes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "leaveTypeID",
+          "db_column": "LeaveTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "scheduleOfAccrual",
+          "db_column": "ScheduleOfAccrual",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "maximumToAccrue",
+          "db_column": "MaximumToAccrue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "openingBalance",
+          "db_column": "OpeningBalance",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rateAccruedHourly",
+          "db_column": "RateAccruedHourly",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentageOfGrossEarnings",
+          "db_column": "PercentageOfGrossEarnings",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "includeHolidayPayEveryPay",
+          "db_column": "IncludeHolidayPayEveryPay",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "showAnnualLeaveInAdvance",
+          "db_column": "ShowAnnualLeaveInAdvance",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "annualLeaveTotalAmountPaid",
+          "db_column": "AnnualLeaveTotalAmountPaid",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "scheduleOfAccrualDate",
+          "db_column": "ScheduleOfAccrualDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitsAccruedAnnually",
+          "db_column": "UnitsAccruedAnnually",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "typeOfUnitsToAccrue",
+          "db_column": "TypeOfUnitsToAccrue",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "openingBalanceTypeOfUnits",
+          "db_column": "OpeningBalanceTypeOfUnits",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leaveTypes",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_leavetypesstage",
+        "prod_table": "c{clientID}_payroll_nz_leavetypes",
+        "primary_key": [
+          "LeaveTypeID",
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "ScheduleOfAccrual"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Deductions",
+      "description": "Payroll deductions configuration including KiwiSaver contributions, payroll giving, and other deductions",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/deductions",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modified_after",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "deductionId",
+          "db_column": "DeductionId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the deduction"
+        },
+        {
+          "api_name": "deductionName",
+          "db_column": "DeductionName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deductionCategory",
+          "db_column": "DeductionCategory",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "liabilityAccountId",
+          "db_column": "LiabilityAccountId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currentRecord",
+          "db_column": "CurrentRecord",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "standardAmount",
+          "db_column": "StandardAmount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "deductions",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_deductionsstage",
+        "prod_table": "c{clientID}_payroll_nz_deductions",
+        "primary_key": [
+          "DeductionId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "DeductionName"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "SalaryAndWages",
+      "description": "Employee salary and wage information including payment types, rates, and work patterns",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/salaryAndWages",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modified_after",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "salaryAndWagesID",
+          "db_column": "SalaryAndWagesID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the salary and wage record"
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnitsPerWeek",
+          "db_column": "NumberOfUnitsPerWeek",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnitsPerDay",
+          "db_column": "NumberOfUnitsPerDay",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "daysPerWeek",
+          "db_column": "DaysPerWeek",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "effectiveFrom",
+          "db_column": "EffectiveFrom",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "annualSalary",
+          "db_column": "AnnualSalary",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paymentType",
+          "db_column": "PaymentType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkPatternType",
+          "db_column": "WorkPatternType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "salaryAndWages",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_salaryandwagesstage",
+        "prod_table": "c{clientID}_payroll_nz_salaryandwages",
+        "primary_key": [
+          "SalaryAndWagesID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EarningsRateID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PayTemplates",
+      "description": "Employee pay template configuration including earnings, deductions, benefits, and reimbursement templates",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/employees/{EmployeeID}/paytemplates",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+
+          ],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "modified_after",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss+00:00",
+            "description": "Parameter used for incremental UPSERT synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "PayTemplateEarnings",
+          "source_field": "earningTemplates"
+        },
+        {
+          "table_name": "PayTemplateDeductions",
+          "source_field": "deductionTemplates"
+        },
+        {
+          "table_name": "PayTemplateBenefits",
+          "source_field": "benefitTemplates"
+        },
+        {
+          "table_name": "paytplreimb",
+          "source_field": "reimbursementTemplates"
+        }
+      ],
+      "is_child_endpoint": true,
+      "child_endpoint_config": [{
+        "parent_table": "employee",
+        "parent_id_column": "employeeid",
+        "parent_id_source": "EmployeeID",
+        "child_endpoint_type": "url_based",
+        "is_query_pattern": false
+      }],
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the employee"
+        },
+        {
+          "api_name": "earningTemplates",
+          "db_column": "EarningTemplates",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deductionTemplates",
+          "db_column": "DeductionTemplates",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "benefitTemplates",
+          "db_column": "BenefitTemplates",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reimbursementTemplates",
+          "db_column": "ReimbursementTemplates",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "payTemplate",
+        "is_array": false,
+        "nested_objects": [
+          "earningTemplates",
+          "deductionTemplates",
+          "benefitTemplates",
+          "reimbursementTemplates"
+        ],
+        "array_fields": [
+          "earningTemplates",
+          "deductionTemplates",
+          "benefitTemplates",
+          "reimbursementTemplates"
+        ],
+        "jsonb_fields": [
+          "earningTemplates",
+          "deductionTemplates",
+          "benefitTemplates",
+          "reimbursementTemplates"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paytemplatesstage",
+        "prod_table": "c{clientID}_payroll_nz_paytemplates",
+        "primary_key": [
+          "EmployeeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PayTemplateEarnings",
+      "is_virtual_endpoint": true,
+      "description": "Employee pay template earnings configuration",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "earningTemplates",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paytemplateearningsstage",
+        "prod_table": "c{clientID}_payroll_nz_paytemplateearnings",
+        "primary_key": [
+          "EmployeeID",
+          "EarningsRateID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PayTemplateDeductions",
+      "is_virtual_endpoint": true,
+      "description": "Employee pay template deductions configuration",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "deductionTypeID",
+          "db_column": "DeductionTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "deductionTemplates",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paytemplatedeductionsstage",
+        "prod_table": "c{clientID}_payroll_nz_paytemplatedeductions",
+        "primary_key": [
+          "EmployeeID",
+          "DeductionTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PayTemplateBenefits",
+      "is_virtual_endpoint": true,
+      "description": "Employee pay template benefits configuration",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "benefitTypeID",
+          "db_column": "BenefitTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "benefitTemplates",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paytemplatebenefitsstage",
+        "prod_table": "c{clientID}_payroll_nz_paytemplatebenefits",
+        "primary_key": [
+          "EmployeeID",
+          "BenefitTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "paytplreimb",
+      "is_virtual_endpoint": true,
+      "description": "Employee pay template reimbursements configuration",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "reimbursementTypeID",
+          "db_column": "ReimbursementTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "reimbursementTemplates",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paytplreimbstage",
+        "prod_table": "c{clientID}_payroll_nz_paytplreimb",
+        "primary_key": [
+          "EmployeeID",
+          "ReimbursementTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+     {
+      "name": "EarningsRates",
+      "description": "Earnings rates configuration for payroll including regular earnings, overtime rates, allowances, and other compensation types",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/earningsRates",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "pagination": {
+            "type": "page",
+            "default_page_size": 100,
+            "max_page_size": 100,
+            "description": "Page-based pagination with pageSize and page parameters"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "earningsType",
+          "db_column": "EarningsType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rateType",
+          "db_column": "RateType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "typeOfUnits",
+          "db_column": "TypeOfUnits",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currentRecord",
+          "db_column": "CurrentRecord",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseAccountID",
+          "db_column": "ExpenseAccountID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "multipleOfOrdinaryEarningsRate",
+          "db_column": "MultipleOfOrdinaryEarningsRate",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fixedAmount",
+          "db_column": "FixedAmount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "earningsRates",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_earningsratesstage",
+        "prod_table": "c{clientID}_payroll_nz_earningsrates",
+        "primary_key": [
+          "EarningsRateID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "EarningsType"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "LeaveTypes",
+      "description": "Leave types configuration for payroll including statutory leave, holiday leave, and other leave categories",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/leaveTypes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "pagination": {
+            "type": "page",
+            "default_page_size": 100,
+            "max_page_size": 100,
+            "description": "Page-based pagination with pageSize and page parameters"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveTypeID",
+          "db_column": "LeaveTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isPaidLeave",
+          "db_column": "IsPaidLeave",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "showOnPayslip",
+          "db_column": "ShowOnPayslip",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedDateUTC",
+          "db_column": "UpdatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "typeOfUnits",
+          "db_column": "TypeOfUnits",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "typeOfUnitsToAccrue",
+          "db_column": "TypeOfUnitsToAccrue",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leaveTypes",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_leavetypesmasterstage",
+        "prod_table": "c{clientID}_payroll_nz_leavetypesmaster",
+        "primary_key": [
+          "LeaveTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "IsActive"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Reimbursements",
+      "description": "Employee reimbursement types and rates for expense claims and mileage",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/reimbursements",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "ModifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "reimbursementID",
+          "db_column": "ReimbursementID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for reimbursement type"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "accountID",
+          "db_column": "AccountID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currentRecord",
+          "db_column": "CurrentRecord",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "standardAmount",
+          "db_column": "StandardAmount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "standardTypeOfUnits",
+          "db_column": "StandardTypeOfUnits",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "standardRatePerUnit",
+          "db_column": "StandardRatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reimbursementCategory",
+          "db_column": "ReimbursementCategory",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "reimbursements",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_reimbursementsstage",
+        "prod_table": "c{clientID}_payroll_nz_reimbursements",
+        "primary_key": [
+          "ReimbursementID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "AccountID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Superannuations",
+      "description": "Superannuation benefit types including KiwiSaver and other retirement savings schemes",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/superannuations",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "ModifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for superannuation benefit"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "category",
+          "db_column": "Category",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "liabilityAccountId",
+          "db_column": "LiabilityAccountId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseAccountId",
+          "db_column": "ExpenseAccountId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "standardAmount",
+          "db_column": "StandardAmount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CalculationTypeNZ",
+          "db_column": "CalculationTypeNZ",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "companyMax",
+          "db_column": "CompanyMax",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currentRecord",
+          "db_column": "CurrentRecord",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "benefits",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_superannuationsstage",
+        "prod_table": "c{clientID}_payroll_nz_superannuations",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "Category"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+ {
+      "name": "PayRuns",
+      "description": "Payroll run records containing pay periods, dates, totals and processing status",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/payRuns",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "ModifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on last modified date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "payRunID",
+          "db_column": "PayRunID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for pay run"
+        },
+        {
+          "api_name": "payrollCalendarID",
+          "db_column": "PayrollCalendarID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "periodStartDate",
+          "db_column": "PeriodStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "periodEndDate",
+          "db_column": "PeriodEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paymentDate",
+          "db_column": "PaymentDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalCost",
+          "db_column": "TotalCost",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPay",
+          "db_column": "TotalPay",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payRunStatus",
+          "db_column": "PayRunStatus",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payRunType",
+          "db_column": "PayRunType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "calendarType",
+          "db_column": "CalendarType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postedDateTime",
+          "db_column": "PostedDateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "payRuns",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payrunsstage",
+        "prod_table": "c{clientID}_payroll_nz_payruns",
+        "primary_key": [
+          "PayRunID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PayrollCalendarID",
+          "PayRunStatus",
+          "PeriodStartDate"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlips",
+      "description": "Detailed employee pay slip information including earnings, deductions, taxes and payments",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/paySlips/{PayslipID}",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "PayslipID"
+          ],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "ModifiedAfter",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on last modified date"
+          }
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "PaySlipEarnLn",
+          "source_field": "earningsLines"
+        },
+        {
+          "table_name": "PaySlipLeaveEarnLn",
+          "source_field": "leaveEarningsLines"
+        },
+        {
+          "table_name": "PaySlipTimesheetEarnLn",
+          "source_field": "timesheetEarningsLines"
+        },
+        {
+          "table_name": "PaySlipDeductLn",
+          "source_field": "deductionLines"
+        },
+        {
+          "table_name": "PaySlipReimbLn",
+          "source_field": "reimbursementLines"
+        },
+        {
+          "table_name": "PaySlipAccrual",
+          "source_field": "leaveAccrualLines"
+        },
+        {
+          "table_name": "PaySlipSupern",
+          "source_field": "superannuationLines"
+        },
+        {
+          "table_name": "PaySlipPaymentLn",
+          "source_field": "paymentLines"
+        },
+        {
+          "table_name": "PaySlipEmpTaxLn",
+          "source_field": "employeeTaxLines"
+        },
+        {
+          "table_name": "PaySlipEmrTaxLn",
+          "source_field": "employerTaxLines"
+        },
+        {
+          "table_name": "PaySlipStatDeductLn",
+          "source_field": "statutoryDeductionLines"
+        }
+      ],
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for pay slip"
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payRunID",
+          "db_column": "PayRunID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "lastEdited",
+          "db_column": "LastEdited",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "firstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "lastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalEarnings",
+          "db_column": "TotalEarnings",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grossEarnings",
+          "db_column": "GrossEarnings",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPay",
+          "db_column": "TotalPay",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalEmployerTaxes",
+          "db_column": "TotalEmployerTaxes",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalEmployeeTaxes",
+          "db_column": "TotalEmployeeTaxes",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalDeductions",
+          "db_column": "TotalDeductions",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalReimbursements",
+          "db_column": "TotalReimbursements",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalStatutoryDeductions",
+          "db_column": "TotalStatutoryDeductions",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalSuperannuation",
+          "db_column": "TotalSuperannuation",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bacsHash",
+          "db_column": "BacsHash",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paymentMethod",
+          "db_column": "PaymentMethod",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "earningsLines",
+          "db_column": "earningsLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveEarningsLines",
+          "db_column": "leaveEarningsLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "timesheetEarningsLines",
+          "db_column": "timesheetEarningsLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deductionLines",
+          "db_column": "deductionLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reimbursementLines",
+          "db_column": "reimbursementLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveAccrualLines",
+          "db_column": "leaveAccrualLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superannuationLines",
+          "db_column": "superannuationLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paymentLines",
+          "db_column": "paymentLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employeeTaxLines",
+          "db_column": "employeeTaxLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employerTaxLines",
+          "db_column": "employerTaxLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "statutoryDeductionLines",
+          "db_column": "statutoryDeductionLines",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxSettings",
+          "db_column": "taxSettings",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grossEarningsHistory",
+          "db_column": "grossEarningsHistory",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "paySlip",
+        "is_array": false,
+        "nested_objects": [
+          "taxSettings",
+          "grossEarningsHistory"
+        ],
+        "array_fields": [
+          "earningsLines",
+          "leaveEarningsLines",
+          "timesheetEarningsLines",
+          "deductionLines",
+          "reimbursementLines",
+          "leaveAccrualLines",
+          "superannuationLines",
+          "paymentLines",
+          "employeeTaxLines",
+          "employerTaxLines",
+          "statutoryDeductionLines"
+        ],
+        "jsonb_fields": [
+          "earningsLines",
+          "leaveEarningsLines",
+          "timesheetEarningsLines",
+          "deductionLines",
+          "reimbursementLines",
+          "leaveAccrualLines",
+          "superannuationLines",
+          "paymentLines",
+          "employeeTaxLines",
+          "employerTaxLines",
+          "statutoryDeductionLines",
+          "taxSettings",
+          "grossEarningsHistory"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipsstage",
+        "prod_table": "c{clientID}_payroll_nz_payslips",
+        "primary_key": [
+          "PaySlipID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "PayRunID",
+          "LastEdited"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Timesheets",
+      "description": "Employee timesheets containing hours worked within specific date ranges linked to payroll calendars",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/timesheets",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "updatedDateUTC",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "timesheetID",
+          "db_column": "TimesheetID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the timesheet"
+        },
+        {
+          "api_name": "payrollCalendarID",
+          "db_column": "PayrollCalendarID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the payroll calendar"
+        },
+        {
+          "api_name": "employeeID",
+          "db_column": "EmployeeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the employee"
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Start date of the timesheet period"
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "End date of the timesheet period"
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Status of the timesheet (Draft, Completed, Approved)"
+        },
+        {
+          "api_name": "totalHours",
+          "db_column": "TotalHours",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Total hours recorded in the timesheet"
+        },
+        {
+          "api_name": "updatedDateUTC",
+          "db_column": "UpdatedDateUTC",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Last updated timestamp in UTC"
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "timesheets",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_timesheetsstage",
+        "prod_table": "c{clientID}_payroll_nz_timesheets",
+        "primary_key": [
+          "TimesheetID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeID",
+          "PayrollCalendarID",
+          "Status"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipEarnLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip earnings line items with detailed earnings breakdown",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "earningsLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipearnlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipearnln",
+        "primary_key": [
+          "PaySlipID",
+          "EarningsRateID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipDeductLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip deduction line items with detailed deduction breakdown",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "deductionTypeID",
+          "db_column": "DeductionTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "deductionLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipdeductlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipdeductln",
+        "primary_key": [
+          "PaySlipID",
+          "DeductionTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipSupern",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip superannuation line items with KiwiSaver and other benefit details",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "superannuationID",
+          "db_column": "SuperannuationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "calculationType",
+          "db_column": "CalculationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "percentage",
+          "db_column": "Percentage",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "superannuationLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipsupernstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipsupern",
+        "primary_key": [
+          "PaySlipID",
+          "SuperannuationID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipLeaveEarnLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip leave earnings line items with leave pay details",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leaveEarningsLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipleaveearnlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipleaveearnln",
+        "primary_key": [
+          "PaySlipID",
+          "EarningsRateID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipTimesheetEarnLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip timesheet earnings line items with timesheet-based pay details",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "earningsRateID",
+          "db_column": "EarningsRateID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ratePerUnit",
+          "db_column": "RatePerUnit",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "timesheetEarningsLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_paysliptimesheetearnlnstage",
+        "prod_table": "c{clientID}_payroll_nz_paysliptimesheetearnln",
+        "primary_key": [
+          "PaySlipID",
+          "EarningsRateID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipReimbLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip reimbursement line items with expense reimbursement details",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "reimbursementTypeID",
+          "db_column": "ReimbursementTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "reimbursementLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipreimblnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipreimbln",
+        "primary_key": [
+          "PaySlipID",
+          "ReimbursementTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipAccrual",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip leave accrual line items with leave balance adjustments",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "leaveTypeID",
+          "db_column": "LeaveTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "numberOfUnits",
+          "db_column": "NumberOfUnits",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "autoCalculate",
+          "db_column": "AutoCalculate",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "leaveAccrualLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipaccrualstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipaccrual",
+        "primary_key": [
+          "PaySlipID",
+          "LeaveTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipPaymentLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip payment line items with payment method and account details",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "paymentMethod",
+          "db_column": "PaymentMethod",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "accountNumber",
+          "db_column": "AccountNumber",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "accountName",
+          "db_column": "AccountName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "paymentLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslippaymentlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslippaymentln",
+        "primary_key": [
+          "PaySlipID",
+          "PaymentMethod",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipEmpTaxLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip employee tax line items with tax calculations for employees",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "taxLineID",
+          "db_column": "TaxLineID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "globalTaxTypeID",
+          "db_column": "GlobalTaxTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "employeeTaxLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipemptaxlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipemptaxln",
+        "primary_key": [
+          "PaySlipID",
+          "TaxLineID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipEmrTaxLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip employer tax line items with tax calculations for employers",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "taxLineID",
+          "db_column": "TaxLineID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "globalTaxTypeID",
+          "db_column": "GlobalTaxTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "employerTaxLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipemrtaxlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipemrtaxln",
+        "primary_key": [
+          "PaySlipID",
+          "TaxLineID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PaySlipStatDeductLn",
+      "is_virtual_endpoint": true,
+      "description": "PaySlip statutory deduction line items with government mandated deductions",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "paySlipID",
+          "db_column": "PaySlipID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "deductionTypeID",
+          "db_column": "DeductionTypeID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "liabilityAmount",
+          "db_column": "LiabilityAmount",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "statutoryDeductionLines",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_payslipstatdeductlnstage",
+        "prod_table": "c{clientID}_payroll_nz_payslipstatdeductln",
+        "primary_key": [
+          "PaySlipID",
+          "DeductionTypeID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PaySlipID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+     {
+      "name": "Settings",
+      "description": "Payroll settings including configured accounts for various payroll categories",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/Settings",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [
+        {
+          "table_name": "SettingsAccounts",
+          "source_field": "accounts"
+        }
+      ],
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for settings response"
+        },
+        {
+          "api_name": "accounts",
+          "db_column": "Accounts",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Array of account configurations with accountID, type, code, and name"
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "settings",
+        "is_array": false,
+        "nested_objects": [
+          "accounts"
+        ],
+        "array_fields": [
+          "accounts"
+        ],
+        "jsonb_fields": [
+          "accounts"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_settingsstage",
+        "prod_table": "c{clientID}_payroll_nz_settings",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "StatutoryDeductions",
+      "description": "Statutory deduction types configured for payroll including child support, student loans, KiwiSaver, and other mandatory deductions",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/statutoryDeductions",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "page",
+            "pageSize"
+          ],
+          "incremental_sync": null
+        }
+      },
+      "nested_extractions": [],
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the statutory deduction"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Display name of the statutory deduction"
+        },
+        {
+          "api_name": "liabilityAccountId",
+          "db_column": "LiabilityAccountId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Account ID for the liability account"
+        },
+        {
+          "api_name": "statutoryDeductionCategory",
+          "db_column": "StatutoryDeductionCategory",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Category of statutory deduction (ChildSupport, StudentLoan, etc.)"
+        },
+        {
+          "api_name": "currentRecord",
+          "db_column": "CurrentRecord",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if this is the current active record"
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "statutoryDeductions",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_statutorydeductionsstage",
+        "prod_table": "c{clientID}_payroll_nz_statutorydeductions",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "StatutoryDeductionCategory",
+          "CurrentRecord"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "SettingsAccounts",
+      "is_virtual_endpoint": true,
+      "description": "Payroll settings account configurations with account details and types",
+      "category": "relationships",
+      "priority": "medium",
+      "fields": [
+        {
+          "api_name": "settingsId",
+          "db_column": "SettingsId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "accountID",
+          "db_column": "AccountID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "type",
+          "db_column": "Type",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "accounts",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_payroll_nz_settingsaccountsstage",
+        "prod_table": "c{clientID}_payroll_nz_settingsaccounts",
+        "primary_key": [
+          "SettingsId",
+          "AccountID",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "SettingsId"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    }
+  ],
+  "metadata": {
+    "foreign_key_pattern": "ID"
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "integration_name": "xeroproject",
+  "auth_type": "xero_oauth2",
+  "auth_config": {
+    "token_source": "authorization_code_refresh",
+    "client_id_env_var": "XERO_CLIENT_ID",
+    "client_secret_env_var": "XERO_CLIENT_SECRET",
+    "token_url": "https://identity.xero.com/connect/token",
+    "authorization_url": "https://login.xero.com/identity/connect/authorize",
+    "access_token_expiry": 1800,
+    "refresh_token_expiry": 5184000,
+    "grant_type": "authorization_code",
+    "redirect_uri": "https://etani.com/oauth/callback",
+    "scopes": [
+      "projects",
+      "offline_access"
+    ],
+    "additional_params": {
+      "response_type": "code"
+    },
+    "custom_headers": {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "XERO_CLIENT_ID",
+    "XERO_CLIENT_SECRET",
+    "XERO_TENANT_ID"
+  ],
+  "env_var_validations": {
+    "EtaniClientID": "lambda x: 'CLIENT' in x",
+    "XERO_CLIENT_ID": "lambda x: len(x) == 32 and x.isalnum()",
+    "XERO_CLIENT_SECRET": "lambda x: len(x) > 30",
+    "XERO_REFRESH_TOKEN": "lambda x: len(x) >= 40 if x else True",
+    "XERO_ACCESS_TOKEN": "lambda x: len(x) >= 100 if x else True",
+    "XeroTenantID": "lambda x: len(x) == 36 and '-' in x",
+    "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
+  },
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "default_value": ""
+    },
+    "xero_client_id": {
+      "env_var": "XERO_CLIENT_ID",
+      "default_value": "",
+      "source": "AWS Secrets Manager (etani/xero/oauth-app)"
+    },
+    "xero_client_secret": {
+      "env_var": "XERO_CLIENT_SECRET",
+      "default_value": "",
+      "source": "AWS Secrets Manager (etani/xero/oauth-app)"
+    },
+    "xero_access_token": {
+      "env_var": "XERO_ACCESS_TOKEN",
+      "default_value": ""
+    },
+    "xero_refresh_token": {
+      "env_var": "XERO_REFRESH_TOKEN",
+      "default_value": ""
+    },
+    "xero_tenant_id": {
+      "env_var": "XERO_TENANT_ID",
+      "default_value": ""
+    },
+    "db_destination": {
+      "env_var": "DB_Destination",
+      "default_value": ""
+    },
+    "trigger_type": {
+      "env_var": "TRIGGER_TYPE",
+      "default_value": ""
+    },
+    "reset_mode": {
+      "env_var": "Reset_Mode",
+      "default_value": ""
+    }
+  },
+  "exclude_fields": [
+    "LastModifiedDateTime",
+    "CreatedDateTime",
+    "UpdatedDateTime",
+    "ModifiedDate",
+    "CreatedDate",
+    "Links",
+    "Href",
+    "ValidationErrors",
+    "HasValidationErrors",
+    "Warnings",
+    "Status",
+    "Meta",
+    "Pagination",
+    "_links",
+    "_embedded"
+  ],
+  "exclude_endpoints": [
+    "SystemInfo",
+    "UserPreferences",
+    "ActivityLogs",
+    "AuditTrail",
+    "Files",
+    "Documents",
+    "Attachments",
+    "Debug",
+    "Health"
+  ],
+  "additional_fields": {
+    "LoadDate": {
+      "data_type": "datetime",
+      "required": true,
+      "default_value": "CURRENT_TIMESTAMP",
+      "description": "Record load timestamp"
+    },
+    "ProcessedDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Processing completion timestamp"
+    },
+    "LastSyncDate": {
+      "data_type": "datetime",
+      "required": false,
+      "description": "Last synchronization timestamp for incremental loads"
+    }
+  },
+  "query_config": {
+    "type": "rest_pagination",
+    "supports_filter": true,
+    "supports_expand": false,
+    "supports_select": false,
+    "date_filter_format": "yyyy-MM-ddTHH:mm:ss.SSS+00:00",
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "daily_limit": 5000,
+      "concurrent_limit": 5,
+      "retry_after_seconds": 60
+    },
+    "custom_fields": {
+      "page": {
+        "default_value": 1,
+        "required": false,
+        "description": "Page number for pagination"
+      },
+      "pageSize": {
+        "default_value": 100,
+        "max_value": 100,
+        "required": false,
+        "description": "Number of records per page"
+      }
+    }
+  },
+  "field_transformations": {
+    "UUID_fields": {
+      "type": "uuid_validation",
+      "description": "Validate and standardize UUID fields"
+    },
+    "datetime_fields": {
+      "type": "datetime_standardization",
+      "format": "YYYY-MM-DDTHH:mm:ss.SSS+00:00",
+      "description": "Standardize datetime format across all endpoints"
+    },
+    "decimal_fields": {
+      "type": "decimal_precision",
+      "precision": 18,
+      "scale": 2,
+      "description": "Standardize decimal precision for financial amounts"
+    }
+  },
+  "endpoint_priorities": {
+    "high": [
+      "Projects",
+      "ProjectUsers",
+      "Time"
+    ],
+    "medium": [
+      "Tasks",
+      "Costs"
+    ],
+    "low": [
+      "Categories"
+    ]
+  },
+  "incremental_endpoints": [
+    "Projects",
+    "Time",
+    "Tasks"
+  ],
+  "error_handling": {
+    "max_retries": 3,
+    "retry_delay_seconds": 5,
+    "exponential_backoff": true,
+    "ignore_ssl_errors": false,
+    "timeout_seconds": 30
+  },
+  "data_validation": {
+    "required_fields_validation": true,
+    "data_type_validation": true,
+    "null_value_handling": "skip_record",
+    "duplicate_key_handling": "update_existing"
+  },
+  "performance": {
+    "batch_size": 100,
+    "parallel_requests": false,
+    "connection_pooling": true,
+    "request_timeout": 30,
+    "max_records_per_endpoint": null
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_api_calls": true,
+    "log_response_size": true,
+    "log_processing_time": true,
+    "sensitive_fields_to_mask": [
+      "access_token",
+      "refresh_token",
+      "client_secret",
+      "password"
+    ]
+  }
+}

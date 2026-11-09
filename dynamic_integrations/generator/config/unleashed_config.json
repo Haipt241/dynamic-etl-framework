@@ -1,0 +1,78 @@
+{
+  "integration_name": "unleashed",
+  "base_url": "https://api.unleashedsoftware.com",
+  "auth_type": "unleashed_hmac_signature",
+  "auth_config": {
+    "type": "unleashed_hmac_signature",
+    "description": "Unleashed API authentication using HMAC-SHA256 signature of query parameters",
+    "required_headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "api-auth-id": "{api_id}",
+      "api-auth-signature": "{hmac_signature}",
+      "client-type": "{client_identifier}"
+    },
+    "signature_generation": {
+      "method": "HMAC-SHA256",
+      "input_source": "query_parameters_only",
+      "encoding": "UTF-8",
+      "output_format": "base64",
+      "secret_key_source": "api_private_key",
+      "description": "Generate HMAC-SHA256 hash of query string parameters using API private key"
+    },
+    "credentials_mapping": {
+      "api_id": "UNLEASHED_API_ID",
+      "api_private_key": "UNLEASHED_API_PRIVATE_KEY",
+      "client_identifier": "UNLEASHED_CLIENT_TYPE"
+    }
+  },
+  "required_env_vars": [
+    "EtaniClientID",
+    "EtaniOrganisationID",
+    "UNLEASHED_API_ID",
+    "UNLEASHED_API_PRIVATE_KEY",
+    "UNLEASHED_CLIENT_TYPE"
+  ],
+  "env_vars_config": {
+    "etani_client_id": {
+      "env_var": "EtaniClientID",
+      "description": "Etani Client ID for tracking",
+      "default_value": ""
+    },
+    "etani_organisation_id": {
+      "env_var": "EtaniOrganisationID",
+      "description": "Etani Organisation ID",
+      "default_value": ""
+    },
+    "unleashed_api_id": {
+      "env_var": "UNLEASHED_API_ID",
+      "description": "Unleashed API identifier for authentication",
+      "default_value": ""
+    },
+    "unleashed_api_private_key": {
+      "env_var": "UNLEASHED_API_PRIVATE_KEY",
+      "description": "Unleashed API private key for HMAC signature generation",
+      "default_value": ""
+    },
+    "unleashed_client_type": {
+      "env_var": "UNLEASHED_CLIENT_TYPE",
+      "description": "Client type identifier for tracking (format: partner_name/app_name)",
+      "default_value": ""
+    }
+  },
+  "data_extraction": {
+    "response_format": "standard",
+    "root_data_field": "Items",
+    "extract_nested": false
+  },
+  "error_handling": {
+    "retry_attempts": 3,
+    "retry_delay": 1,
+    "timeout": 30
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_api_responses": false,
+    "log_auth_headers": false
+  }
+}
