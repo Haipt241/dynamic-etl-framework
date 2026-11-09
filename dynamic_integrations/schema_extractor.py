@@ -1451,7 +1451,7 @@ class SchemaExtractor:
         """
 
         # Account for the prefix pattern: c{clientID}_{orgID}_ + name + stage
-        # Real example: REDACTED_2024_ = ~30 chars
+        # Real example: ADVISEACCOUNTANTS_CLIENT2024_2024_ = ~30 chars
         # Plus "stage" suffix = ~35 chars total fixed part
         # Leave reasonable space for table name
         available_length = max_length - 35  # More realistic estimate

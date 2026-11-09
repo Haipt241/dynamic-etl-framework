@@ -16,7 +16,7 @@
   ],
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
-    "TIDYWORK_API_KEY": "lambda x: len(x) > 20 if x else True",
+    "TIDYWORK_API_KEY": "",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
   "env_vars_config": {
@@ -46,7 +46,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

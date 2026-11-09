@@ -46,7 +46,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "error_handling": {

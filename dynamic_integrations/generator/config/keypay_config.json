@@ -5,7 +5,7 @@
     "base_url": "https://api.yourpayroll.com.au/api/v2/",
     "custom_headers": {
       "Content-Type": "application/json",
-      "Authorization": "Basic {api_key_base64}",
+      "Authorization": "",
       "Accept": "application/json"
     },
     "encoding": "base64",
@@ -51,7 +51,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "api_config": {

@@ -17,9 +17,9 @@
   ],
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
-    "SIMPRO_API_KEY": "lambda x: len(x) > 10",
+    "SIMPRO_API_KEY": "",
     "SIMPRO_CLIENT_ID": "lambda x: len(x) > 5",
-    "SIMPRO_UPG_API_KEY": "lambda x: len(x) > 10",
+    "SIMPRO_UPG_API_KEY": "",
     "SIMPRO_UPG_CLIENT_ID": "lambda x: len(x) > 5",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
@@ -66,7 +66,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

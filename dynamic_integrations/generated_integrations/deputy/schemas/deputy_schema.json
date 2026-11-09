@@ -19,9 +19,9 @@
         "longlife_refresh_token"
       ],
       "client_id": "{{deputy_client_id}}",
-      "client_secret": "{{deputy_client_secret}}",
-      "access_token": "{{deputy_access_token}}",
-      "refresh_token": "{{deputy_refresh_token}}",
+      "client_secret": "",
+      "access_token": "",
+      "refresh_token": "",
       "additional_params": {
         "response_type": "code",
         "scope": "longlife_refresh_token"
@@ -54,7 +54,7 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": "OAuth {{deputy_access_token}}",
+      "Authorization": "",
       "User-Agent": "Etani-Deputy-Integration/1.0"
     },
     "query_config": {
@@ -97,7 +97,12 @@
     },
     "subdomain_config": {
       "pattern": "{customer_name}.{geo}.deputy.com",
-      "geo_regions": ["au", "us", "uk", "ca"],
+      "geo_regions": [
+        "au",
+        "us",
+        "uk",
+        "ca"
+      ],
       "example": "simonssambos.au.deputy.com"
     },
     "authentication_notes": {
@@ -107,19 +112,21 @@
       "validation_endpoint": "/v1/me"
     }
   },
- "endpoints": [
-{
-    "name": "Address",
-    "description": "Deputy address records that can be linked to employees and other entities. Reusable address entities that must be created independently before assignment.",
-    "category": "master_data",
-    "priority": "medium",
-    "api_details": {
-      "path": "/v1/resource/Address/QUERY",
-      "method": "POST",
+  "endpoints": [
+    {
+      "name": "Address",
+      "description": "Deputy address records that can be linked to employees and other entities. Reusable address entities that must be created independently before assignment.",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/v1/resource/Address/QUERY",
+        "method": "POST",
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -129,41 +136,186 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "ContactName", "db_column": "ContactName", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "UnitNo", "db_column": "UnitNo", "data_type": "VARCHAR(100)", "nullable": true, "is_primary_key": false},
-        {"api_name": "StreetNo", "db_column": "StreetNo", "data_type": "VARCHAR(100)", "nullable": true, "is_primary_key": false},
-        {"api_name": "SuiteNo", "db_column": "SuiteNo", "data_type": "VARCHAR(100)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PoBox", "db_column": "PoBox", "data_type": "VARCHAR(100)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Street1", "db_column": "Street1", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Street2", "db_column": "Street2", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "City", "db_column": "City", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "State", "db_column": "State", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Postcode", "db_column": "Postcode", "data_type": "VARCHAR(20)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Country", "db_column": "CountryId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone", "db_column": "Phone", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Saved", "db_column": "Saved", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Notes", "db_column": "Notes", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ContactName",
+          "db_column": "ContactName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UnitNo",
+          "db_column": "UnitNo",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StreetNo",
+          "db_column": "StreetNo",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SuiteNo",
+          "db_column": "SuiteNo",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PoBox",
+          "db_column": "PoBox",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Street1",
+          "db_column": "Street1",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Street2",
+          "db_column": "Street2",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "City",
+          "db_column": "City",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "State",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Postcode",
+          "db_column": "Postcode",
+          "data_type": "VARCHAR(20)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Country",
+          "db_column": "CountryId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone",
+          "db_column": "Phone",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Saved",
+          "db_column": "Saved",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_addressstage",
         "prod_table": "c{clientID}_deputy_address",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "ContactName", "City", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ContactName",
+          "City",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "Category",
@@ -176,7 +328,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -186,31 +340,114 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Category", "db_column": "Category", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Group", "db_column": "Group", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "sortOrder", "db_column": "SortOrder", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Stafflog", "db_column": "Stafflog", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Category",
+          "db_column": "Category",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Group",
+          "db_column": "Group",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sortOrder",
+          "db_column": "SortOrder",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Stafflog",
+          "db_column": "Stafflog",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_categorystage",
         "prod_table": "c{clientID}_deputy_category",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Category", "SortOrder"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Category",
+          "SortOrder"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "Comment",
@@ -223,7 +460,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -233,31 +472,116 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "orm", "db_column": "Orm", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "RecId", "db_column": "RecId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "InFeed", "db_column": "InFeed", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Comment", "db_column": "Comment", "data_type": "TEXT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "orm",
+          "db_column": "Orm",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecId",
+          "db_column": "RecId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InFeed",
+          "db_column": "InFeed",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Comment",
+          "db_column": "Comment",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_commentstage",
         "prod_table": "c{clientID}_deputy_comment",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Orm", "RecId", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Orm",
+          "RecId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "CompanyPeriod",
@@ -270,7 +594,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -280,33 +606,130 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "DateStart", "db_column": "DateStart", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Start", "db_column": "Start", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "End", "db_column": "End", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "DateEnd", "db_column": "DateEnd", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Company", "db_column": "CompanyId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayPeriod", "db_column": "PayPeriodId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "DateStart",
+          "db_column": "DateStart",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Start",
+          "db_column": "Start",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "End",
+          "db_column": "End",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateEnd",
+          "db_column": "DateEnd",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Company",
+          "db_column": "CompanyId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPeriod",
+          "db_column": "PayPeriodId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_companyperiodstage",
         "prod_table": "c{clientID}_deputy_companyperiod",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "CompanyId", "PayPeriodId", "DateStart", "DateEnd"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CompanyId",
+          "PayPeriodId",
+          "DateStart",
+          "DateEnd"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "Contact",
@@ -319,7 +742,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -329,46 +754,221 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Phone1", "db_column": "Phone1", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone2", "db_column": "Phone2", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone3", "db_column": "Phone3", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone1Type", "db_column": "Phone1Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone2Type", "db_column": "Phone2Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Phone3Type", "db_column": "Phone3Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PrimaryPhone", "db_column": "PrimaryPhone", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Email1", "db_column": "Email1", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Email2", "db_column": "Email2", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PrimaryEmail", "db_column": "PrimaryEmail", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Email1Type", "db_column": "Email1Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Email2Type", "db_column": "Email2Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Im1", "db_column": "Im1", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Im2", "db_column": "Im2", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Im1Type", "db_column": "Im1Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Im2Type", "db_column": "Im2Type", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Web", "db_column": "Web", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Notes", "db_column": "Notes", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Saved", "db_column": "Saved", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Phone1",
+          "db_column": "Phone1",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone2",
+          "db_column": "Phone2",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone3",
+          "db_column": "Phone3",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone1Type",
+          "db_column": "Phone1Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone2Type",
+          "db_column": "Phone2Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Phone3Type",
+          "db_column": "Phone3Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PrimaryPhone",
+          "db_column": "PrimaryPhone",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Email1",
+          "db_column": "Email1",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Email2",
+          "db_column": "Email2",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PrimaryEmail",
+          "db_column": "PrimaryEmail",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Email1Type",
+          "db_column": "Email1Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Email2Type",
+          "db_column": "Email2Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Im1",
+          "db_column": "Im1",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Im2",
+          "db_column": "Im2",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Im1Type",
+          "db_column": "Im1Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Im2Type",
+          "db_column": "Im2Type",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Web",
+          "db_column": "Web",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Saved",
+          "db_column": "Saved",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_contactstage",
         "prod_table": "c{clientID}_deputy_contact",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Email1", "Phone1", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Email1",
+          "Phone1",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "Country",
@@ -381,7 +981,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -391,37 +993,146 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Code", "db_column": "Code", "data_type": "CHAR(2)", "nullable": false, "is_primary_key": false},
-        {"api_name": "CodeA3", "db_column": "CodeA3", "data_type": "CHAR(3)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Region", "db_column": "Region", "data_type": "CHAR(2)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "SortOrder", "db_column": "SortOrder", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Country", "db_column": "CountryName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "ZipValidatePreg", "db_column": "ZipValidatePreg", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PhoneDisplayPreg", "db_column": "PhoneDisplayPreg", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Code",
+          "db_column": "Code",
+          "data_type": "CHAR(2)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CodeA3",
+          "db_column": "CodeA3",
+          "data_type": "CHAR(3)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Region",
+          "db_column": "Region",
+          "data_type": "CHAR(2)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SortOrder",
+          "db_column": "SortOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Country",
+          "db_column": "CountryName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ZipValidatePreg",
+          "db_column": "ZipValidatePreg",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PhoneDisplayPreg",
+          "db_column": "PhoneDisplayPreg",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_countrystage",
         "prod_table": "c{clientID}_deputy_country",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Code", "CodeA3", "Region", "Active"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "CodeA3",
+          "Region",
+          "Active"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
-      {
+    {
       "name": "CustomAppData",
       "description": "Deputy custom application data storage. Stores data for custom applications linked to various entities in Deputy install.",
       "category": "custom_data",
@@ -432,7 +1143,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"documentId": "asc"},
+            "sort": {
+              "documentId": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -442,35 +1155,145 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "documentId", "db_column": "DocumentId", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": true},
-        {"api_name": "data", "db_column": "Data", "data_type": "TEXT", "nullable": false, "is_primary_key": false},
-        {"api_name": "keyInt", "db_column": "KeyInt", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "keyString", "db_column": "KeyString", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "label", "db_column": "Label", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "operationalUnit", "db_column": "OperationalUnitId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "employee", "db_column": "EmployeeId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "permission", "db_column": "Permission", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "deleted", "db_column": "Deleted", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "documentId",
+          "db_column": "DocumentId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "data",
+          "db_column": "Data",
+          "data_type": "TEXT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "keyInt",
+          "db_column": "KeyInt",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "keyString",
+          "db_column": "KeyString",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "operationalUnit",
+          "db_column": "OperationalUnitId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employee",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "permission",
+          "db_column": "Permission",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "deleted",
+          "db_column": "Deleted",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_customappdatastage",
         "prod_table": "c{clientID}_deputy_customappdata",
-        "primary_key": ["DocumentId", "OrganisationID"],
-        "indexes": ["OrganisationID", "KeyString", "KeyInt", "EmployeeId", "Created", "Modified"]
+        "primary_key": [
+          "DocumentId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "KeyString",
+          "KeyInt",
+          "EmployeeId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "CustomField",
@@ -483,7 +1306,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -493,38 +1318,165 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "System", "db_column": "System", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Name", "db_column": "Name", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "ApiName", "db_column": "ApiName", "data_type": "VARCHAR(64)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Type", "db_column": "Type", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "DeputyField", "db_column": "DeputyField", "data_type": "VARCHAR(10)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Valuelist", "db_column": "Valuelist", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Published", "db_column": "Published", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Validation", "db_column": "Validation", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "ConditionalRules", "db_column": "ConditionalRules", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "DisplayTiming", "db_column": "DisplayTiming", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Action", "db_column": "Action", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "System",
+          "db_column": "System",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ApiName",
+          "db_column": "ApiName",
+          "data_type": "VARCHAR(64)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DeputyField",
+          "db_column": "DeputyField",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Valuelist",
+          "db_column": "Valuelist",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Published",
+          "db_column": "Published",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Validation",
+          "db_column": "Validation",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ConditionalRules",
+          "db_column": "ConditionalRules",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DisplayTiming",
+          "db_column": "DisplayTiming",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Action",
+          "db_column": "Action",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_customfieldstage",
         "prod_table": "c{clientID}_deputy_customfield",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "System", "ApiName", "Type", "Published"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "System",
+          "ApiName",
+          "Type",
+          "Published"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "CustomFieldData",
@@ -537,7 +1489,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"system": "asc"},
+            "sort": {
+              "system": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -547,39 +1501,159 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "system", "db_column": "System", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": true},
-        {"api_name": "f01", "db_column": "F01", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f02", "db_column": "F02", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f03", "db_column": "F03", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f04", "db_column": "F04", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f05", "db_column": "F05", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f06", "db_column": "F06", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f07", "db_column": "F07", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f08", "db_column": "F08", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f09", "db_column": "F09", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "f10", "db_column": "F10", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "system",
+          "db_column": "System",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "f01",
+          "db_column": "F01",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f02",
+          "db_column": "F02",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f03",
+          "db_column": "F03",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f04",
+          "db_column": "F04",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f05",
+          "db_column": "F05",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f06",
+          "db_column": "F06",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f07",
+          "db_column": "F07",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f08",
+          "db_column": "F08",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f09",
+          "db_column": "F09",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "f10",
+          "db_column": "F10",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_customfielddatastage",
         "prod_table": "c{clientID}_deputy_customfielddata",
-        "primary_key": ["System", "OrganisationID"],
-        "indexes": ["OrganisationID", "System", "Created", "Modified"]
+        "primary_key": [
+          "System",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "System",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
-     {
+    {
       "name": "Company",
       "description": "Deputy company locations where employees work. Represents physical or conceptual locations for work assignments (referred to as 'Location' in Deputy UI).",
       "category": "master_data",
@@ -590,7 +1664,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -600,38 +1676,167 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Code", "db_column": "Code", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "ParentCompany", "db_column": "ParentCompanyId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "CompanyName", "db_column": "CompanyName", "data_type": "VARCHAR(500)", "nullable": false, "is_primary_key": false},
-        {"api_name": "CompanyNumber", "db_column": "CompanyNumber", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "TradingName", "db_column": "TradingName", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "IsWorkplace", "db_column": "IsWorkplace", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "IsPayrollEntity", "db_column": "IsPayrollEntity", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayrollExportCode", "db_column": "PayrollExportCode", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Address", "db_column": "AddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Contact", "db_column": "ContactId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ParentCompany",
+          "db_column": "ParentCompanyId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompanyName",
+          "db_column": "CompanyName",
+          "data_type": "VARCHAR(500)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompanyNumber",
+          "db_column": "CompanyNumber",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TradingName",
+          "db_column": "TradingName",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsWorkplace",
+          "db_column": "IsWorkplace",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsPayrollEntity",
+          "db_column": "IsPayrollEntity",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayrollExportCode",
+          "db_column": "PayrollExportCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Address",
+          "db_column": "AddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Contact",
+          "db_column": "ContactId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_companystage",
         "prod_table": "c{clientID}_deputy_company",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Code", "CompanyName", "ParentCompanyId", "Active", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "CompanyName",
+          "ParentCompanyId",
+          "Active",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "Employee",
@@ -644,7 +1849,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -654,51 +1861,260 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Company", "db_column": "CompanyId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "FirstName", "db_column": "FirstName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "LastName", "db_column": "LastName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "DisplayName", "db_column": "DisplayName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OtherName", "db_column": "OtherName", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Saluation", "db_column": "Saluation", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "Role", "db_column": "RoleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "DateOfBirth", "db_column": "DateOfBirth", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "Gender", "db_column": "Gender", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Pronouns", "db_column": "Pronouns", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "CustomPronouns", "db_column": "CustomPronouns", "data_type": "VARCHAR(100)", "nullable": true, "is_primary_key": false},
-        {"api_name": "StartDate", "db_column": "StartDate", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "TerminationDate", "db_column": "TerminationDate", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "AllowAppraisal", "db_column": "AllowAppraisal", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "MainAddress", "db_column": "MainAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PostalAddress", "db_column": "PostalAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "EmergencyAddress", "db_column": "EmergencyAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Contact", "db_column": "ContactId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Photo", "db_column": "PhotoId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "User", "db_column": "UserId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "StressProfile", "db_column": "StressProfileId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "TrainingRecords", "db_column": "TrainingRecordsId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "HistoryId", "db_column": "HistoryId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Company",
+          "db_column": "CompanyId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FirstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DisplayName",
+          "db_column": "DisplayName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OtherName",
+          "db_column": "OtherName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Saluation",
+          "db_column": "Saluation",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Role",
+          "db_column": "RoleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateOfBirth",
+          "db_column": "DateOfBirth",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Gender",
+          "db_column": "Gender",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Pronouns",
+          "db_column": "Pronouns",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CustomPronouns",
+          "db_column": "CustomPronouns",
+          "data_type": "VARCHAR(100)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TerminationDate",
+          "db_column": "TerminationDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AllowAppraisal",
+          "db_column": "AllowAppraisal",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MainAddress",
+          "db_column": "MainAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PostalAddress",
+          "db_column": "PostalAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmergencyAddress",
+          "db_column": "EmergencyAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Contact",
+          "db_column": "ContactId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Photo",
+          "db_column": "PhotoId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "User",
+          "db_column": "UserId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StressProfile",
+          "db_column": "StressProfileId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TrainingRecords",
+          "db_column": "TrainingRecordsId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HistoryId",
+          "db_column": "HistoryId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeestage",
         "prod_table": "c{clientID}_deputy_employee",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "CompanyId", "FirstName", "LastName", "Active", "RoleId", "StartDate", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CompanyId",
+          "FirstName",
+          "LastName",
+          "Active",
+          "RoleId",
+          "StartDate",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "PayRules",
@@ -711,7 +2127,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -721,50 +2139,251 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "RemunerationType", "db_column": "RemunerationType", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "RemunerationBy", "db_column": "RemunerationBy", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayTitle", "db_column": "PayTitle", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "IsExported", "db_column": "IsExported", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "AnnualSalary", "db_column": "AnnualSalary", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "HourlyRate", "db_column": "HourlyRate", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "IsMultiplier", "db_column": "IsMultiplier", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "MultiplierValue", "db_column": "MultiplierValue", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MultiplierBaseRate", "db_column": "MultiplierBaseRateId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "UnitValue", "db_column": "UnitValue", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MinimumType", "db_column": "MinimumType", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "MaximumType", "db_column": "MaximumType", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "MinimumValue", "db_column": "MinimumValue", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MaximumValue", "db_column": "MaximumValue", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MinimumShiftLength", "db_column": "MinimumShiftLength", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MaximumShiftLength", "db_column": "MaximumShiftLength", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Schedule", "db_column": "Schedule", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "RecommendWith", "db_column": "RecommendWith", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "DexmlScript", "db_column": "DexmlScriptId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "DexmlScriptParam", "db_column": "DexmlScriptParam", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayPortionRule", "db_column": "PayPortionRule", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayrollCategory", "db_column": "PayrollCategory", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "RateType", "db_column": "RateType", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "RemunerationType",
+          "db_column": "RemunerationType",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RemunerationBy",
+          "db_column": "RemunerationBy",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayTitle",
+          "db_column": "PayTitle",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsExported",
+          "db_column": "IsExported",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AnnualSalary",
+          "db_column": "AnnualSalary",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HourlyRate",
+          "db_column": "HourlyRate",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsMultiplier",
+          "db_column": "IsMultiplier",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MultiplierValue",
+          "db_column": "MultiplierValue",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MultiplierBaseRate",
+          "db_column": "MultiplierBaseRateId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UnitValue",
+          "db_column": "UnitValue",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MinimumType",
+          "db_column": "MinimumType",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaximumType",
+          "db_column": "MaximumType",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MinimumValue",
+          "db_column": "MinimumValue",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaximumValue",
+          "db_column": "MaximumValue",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MinimumShiftLength",
+          "db_column": "MinimumShiftLength",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaximumShiftLength",
+          "db_column": "MaximumShiftLength",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Schedule",
+          "db_column": "Schedule",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecommendWith",
+          "db_column": "RecommendWith",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DexmlScript",
+          "db_column": "DexmlScriptId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DexmlScriptParam",
+          "db_column": "DexmlScriptParam",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPortionRule",
+          "db_column": "PayPortionRule",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayrollCategory",
+          "db_column": "PayrollCategory",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RateType",
+          "db_column": "RateType",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_payrulesstage",
         "prod_table": "c{clientID}_deputy_payrules",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "PayTitle", "RemunerationType", "RemunerationBy", "IsExported", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PayTitle",
+          "RemunerationType",
+          "RemunerationBy",
+          "IsExported",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "TimesheetPayReturn",
@@ -777,7 +2396,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -787,33 +2408,131 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Timesheet", "db_column": "TimesheetId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayRule", "db_column": "PayRuleId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Overridden", "db_column": "Overridden", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Value", "db_column": "Value", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Cost", "db_column": "Cost", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "OverrideComment", "db_column": "OverrideComment", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Timesheet",
+          "db_column": "TimesheetId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayRule",
+          "db_column": "PayRuleId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Overridden",
+          "db_column": "Overridden",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Cost",
+          "db_column": "Cost",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OverrideComment",
+          "db_column": "OverrideComment",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_timesheetpayreturnstage",
         "prod_table": "c{clientID}_deputy_timesheetpayreturn",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "TimesheetId", "PayRuleId", "Overridden", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "TimesheetId",
+          "PayRuleId",
+          "Overridden",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeAgreement",
@@ -826,7 +2545,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -836,40 +2557,170 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "EmployeeId", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayPoint", "db_column": "PayPointId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmpType", "db_column": "EmpType", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "CompanyName", "db_column": "CompanyName", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "StartDate", "db_column": "StartDate", "data_type": "DATETIME", "nullable": false, "is_primary_key": false},
-        {"api_name": "Contract", "db_column": "ContractId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "SalaryPayRule", "db_column": "SalaryPayRuleId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayrollId", "db_column": "PayrollId", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayPeriod", "db_column": "PayPeriodId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "HistoryId", "db_column": "HistoryId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "EmployeeId",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPoint",
+          "db_column": "PayPointId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmpType",
+          "db_column": "EmpType",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompanyName",
+          "db_column": "CompanyName",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Contract",
+          "db_column": "ContractId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SalaryPayRule",
+          "db_column": "SalaryPayRuleId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayrollId",
+          "db_column": "PayrollId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPeriod",
+          "db_column": "PayPeriodId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "HistoryId",
+          "db_column": "HistoryId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeeagreementstage",
         "prod_table": "c{clientID}_deputy_employeeagreement",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "PayPointId", "EmpType", "Active", "StartDate", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "PayPointId",
+          "EmpType",
+          "Active",
+          "StartDate",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
-      {
+    {
       "name": "EmployeeAgreementHistory",
       "description": "Deputy employee agreement history tracking employment terms and compensation changes over time.",
       "category": "master_data",
@@ -880,7 +2731,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -890,37 +2743,161 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "AgreementId", "db_column": "AgreementId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayPoint", "db_column": "PayPointId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmpType", "db_column": "EmpType", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "CompanyName", "db_column": "CompanyName", "data_type": "VARCHAR(500)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "StartDate", "db_column": "StartDate", "data_type": "DATETIME", "nullable": false, "is_primary_key": false},
-        {"api_name": "Contract", "db_column": "ContractId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "SalaryPayRule", "db_column": "SalaryPayRuleId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayrollId", "db_column": "PayrollId", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "PayPeriod", "db_column": "PayPeriodId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "AgreementId",
+          "db_column": "AgreementId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPoint",
+          "db_column": "PayPointId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmpType",
+          "db_column": "EmpType",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CompanyName",
+          "db_column": "CompanyName",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Contract",
+          "db_column": "ContractId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SalaryPayRule",
+          "db_column": "SalaryPayRuleId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayrollId",
+          "db_column": "PayrollId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayPeriod",
+          "db_column": "PayPeriodId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeeagreementhistorystage",
         "prod_table": "c{clientID}_deputy_employeeagreementhistory",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "AgreementId", "PayPointId", "EmpType", "Active", "StartDate", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "AgreementId",
+          "PayPointId",
+          "EmpType",
+          "Active",
+          "StartDate",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeAppraisal",
@@ -933,7 +2910,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -943,35 +2922,145 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Employee", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "DayTimeStamp", "db_column": "DayTimeStamp", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Date", "db_column": "Date", "data_type": "DATE", "nullable": false, "is_primary_key": false},
-        {"api_name": "Mark01", "db_column": "Mark01", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Mark02", "db_column": "Mark02", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Mark03", "db_column": "Mark03", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Mark04", "db_column": "Mark04", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Mark05", "db_column": "Mark05", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Employee",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DayTimeStamp",
+          "db_column": "DayTimeStamp",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATE",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Mark01",
+          "db_column": "Mark01",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Mark02",
+          "db_column": "Mark02",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Mark03",
+          "db_column": "Mark03",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Mark04",
+          "db_column": "Mark04",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Mark05",
+          "db_column": "Mark05",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeeappraisalstage",
         "prod_table": "c{clientID}_deputy_employeeappraisal",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "Date", "DayTimeStamp", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "Date",
+          "DayTimeStamp",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeAvailability",
@@ -984,7 +3073,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -994,35 +3085,146 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Employee", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Type", "db_column": "Type", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "MaxDateRecurringGenerated", "db_column": "MaxDateRecurringGenerated", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "StartTime", "db_column": "StartTime", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "EndTime", "db_column": "EndTime", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Date", "db_column": "Date", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "Comment", "db_column": "Comment", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Schedule", "db_column": "ScheduleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Employee",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Type",
+          "db_column": "Type",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaxDateRecurringGenerated",
+          "db_column": "MaxDateRecurringGenerated",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartTime",
+          "db_column": "StartTime",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndTime",
+          "db_column": "EndTime",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Comment",
+          "db_column": "Comment",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Schedule",
+          "db_column": "ScheduleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeeavailabilitystage",
         "prod_table": "c{clientID}_deputy_employeeavailability",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "Type", "Date", "ScheduleId", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "Type",
+          "Date",
+          "ScheduleId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeHistory",
@@ -1035,7 +3237,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1045,45 +3249,219 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Company", "db_column": "CompanyId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "FirstName", "db_column": "FirstName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "LastName", "db_column": "LastName", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Displayname", "db_column": "Displayname", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OtherName", "db_column": "OtherName", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Salutation", "db_column": "Salutation", "data_type": "VARCHAR(50)", "nullable": true, "is_primary_key": false},
-        {"api_name": "MainAddress", "db_column": "MainAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PostalAddress", "db_column": "PostalAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "EmergencyAddress", "db_column": "EmergencyAddressId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "DateOfBirth", "db_column": "DateOfBirth", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "Gender", "db_column": "Gender", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Photo", "db_column": "PhotoId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Active", "db_column": "Active", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "StartDate", "db_column": "StartDate", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "TerminationDate", "db_column": "TerminationDate", "data_type": "DATE", "nullable": true, "is_primary_key": false},
-        {"api_name": "Position", "db_column": "Position", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Role", "db_column": "RoleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmployeeId", "db_column": "EmployeeId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Company",
+          "db_column": "CompanyId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "FirstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Displayname",
+          "db_column": "Displayname",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OtherName",
+          "db_column": "OtherName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Salutation",
+          "db_column": "Salutation",
+          "data_type": "VARCHAR(50)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MainAddress",
+          "db_column": "MainAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PostalAddress",
+          "db_column": "PostalAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmergencyAddress",
+          "db_column": "EmergencyAddressId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DateOfBirth",
+          "db_column": "DateOfBirth",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Gender",
+          "db_column": "Gender",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Photo",
+          "db_column": "PhotoId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Active",
+          "db_column": "Active",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TerminationDate",
+          "db_column": "TerminationDate",
+          "data_type": "DATE",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Position",
+          "db_column": "Position",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Role",
+          "db_column": "RoleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmployeeId",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeehistorystage",
         "prod_table": "c{clientID}_deputy_employeehistory",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "CompanyId", "FirstName", "LastName", "Active", "RoleId", "EmployeeId", "StartDate", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CompanyId",
+          "FirstName",
+          "LastName",
+          "Active",
+          "RoleId",
+          "EmployeeId",
+          "StartDate",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeePaycycle",
@@ -1096,7 +3474,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1106,44 +3486,198 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "EmployeeId", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmployeeAgreementId", "db_column": "EmployeeAgreementId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PeriodId", "db_column": "PeriodId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "RecommendedLoadings", "db_column": "RecommendedLoadings", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Timesheets", "db_column": "Timesheets", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "TimesheetsTimeApproved", "db_column": "TimesheetsTimeApproved", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "TimesheetsPayApproved", "db_column": "TimesheetsPayApproved", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PaycycleRules", "db_column": "PaycycleRulesId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "PaycycleRulesApproved", "db_column": "PaycycleRulesApproved", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Exported", "db_column": "Exported", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "ExportId", "db_column": "ExportId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Paid", "db_column": "Paid", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "TimeTotal", "db_column": "TimeTotal", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "CostTotal", "db_column": "CostTotal", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "EmployeeAgreementHistoryId", "db_column": "EmployeeAgreementHistoryId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "EmployeeId",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmployeeAgreementId",
+          "db_column": "EmployeeAgreementId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PeriodId",
+          "db_column": "PeriodId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "RecommendedLoadings",
+          "db_column": "RecommendedLoadings",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Timesheets",
+          "db_column": "Timesheets",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TimesheetsTimeApproved",
+          "db_column": "TimesheetsTimeApproved",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TimesheetsPayApproved",
+          "db_column": "TimesheetsPayApproved",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaycycleRules",
+          "db_column": "PaycycleRulesId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PaycycleRulesApproved",
+          "db_column": "PaycycleRulesApproved",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Exported",
+          "db_column": "Exported",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ExportId",
+          "db_column": "ExportId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Paid",
+          "db_column": "Paid",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "TimeTotal",
+          "db_column": "TimeTotal",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "CostTotal",
+          "db_column": "CostTotal",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmployeeAgreementHistoryId",
+          "db_column": "EmployeeAgreementHistoryId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeepaycyclestage",
         "prod_table": "c{clientID}_deputy_employeepaycycle",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "EmployeeAgreementId", "PeriodId", "Exported", "Paid", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "EmployeeAgreementId",
+          "PeriodId",
+          "Exported",
+          "Paid",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
-      {
+    {
       "name": "EmployeePaycycleReturn",
       "description": "Deputy pay cycle returns capturing payroll line items with hours, costs and approval status from timesheet data.",
       "category": "transactional_data",
@@ -1154,7 +3688,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1164,34 +3700,139 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "PayCycleId", "db_column": "PayCycleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "PayRule", "db_column": "PayRuleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Approved", "db_column": "Approved", "data_type": "BOOLEAN", "nullable": false, "is_primary_key": false},
-        {"api_name": "Overridden", "db_column": "Overridden", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Value", "db_column": "Value", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Cost", "db_column": "Cost", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "OverrideComment", "db_column": "OverrideComment", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "PayCycleId",
+          "db_column": "PayCycleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PayRule",
+          "db_column": "PayRuleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Approved",
+          "db_column": "Approved",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Overridden",
+          "db_column": "Overridden",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Value",
+          "db_column": "Value",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Cost",
+          "db_column": "Cost",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OverrideComment",
+          "db_column": "OverrideComment",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeepaycyclereturnstage",
         "prod_table": "c{clientID}_deputy_employeepaycyclereturn",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "PayCycleId", "PayRuleId", "Approved", "Overridden", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "PayCycleId",
+          "PayRuleId",
+          "Approved",
+          "Overridden",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeRole",
@@ -1204,7 +3845,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1214,32 +3857,124 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Role", "db_column": "Role", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Ranking", "db_column": "Ranking", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "ReportTo", "db_column": "ReportToId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Permissions", "db_column": "Permissions", "data_type": "LONGTEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Require2fa", "db_column": "Require2fa", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Role",
+          "db_column": "Role",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Ranking",
+          "db_column": "Ranking",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ReportTo",
+          "db_column": "ReportToId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Permissions",
+          "db_column": "Permissions",
+          "data_type": "LONGTEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Require2fa",
+          "db_column": "Require2fa",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeerolestage",
         "prod_table": "c{clientID}_deputy_employeerole",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Role", "Ranking", "ReportToId", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Role",
+          "Ranking",
+          "ReportToId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeSalaryCost",
@@ -1252,7 +3987,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1262,33 +3999,132 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Employee", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmployeeAgreement", "db_column": "EmployeeAgreementId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "DayTimestamp", "db_column": "DayTimestamp", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Date", "db_column": "Date", "data_type": "DATE", "nullable": false, "is_primary_key": false},
-        {"api_name": "OpUnit", "db_column": "OpUnitId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Cost", "db_column": "Cost", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Employee",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmployeeAgreement",
+          "db_column": "EmployeeAgreementId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DayTimestamp",
+          "db_column": "DayTimestamp",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Date",
+          "db_column": "Date",
+          "data_type": "DATE",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OpUnit",
+          "db_column": "OpUnitId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Cost",
+          "db_column": "Cost",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeesalarycoststage",
         "prod_table": "c{clientID}_deputy_employeesalarycost",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "EmployeeAgreementId", "Date", "OpUnitId", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "EmployeeAgreementId",
+          "Date",
+          "OpUnitId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmployeeWorkplace",
@@ -1301,7 +4137,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1311,33 +4149,132 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "EmployeeId", "db_column": "EmployeeId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Company", "db_column": "CompanyId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "sortOrder", "db_column": "SortOrder", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "Agreement1", "db_column": "Agreement1Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Agreement2", "db_column": "Agreement2Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Agreement3", "db_column": "Agreement3Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "EmployeeId",
+          "db_column": "EmployeeId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Company",
+          "db_column": "CompanyId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sortOrder",
+          "db_column": "SortOrder",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Agreement1",
+          "db_column": "Agreement1Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Agreement2",
+          "db_column": "Agreement2Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Agreement3",
+          "db_column": "Agreement3Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employeeworkplacestage",
         "prod_table": "c{clientID}_deputy_employeeworkplace",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "EmployeeId", "CompanyId", "SortOrder", "Agreement1Id", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "EmployeeId",
+          "CompanyId",
+          "SortOrder",
+          "Agreement1Id",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmploymentCondition",
@@ -1350,7 +4287,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1360,34 +4299,137 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Name", "db_column": "Name", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Description", "db_column": "Description", "data_type": "LONGTEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "WorkingDaysPerPeriod", "db_column": "WorkingDaysPerPeriod", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "UsualStartTime", "db_column": "UsualStartTime", "data_type": "TIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "UsualFinishTime", "db_column": "UsualFinishTime", "data_type": "TIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "UsualMealbreak", "db_column": "UsualMealbreak", "data_type": "TIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "AvgHoursPerDay", "db_column": "AvgHoursPerDay", "data_type": "DECIMAL(19,4)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "LONGTEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "WorkingDaysPerPeriod",
+          "db_column": "WorkingDaysPerPeriod",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UsualStartTime",
+          "db_column": "UsualStartTime",
+          "data_type": "TIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UsualFinishTime",
+          "db_column": "UsualFinishTime",
+          "data_type": "TIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "UsualMealbreak",
+          "db_column": "UsualMealbreak",
+          "data_type": "TIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AvgHoursPerDay",
+          "db_column": "AvgHoursPerDay",
+          "data_type": "DECIMAL(19,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employmentconditionstage",
         "prod_table": "c{clientID}_deputy_employmentcondition",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Name", "WorkingDaysPerPeriod", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "WorkingDaysPerPeriod",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "EmploymentContract",
@@ -1400,7 +4442,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1410,44 +4454,210 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "Code", "db_column": "Code", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "Name", "db_column": "Name", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "Description", "db_column": "Description", "data_type": "TEXT", "nullable": true, "is_primary_key": false},
-        {"api_name": "EmploymentBasis", "db_column": "EmploymentBasis", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmploymentCategory", "db_column": "EmploymentCategory", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmploymentStatus", "db_column": "EmploymentStatus", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "EmploymentCondition", "db_column": "EmploymentConditionId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "BasePayRule", "db_column": "BasePayRuleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "StressProfile", "db_column": "StressProfileId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "StartDate", "db_column": "StartDate", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "EndDate", "db_column": "EndDate", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "PeriodType", "db_column": "PeriodType", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "File", "db_column": "File", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "StrictLeaveApproval", "db_column": "StrictLeaveApproval", "data_type": "BOOLEAN", "nullable": true, "is_primary_key": false},
-        {"api_name": "Award", "db_column": "Award", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "EmploymentSubType", "db_column": "EmploymentSubType", "data_type": "VARCHAR(255)", "nullable": true, "is_primary_key": false},
-        {"api_name": "AwardStartDate", "db_column": "AwardStartDate", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "Code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmploymentBasis",
+          "db_column": "EmploymentBasis",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmploymentCategory",
+          "db_column": "EmploymentCategory",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmploymentStatus",
+          "db_column": "EmploymentStatus",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmploymentCondition",
+          "db_column": "EmploymentConditionId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BasePayRule",
+          "db_column": "BasePayRuleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StressProfile",
+          "db_column": "StressProfileId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StartDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EndDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PeriodType",
+          "db_column": "PeriodType",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "File",
+          "db_column": "File",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "StrictLeaveApproval",
+          "db_column": "StrictLeaveApproval",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Award",
+          "db_column": "Award",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EmploymentSubType",
+          "db_column": "EmploymentSubType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "AwardStartDate",
+          "db_column": "AwardStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_employmentcontractstage",
         "prod_table": "c{clientID}_deputy_employmentcontract",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "Name", "EmploymentBasis", "EmploymentCategory", "EmploymentStatus", "PeriodType", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name",
+          "EmploymentBasis",
+          "EmploymentCategory",
+          "EmploymentStatus",
+          "PeriodType",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     },
     {
       "name": "ContractLeaveRules",
@@ -1460,7 +4670,9 @@
         "request_body": {
           "type": "json",
           "structure": {
-            "sort": {"Id": "asc"},
+            "sort": {
+              "Id": "asc"
+            },
             "search": {},
             "join": []
           }
@@ -1470,33 +4682,131 @@
           "type": "post_body_search",
           "timestamp_format": "unix_timestamp",
           "search_structure": {
-            "s1": {"field": "Modified", "data": "{last_sync_timestamp}", "type": "gt"}
+            "s1": {
+              "field": "Modified",
+              "data": "{last_sync_timestamp}",
+              "type": "gt"
+            }
           },
           "description": "Incremental sync using POST body search with Modified timestamp filter"
         }
       },
       "fields": [
-        {"api_name": "Id", "db_column": "Id", "data_type": "INT", "nullable": false, "is_primary_key": true},
-        {"api_name": "ContractId", "db_column": "ContractId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "LeaveRuleId", "db_column": "LeaveRuleId", "data_type": "INT", "nullable": false, "is_primary_key": false},
-        {"api_name": "BasePayRule", "db_column": "BasePayRuleId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "LoadingPayRule1", "db_column": "LoadingPayRule1Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "LoadingPayRule2", "db_column": "LoadingPayRule2Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "LoadingPayRule3", "db_column": "LoadingPayRule3Id", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Creator", "db_column": "CreatorId", "data_type": "INT", "nullable": true, "is_primary_key": false},
-        {"api_name": "Created", "db_column": "Created", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "Modified", "db_column": "Modified", "data_type": "DATETIME", "nullable": true, "is_primary_key": false},
-        {"api_name": "ClientID", "db_column": "ClientID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false},
-        {"api_name": "OrganisationID", "db_column": "OrganisationID", "data_type": "VARCHAR(255)", "nullable": false, "is_primary_key": false}
+        {
+          "api_name": "Id",
+          "db_column": "Id",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "ContractId",
+          "db_column": "ContractId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LeaveRuleId",
+          "db_column": "LeaveRuleId",
+          "data_type": "INT",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "BasePayRule",
+          "db_column": "BasePayRuleId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LoadingPayRule1",
+          "db_column": "LoadingPayRule1Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LoadingPayRule2",
+          "db_column": "LoadingPayRule2Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LoadingPayRule3",
+          "db_column": "LoadingPayRule3Id",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Creator",
+          "db_column": "CreatorId",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Created",
+          "db_column": "Created",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Modified",
+          "db_column": "Modified",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
       ],
-      "response_structure": {"root_data_field": null, "is_array": true, "nested_objects": [], "array_fields": [], "jsonb_fields": []},
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_deputy_contractleaverulesstage",
         "prod_table": "c{clientID}_deputy_contractleaverules",
-        "primary_key": ["Id", "OrganisationID"],
-        "indexes": ["OrganisationID", "ContractId", "LeaveRuleId", "BasePayRuleId", "Created", "Modified"]
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ContractId",
+          "LeaveRuleId",
+          "BasePayRuleId",
+          "Created",
+          "Modified"
+        ]
       },
-      "transformation": {"type": "simple", "nested_handling": "flatten", "array_handling": "expand_to_rows", "date_format": "unix_timestamp", "null_handling": "preserve"}
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "unix_timestamp",
+        "null_handling": "preserve"
+      }
     }
   ]
 }

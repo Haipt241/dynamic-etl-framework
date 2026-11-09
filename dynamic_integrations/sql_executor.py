@@ -71,7 +71,7 @@ class SQLExecutor:
             config = Utils.load_integration_config(integration_name.upper())
             env_vars_config = config.get('env_vars_config', {})
             
-            # Extract client ID from EtaniClientID (e.g., "REDACTED" -> "2013", "BIGOLESHOECOMPANY")
+            # Extract client ID from EtaniClientID (e.g., "BIGOLESHOECOMPANY_CLIENT2013" -> "2013", "BIGOLESHOECOMPANY")
             etani_client_id = env_vars_config.get('etani_client_id', {}).get('default_value', '')
             client_id = ""
             client_name = ""

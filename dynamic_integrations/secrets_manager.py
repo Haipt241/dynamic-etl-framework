@@ -136,7 +136,7 @@ def rotate_xero_oauth_credentials(new_client_id: str, new_client_secret: str):
 
         rotate_xero_oauth_credentials(
             new_client_id='NEW_ID_HERE',
-            new_client_secret='NEW_SECRET_HERE'
+            new_client_secret='REDACTED'
         )
     """
     secret_name = 'etani/xero/oauth-app'

@@ -92,7 +92,7 @@ DELIMITER ;
 -- CALL `Dynamic-ETL-CIN7_DEAR-Integration-CloseOut`(
 --     '6956',                              -- ClientID
 --     1755241633,                          -- OrganisationID
---     'REDACTED',      -- EtaniClientID
+--     'BIGOLESHOECOMPANY_CLIENT6956',      -- EtaniClientID
 --     'MANUAL',                            -- TriggerType
 --     0                                    -- JobRunID
 -- );

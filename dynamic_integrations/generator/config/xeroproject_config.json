@@ -32,9 +32,9 @@
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
     "XERO_CLIENT_ID": "lambda x: len(x) == 32 and x.isalnum()",
-    "XERO_CLIENT_SECRET": "lambda x: len(x) > 30",
-    "XERO_REFRESH_TOKEN": "lambda x: len(x) >= 40 if x else True",
-    "XERO_ACCESS_TOKEN": "lambda x: len(x) >= 100 if x else True",
+    "XERO_CLIENT_SECRET": "",
+    "XERO_REFRESH_TOKEN": "",
+    "XERO_ACCESS_TOKEN": "",
     "XeroTenantID": "lambda x: len(x) == 36 and '-' in x",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
@@ -79,7 +79,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

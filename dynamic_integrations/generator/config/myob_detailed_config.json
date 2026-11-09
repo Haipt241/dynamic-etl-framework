@@ -13,10 +13,10 @@
   ],
   "env_var_validations": {
     "MYOB_CLIENT_ID": "lambda x: bool(x) and len(x) > 0",
-    "MYOB_ACCESS_TOKEN": "lambda x: bool(x) and len(x) > 0",
-    "MYOB_CLIENT_SECRET": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_ACCESS_TOKEN": "",
+    "MYOB_CLIENT_SECRET": "",
     "MYOB_COMPANY_FILE": "lambda x: bool(x) and len(x) > 0",
-    "MYOB_API_KEY": "lambda x: bool(x) and len(x) > 0",
+    "MYOB_API_KEY": "",
     "MYOB_CF_TOKEN": "lambda x: bool(x) and len(x) > 0"
   },
   "env_vars_config": {
@@ -108,7 +108,9 @@
     "grant_type": "refresh_token",
     "token_validity_minutes": 20,
     "refresh_token_validity_days": 7,
-    "additional_params": {},
+    "additional_params": {
+      "refresh_token": ""
+    },
     "custom_headers": {
       "Content-Type": "application/x-www-form-urlencoded",
       "Accept": "application/json"

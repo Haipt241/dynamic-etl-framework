@@ -55,7 +55,7 @@
     "auth_config": {
       "authorization_url": "https://secure.myob.com/oauth2/account/authorize",
       "token_url": "https://secure.myob.com/oauth2/v1/authorize/",
-      "client_id": "REDACTED",
+      "client_id": "xwpav5pja4uthmj8efnccuch",
       "client_secret": "",
       "scope": "CompanyFile offline_access openid",
       "grant_type": "authorization_code",

@@ -51,7 +51,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     },
     "EtaniClientID": {
       "env_var": "ETANI_CLIENT_ID",

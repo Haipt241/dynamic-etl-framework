@@ -1,0 +1,46 @@
+CREATE OR REPLACE VIEW bigoleshoecompany_client1518_xeroblue_quotes_aud AS
+SELECT
+  q.`Id`,
+  q.`QuoteId`,
+  q.`ContactId`,
+  q.`ContactName`,
+  q.`Date`,
+  q.`ExpiryDate`,
+  q.`Status`,
+  q.`LineItem_LineItemId` AS `LineItemId`,
+  q.`LineItem_Description` AS `Description`,
+  q.`LineItem_Quantity` AS `Quantity`,
+  q.`LineItem_UnitAmount` AS `UnitAmount`,
+  q.`LineItem_ItemCode` AS `ItemCode`,
+  q.`LineItem_AccountCode` AS `AccountCode`,
+  q.`LineItem_TaxType` AS `TaxType`,
+  q.`LineItem_TaxAmount` AS `TaxAmount`,
+  q.`LineItem_LineAmount` AS `Amount`,
+  q.`LineItem_DiscountRate` AS `DiscountRate`,
+  q.`LineItem_TrackingCategory1_CategoryName` AS `TrackingCategoryCategoryName`,
+  q.`LineItem_TrackingCategory1_OptionName` AS `TrackingCategoryOptionName`,
+  q.`QuoteNumber`,
+  q.`LineAmountTypes`,
+  q.`Reference`,
+  q.`CurrencyCode`,
+  q.`CurrencyRate`,
+  q.`SubTotal`AS `QuoteSubTotal`,
+  q.`TotalTax`AS `QuoteTotalTax`,
+  q.`Total` AS `QuoteTotal`,
+  q.`TotalDiscount`,
+  q.`BrandingThemeId`,
+  q.`Terms`,
+  q.`Title`,
+  q.`Summary`,
+  q.`UpdatedDateUTC`,
+  q.`ClientID`,
+  q.`OrganisationID`,
+  a.`Name` AS `AccountName`,
+  a.`Class` AS `AccountClass`,
+  a.`Type` AS `AccountType`,
+  o.`Name` AS `OrganisationName`
+FROM `evadb_stage`.`c1518_xeroblue_quotes` q
+LEFT JOIN `evadb_stage`.`c1518_xeroblue_accounts` a
+  ON q.`LineItem_AccountCode` = a.`code`
+LEFT JOIN `evadb_stage`.`c1518_xeroblue_organisationsclients` o
+  ON q.`OrganisationID` = o.`OrganisationID`;

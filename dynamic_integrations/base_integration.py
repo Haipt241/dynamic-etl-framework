@@ -270,15 +270,15 @@ class BaseIntegration(ABC):
             client_id = os.getenv('xeroblue_client_id') or os.getenv('XERO_CLIENT_ID')
             if client_id is None:
                 # XeroBlue default fallback
-                return 'REDACTED'
+                return '7D624AC6AEAA49CAA480DC684FCAA0C4'
             return client_id
         elif integration_name == 'QBO':
             # QBO: Check config or use test fallback
             try:
                 import config
-                return getattr(config, 'QBO_CLIENT_ID', 'REDACTED')
+                return getattr(config, 'QBO_CLIENT_ID', 'Q0Uon6a8WLHJdy0b9NuyYNxp6YsWgYenowtLglbnKNZqZ1TNcP')
             except ImportError:
-                return 'REDACTED'
+                return 'Q0Uon6a8WLHJdy0b9NuyYNxp6YsWgYenowtLglbnKNZqZ1TNcP'
         else:
             # Generic fallback for other integrations
             return os.getenv(f'{integration_name}_CLIENT_ID', f'default_{integration_name.lower()}_client_id')
@@ -397,9 +397,9 @@ class BaseIntegration(ABC):
 
         try:
             import config
-            return getattr(config, 'BLOB_CONTAINER_NAME', 'REDACTED')
+            return getattr(config, 'BLOB_CONTAINER_NAME', 'databrickstemp')
         except ImportError:
-            return 'REDACTED'  # Default value
+            return 'databrickstemp'  # Default value
 
     @blob_container_name.setter
     def blob_container_name(self, value: str):
@@ -424,9 +424,9 @@ class BaseIntegration(ABC):
 
         try:
             import config
-            return getattr(config, 'FILE_SHARE_NAME', 'REDACTED')
+            return getattr(config, 'FILE_SHARE_NAME', 'xeroblue-pydw-refreshtoken')
         except ImportError:
-            return 'REDACTED'  # Default value
+            return 'xeroblue-pydw-refreshtoken'  # Default value
 
     @file_share_name.setter
     def file_share_name(self, value: str):

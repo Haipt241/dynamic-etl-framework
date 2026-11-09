@@ -4,7 +4,10 @@
     "access_token_env_var": "SHOPIFY_ACCESS_TOKEN",
     "header_name": "X-Shopify-Access-Token",
     "token_format": "{access_token}",
-    "additional_params": {},
+    "additional_params": {
+      "api_key": "",
+      "secret": "c8a5d44986656c121a24194287cdfca3"
+    },
     "custom_headers": {
       "Accept": "application/json",
       "Content-Type": "application/json"
@@ -17,7 +20,7 @@
   ],
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
-    "SHOPIFY_ACCESS_TOKEN": "lambda x: len(x) > 20",
+    "SHOPIFY_ACCESS_TOKEN": "",
     "SHOPIFY_STORE_URL": "lambda x: any('.myshopify.com' in store or len(store) > 5 for store in (x if isinstance(x, list) else [x]))",
     "SHOPIFY_API_VERSION": "lambda x: len(x) >= 7 and '-' in x",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
@@ -53,7 +56,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

@@ -515,7 +515,7 @@ class QueryBuilder(SingletonBase):
                 self.logger.warning(f"Cannot query etlupdatetime - missing client_id ({client_id}) or org_id ({org_id})")
                 return None
                 
-            # Extract client number from client_id (e.g., REDACTED -> 2013)
+            # Extract client number from client_id (e.g., BIGOLESHOECOMPANY_CLIENT2013 -> 2013)
             client_number = client_id.split('CLIENT')[-1] if 'CLIENT' in client_id else client_id
             integration_name = self.integration.integration_name
 

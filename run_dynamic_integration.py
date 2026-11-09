@@ -10,18 +10,18 @@ UPSERT Mode: Run integration sync only (assumes setup already done)
 Usage:
     # INSERT - Full setup with simplified workflow
     python run_dynamic_integration.py --integration qbo --mode insert \
-      --param EtaniClientID=REDACTED \
+      --param EtaniClientID=BIGOLESHOECOMPANY_CLIENT2013 \
       --param EtaniOrganisationID=7035 \
       --param RealmID=123456789
 
     # UPSERT - Auto-detect timestamp (recommended)
     python run_dynamic_integration.py --integration fyi --mode upsert \
-      --param EtaniClientID=REDACTED \
+      --param EtaniClientID=BIGOLESHOECOMPANY_CLIENT2013 \
       --param EtaniOrganisationID=7035
 
     # UPSERT - With custom timestamp override
     python run_dynamic_integration.py --integration fyi --mode upsert \
-      --param EtaniClientID=REDACTED \
+      --param EtaniClientID=BIGOLESHOECOMPANY_CLIENT2013 \
       --param EtaniOrganisationID=7035 \
       --param modified_on_gte=2024-01-15T10:30:00
 """
@@ -643,13 +643,13 @@ def main():
             Examples:
               # INSERT - Simplified setup (config + SQL + direct run)
               python run_dynamic_integration.py --integration qbo --mode insert \\
-                --param EtaniClientID=REDACTED \\
+                --param EtaniClientID=BIGOLESHOECOMPANY_CLIENT2013 \\
                 --param EtaniOrganisationID=7035 \\
                 --param RealmID=123456789
 
               # UPSERT - Just run integration sync
               python run_dynamic_integration.py --integration qbo --mode upsert \\
-                --param EtaniClientID=REDACTED \\
+                --param EtaniClientID=BIGOLESHOECOMPANY_CLIENT2013 \\
                 --param EtaniOrganisationID=7035
 
               # Database-driven mode - Only provide org_id, fetch everything else from database

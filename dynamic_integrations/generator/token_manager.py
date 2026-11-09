@@ -659,7 +659,7 @@ class TokenManager:
                 response = requests.post(
                     token_refresh_url,
                     headers={
-                        'Authorization': 'Basic ' + b64_id_secret,
+                        'Authorization': 'REDACTED' + b64_id_secret,
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     data=data,

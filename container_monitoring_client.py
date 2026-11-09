@@ -15,7 +15,7 @@ class ContainerMonitoringClient:
         Initialize client
 
         Args:
-            api_url: API base URL (e.g., REDACTED)
+            api_url: API base URL (e.g., https://apidev.vibecfo.au/api/etl)
             api_key: ETL API write key
         """
         self.api_url = api_url.rstrip('/')

@@ -33,9 +33,9 @@
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
     "WFM_CLIENT_ID": "lambda x: len(x) > 30 and '-' in x",
-    "WFM_CLIENT_SECRET": "lambda x: len(x) > 30",
-    "WFM_REFRESH_TOKEN": "lambda x: len(x) > 50 if x else True",
-    "WFM_ACCESS_TOKEN": "lambda x: len(x) > 50 if x else True",
+    "WFM_CLIENT_SECRET": "",
+    "WFM_REFRESH_TOKEN": "",
+    "WFM_ACCESS_TOKEN": "",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
   "env_vars_config": {
@@ -89,7 +89,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

@@ -637,7 +637,7 @@ class ChildEndpointHandler(SingletonBase):
             str: Last sync timestamp or default '1970-01-01 00:00:00' if not found
         """
         try:
-            # Extract client number from client_id (e.g., REDACTED -> 2013)
+            # Extract client number from client_id (e.g., BIGOLESHOECOMPANY_CLIENT2013 -> 2013)
             config = self.integration.config or {}
             client_id = config.get('client_id') or getattr(self.integration, 'etani_client_id', '')
             client_number = client_id.split('CLIENT')[-1] if 'CLIENT' in client_id else str(self.integration.client_id_number)

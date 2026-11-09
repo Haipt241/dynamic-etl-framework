@@ -524,7 +524,7 @@ def check_cms_status_for_provisioning(client_id: str, organisation_id: str, inte
     Check if CMS status = 9 (Provisioning New Data) OR 12 (Updating Data) before proceeding with integration
 
     Args:
-        client_id: Etani Client ID (e.g., 'REDACTED')
+        client_id: Etani Client ID (e.g., 'BIGOLESHOECOMPANY_CLIENT2034')
         organisation_id: Organisation ID
         integration_name: Integration name for logging (default: 'FYI')
         error_list: Error list to append to (optional)

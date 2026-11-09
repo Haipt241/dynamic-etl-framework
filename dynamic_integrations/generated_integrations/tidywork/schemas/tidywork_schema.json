@@ -40,7 +40,7 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": "Basic {{tidywork_api_key}}",
+      "Authorization": "",
       "User-Agent": "Etani-TidyWork-Integration/1.0"
     },
     "query_config": {
@@ -72,8 +72,8 @@
       }
     }
   },
- "endpoints": [
-   {
+  "endpoints": [
+    {
       "name": "Activities",
       "description": "Work activities that can be performed within projects, including their departments, codes, and billing properties",
       "category": "master_data",
@@ -424,7 +424,7 @@
         "null_handling": "preserve"
       }
     },
-   {
+    {
       "name": "Customers",
       "description": "Customer master data including contact information, addresses, billing details, and organizational settings",
       "category": "master_data",
@@ -4087,9 +4087,20 @@
       "response_structure": {
         "root_data_field": null,
         "is_array": true,
-        "nested_objects": ["assignments", "materials", "children"],
-        "array_fields": ["assignments", "children"],
-        "jsonb_fields": ["assignments", "materials", "children"]
+        "nested_objects": [
+          "assignments",
+          "materials",
+          "children"
+        ],
+        "array_fields": [
+          "assignments",
+          "children"
+        ],
+        "jsonb_fields": [
+          "assignments",
+          "materials",
+          "children"
+        ]
       },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_tidywork_projecttasksstage",
@@ -5247,7 +5258,7 @@
         "null_handling": "preserve"
       }
     },
-   {
+    {
       "name": "Quote",
       "description": "Quote entity containing quote details, customer information, pricing, and project data",
       "category": "transactional",
@@ -5722,9 +5733,20 @@
       "response_structure": {
         "root_data_field": null,
         "is_array": true,
-        "nested_objects": ["assignments", "materials", "children"],
-        "array_fields": ["assignments", "children"],
-        "jsonb_fields": ["assignments", "materials", "children"]
+        "nested_objects": [
+          "assignments",
+          "materials",
+          "children"
+        ],
+        "array_fields": [
+          "assignments",
+          "children"
+        ],
+        "jsonb_fields": [
+          "assignments",
+          "materials",
+          "children"
+        ]
       },
       "database_schema": {
         "stage_table": "c{clientID}_{orgID}_tidywork_quotetasksstage",
@@ -6399,7 +6421,7 @@
         "null_handling": "preserve"
       }
     },
-   {
+    {
       "name": "Tasks",
       "description": "Project tasks with assignments, materials, and time tracking information",
       "category": "transactional",

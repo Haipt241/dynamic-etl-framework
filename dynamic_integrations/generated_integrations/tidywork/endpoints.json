@@ -1,0 +1,5561 @@
+{
+  "total_endpoints": 26,
+  "endpoints": [
+    {
+      "name": "Activities",
+      "description": "Work activities that can be performed within projects, including their departments, codes, and billing properties",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/activities",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "activityId",
+          "db_column": "ActivityId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the activity"
+        },
+        {
+          "api_name": "departmentIds",
+          "db_column": "departmentIds",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Array of department IDs associated with this activity"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Activity code"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Activity name"
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Activity description"
+        },
+        {
+          "api_name": "isOverhead",
+          "db_column": "IsOverhead",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Whether this activity is overhead"
+        },
+        {
+          "api_name": "isPayable",
+          "db_column": "IsPayable",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Whether this activity is payable"
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Whether this activity is active"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        },
+        {
+          "api_name": "SyncToken",
+          "db_column": "SyncToken",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Synchronization token"
+        },
+        {
+          "api_name": "MetaData_CreateTime",
+          "db_column": "MetaData_CreateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Record creation timestamp"
+        },
+        {
+          "api_name": "MetaData_LastUpdatedTime",
+          "db_column": "MetaData_LastUpdatedTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Last update timestamp"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [
+          "departmentIds"
+        ],
+        "jsonb_fields": [
+          "departmentIds"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_activitiesstage",
+        "prod_table": "c{clientID}_integration_activities",
+        "primary_key": [
+          "ActivityId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ChargeRates",
+      "description": "Billing rates used for charging customers for different types of work or staff levels",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/chargerates",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "IncludeGlobal",
+            "IncludeUserChargeRates"
+          ]
+        }
+      },
+      "fields": [
+        {
+          "api_name": "chargeRateId",
+          "db_column": "ChargeRateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the charge rate"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Charge rate code"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Charge rate name"
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency identifier"
+        },
+        {
+          "api_name": "currencyIsoCode",
+          "db_column": "CurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency ISO code"
+        },
+        {
+          "api_name": "currentAmount",
+          "db_column": "CurrentAmount",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Current charge rate amount"
+        },
+        {
+          "api_name": "currentQuoteCostAmount",
+          "db_column": "CurrentQuoteCostAmount",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Current quote cost amount"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        },
+        {
+          "api_name": "SyncToken",
+          "db_column": "SyncToken",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Synchronization token"
+        },
+        {
+          "api_name": "MetaData_CreateTime",
+          "db_column": "MetaData_CreateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Record creation timestamp"
+        },
+        {
+          "api_name": "MetaData_LastUpdatedTime",
+          "db_column": "MetaData_LastUpdatedTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Last update timestamp"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_chargeratesstage",
+        "prod_table": "c{clientID}_integration_chargerates",
+        "primary_key": [
+          "ChargeRateId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Customers",
+      "description": "Customer master data including contact information, addresses, billing details, and organizational settings",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/customers",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the customer"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer code"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer name"
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer description"
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency identifier"
+        },
+        {
+          "api_name": "currencyIsoCode",
+          "db_column": "CurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency ISO code"
+        },
+        {
+          "api_name": "countryId",
+          "db_column": "CountryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Country identifier"
+        },
+        {
+          "api_name": "countryIsoCode",
+          "db_column": "CountryIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Country ISO code"
+        },
+        {
+          "api_name": "taxTypeId",
+          "db_column": "TaxTypeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Tax type identifier"
+        },
+        {
+          "api_name": "taxTypeCode",
+          "db_column": "TaxTypeCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Tax type code"
+        },
+        {
+          "api_name": "notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer notes"
+        },
+        {
+          "api_name": "invoiceDueBasis",
+          "db_column": "InvoiceDueBasis",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Invoice due basis"
+        },
+        {
+          "api_name": "invoiceDueNumber",
+          "db_column": "InvoiceDueNumber",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Invoice due number"
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Whether the customer is active"
+        },
+        {
+          "api_name": "postalAddress1",
+          "db_column": "PostalAddress1",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Primary postal address line"
+        },
+        {
+          "api_name": "postalAddress2",
+          "db_column": "PostalAddress2",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Secondary postal address line"
+        },
+        {
+          "api_name": "postalSuburb",
+          "db_column": "PostalSuburb",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Postal suburb"
+        },
+        {
+          "api_name": "postalCity",
+          "db_column": "PostalCity",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Postal city"
+        },
+        {
+          "api_name": "postalState",
+          "db_column": "PostalState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Postal state"
+        },
+        {
+          "api_name": "postalPostCode",
+          "db_column": "PostalPostCode",
+          "data_type": "VARCHAR(20)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Postal post code"
+        },
+        {
+          "api_name": "customerPortalEnabled",
+          "db_column": "CustomerPortalEnabled",
+          "data_type": "BOOLEAN",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Whether customer portal is enabled"
+        },
+        {
+          "api_name": "customerPortalLink",
+          "db_column": "CustomerPortalLink",
+          "data_type": "VARCHAR(500)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer portal link"
+        },
+        {
+          "api_name": "customerPortalUserId",
+          "db_column": "CustomerPortalUserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Customer portal user ID"
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Material location identifier"
+        },
+        {
+          "api_name": "materialPricingLevelId",
+          "db_column": "MaterialPricingLevelId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Material pricing level identifier"
+        },
+        {
+          "api_name": "projectPricingLevelId",
+          "db_column": "ProjectPricingLevelId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Project pricing level identifier"
+        },
+        {
+          "api_name": "physicalAddresses",
+          "db_column": "physicalAddresses",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Array of physical addresses for the customer"
+        },
+        {
+          "api_name": "contacts",
+          "db_column": "contacts",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Array of contact information for the customer"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        },
+        {
+          "api_name": "SyncToken",
+          "db_column": "SyncToken",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Synchronization token"
+        },
+        {
+          "api_name": "MetaData_CreateTime",
+          "db_column": "MetaData_CreateTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Record creation timestamp"
+        },
+        {
+          "api_name": "MetaData_LastUpdatedTime",
+          "db_column": "MetaData_LastUpdatedTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Last update timestamp"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [
+          "PhysicalAddresses",
+          "Contacts"
+        ],
+        "array_fields": [
+          "physicalAddresses",
+          "contacts"
+        ],
+        "jsonb_fields": [
+          "physicalAddresses",
+          "contacts"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_customersstage",
+        "prod_table": "c{clientID}_integration_customers",
+        "primary_key": [
+          "CustomerId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ExpenseActuals",
+      "description": "Expense reports with actual expense data including customer, project, and user details",
+      "category": "reporting",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/reports/ExpenseActuals",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "StartDate",
+            "EndDate",
+            "PageSize",
+            "Page"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "StartDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Parameter used for incremental synchronization based on expense date range"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "expenseId",
+          "db_column": "ExpenseId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "dateUtc",
+          "db_column": "DateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "date",
+          "db_column": "Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerCode",
+          "db_column": "CustomerCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerName",
+          "db_column": "CustomerName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentCode",
+          "db_column": "DepartmentCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentName",
+          "db_column": "DepartmentName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userName",
+          "db_column": "UserName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userEmail",
+          "db_column": "UserEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseCategoryCode",
+          "db_column": "ExpenseCategoryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseCategoryName",
+          "db_column": "ExpenseCategoryName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseTypeCode",
+          "db_column": "ExpenseTypeCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseTypeName",
+          "db_column": "ExpenseTypeName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyIsoCode",
+          "db_column": "CurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing",
+          "db_column": "Billing",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_expenseactualsstage",
+        "prod_table": "c{clientID}_integration_expenseactuals",
+        "primary_key": [
+          "ExpenseId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "ProjectId",
+          "UserId"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ExpenseCategories",
+      "description": "Master data for expense categories with code and name",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/expensecategories",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "expenseCategoryId",
+          "db_column": "ExpenseCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_expensecategoriesstage",
+        "prod_table": "c{clientID}_integration_expensecategories",
+        "primary_key": [
+          "ExpenseCategoryId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Expenses",
+      "description": "Transactional expense data with project and user associations",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/expenses",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "expenseId",
+          "db_column": "ExpenseId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseDate",
+          "db_column": "ExpenseDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseDateUtc",
+          "db_column": "ExpenseDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseTypeId",
+          "db_column": "ExpenseTypeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "amount",
+          "db_column": "Amount",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseTypeCode",
+          "db_column": "ExpenseTypeCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseTypeName",
+          "db_column": "ExpenseTypeName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isBillable",
+          "db_column": "IsBillable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_expensesstage",
+        "prod_table": "c{clientID}_integration_expenses",
+        "primary_key": [
+          "ExpenseId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "UserId",
+          "ExpenseTypeId"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ExpenseTypes",
+      "description": "Master data for expense types with code, name and category association",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/expensetypes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "expenseTypeId",
+          "db_column": "ExpenseTypeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenseCategoryId",
+          "db_column": "ExpenseCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_expensetypesstage",
+        "prod_table": "c{clientID}_integration_expensetypes",
+        "primary_key": [
+          "ExpenseTypeId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "ExpenseCategoryId"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "MaterialActuals",
+      "description": "Material actuals reporting data including material usage, costs, pricing, and project allocation details",
+      "category": "reporting",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/reports/MaterialActuals",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "StartDate",
+            "EndDate"
+          ],
+          "optional": [
+            "PageSize",
+            "Page"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "StartDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Parameter used for incremental synchronization based on date range filtering"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "materialId",
+          "db_column": "MaterialId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for material actual records"
+        },
+        {
+          "api_name": "dateUtc",
+          "db_column": "DateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "date",
+          "db_column": "Date",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerCode",
+          "db_column": "CustomerCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerName",
+          "db_column": "CustomerName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentCode",
+          "db_column": "DepartmentCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentName",
+          "db_column": "DepartmentName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userName",
+          "db_column": "UserName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userEmail",
+          "db_column": "UserEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialItemId",
+          "db_column": "MaterialItemId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialItemCode",
+          "db_column": "MaterialItemCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialItemName",
+          "db_column": "MaterialItemName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialCategoryId",
+          "db_column": "MaterialCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialCategoryCode",
+          "db_column": "MaterialCategoryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialCategoryName",
+          "db_column": "MaterialCategoryName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationCode",
+          "db_column": "MaterialLocationCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationName",
+          "db_column": "MaterialLocationName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitCost",
+          "db_column": "UnitCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitCostCurrencyId",
+          "db_column": "UnitCostCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitCostCurrencyIsoCode",
+          "db_column": "UnitCostCurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitPrice",
+          "db_column": "UnitPrice",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitPriceCurrencyId",
+          "db_column": "UnitPriceCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unitPriceCurrencyIsoCode",
+          "db_column": "UnitPriceCurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "unit",
+          "db_column": "Unit",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "quantity",
+          "db_column": "Quantity",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalCost",
+          "db_column": "TotalCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPrice",
+          "db_column": "TotalPrice",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing",
+          "db_column": "Billing",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materialactualsstage",
+        "prod_table": "c{clientID}_integration_materialactuals",
+        "primary_key": [
+          "MaterialId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "ProjectId",
+          "Date"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "MaterialCategories",
+      "description": "Material categories master data including category details, default settings, and tax information",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/materialcategories",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "materialCategoryId",
+          "db_column": "MaterialCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for material categories"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "defaultStockReorderLevel",
+          "db_column": "DefaultStockReorderLevel",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxTypeId",
+          "db_column": "TaxTypeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isDefault",
+          "db_column": "IsDefault",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materialcategoriesstage",
+        "prod_table": "c{clientID}_integration_materialcategories",
+        "primary_key": [
+          "MaterialCategoryId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "MaterialItems",
+      "description": "Material items master data including item details, pricing, stock levels, and related configurations",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/materialitems",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "updatedUtc",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental UPSERT synchronization based on last updated date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "materialItemId",
+          "db_column": "MaterialItemId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Primary identifier for material items"
+        },
+        {
+          "api_name": "materialCategoryId",
+          "db_column": "MaterialCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialCategoryCode",
+          "db_column": "MaterialCategoryCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialCategoryName",
+          "db_column": "MaterialCategoryName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationCode",
+          "db_column": "MaterialLocationCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationName",
+          "db_column": "MaterialLocationName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "costCurrencyId",
+          "db_column": "CostCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "costCurrencyIsoCode",
+          "db_column": "CostCurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "chargeCurrencyId",
+          "db_column": "ChargeCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "chargeCurrencyIsoCode",
+          "db_column": "ChargeCurrencyIsoCode",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "cost",
+          "db_column": "Cost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "charge",
+          "db_column": "Charge",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "priceByCustLevelQty",
+          "db_column": "PriceByCustLevelQty",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "pricingUnitId",
+          "db_column": "PricingUnitId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "pricingUnitAbbrev",
+          "db_column": "PricingUnitAbbrev",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "usageUnitId",
+          "db_column": "UsageUnitId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "usageUnitAbbrev",
+          "db_column": "UsageUnitAbbrev",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "stockLevel",
+          "db_column": "StockLevel",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "stockReorderLevel",
+          "db_column": "StockReorderLevel",
+          "data_type": "DECIMAL(18,4)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isManaged",
+          "db_column": "IsManaged",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "sku",
+          "db_column": "Sku",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "barcode",
+          "db_column": "Barcode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "netCost",
+          "db_column": "NetCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reference",
+          "db_column": "Reference",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialItemType",
+          "db_column": "MaterialItemType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "supplierId",
+          "db_column": "SupplierId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxTypeId",
+          "db_column": "TaxTypeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "allowedInCustomerPortal",
+          "db_column": "AllowedInCustomerPortal",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "pricing",
+          "db_column": "pricing",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "locationStockLevels",
+          "db_column": "locationStockLevels",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "images",
+          "db_column": "images",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedUtc",
+          "db_column": "UpdatedUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [
+          "pricing",
+          "locationStockLevels",
+          "images"
+        ],
+        "jsonb_fields": [
+          "pricing",
+          "locationStockLevels",
+          "images"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materialitemsstage",
+        "prod_table": "c{clientID}_integration_materialitems",
+        "primary_key": [
+          "MaterialItemId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name",
+          "UpdatedUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "MaterialLocation",
+      "description": "Physical locations where materials are stored, including shops, depots, and warehouses",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/materiallocations",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for material location"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Short code identifier for the location"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Display name of the material location"
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Detailed description of the location"
+        },
+        {
+          "api_name": "isDefault",
+          "db_column": "IsDefault",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if this is the default material location"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materiallocationstage",
+        "prod_table": "c{clientID}_integration_materiallocation",
+        "primary_key": [
+          "MaterialLocationId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "MaterialPricingLevel",
+      "description": "Pricing levels or tiers used for material pricing calculations",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/materialpricinglevels",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "MaterialPricingLevelId",
+          "db_column": "MaterialPricingLevelId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for material pricing level"
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the pricing level"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materialpricinglevelstage",
+        "prod_table": "c{clientID}_integration_materialpricinglevel",
+        "primary_key": [
+          "MaterialPricingLevelId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Material",
+      "description": "Material usage and consumption records for projects, including costs, quantities, and billing information",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/materials",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "materialId",
+          "db_column": "MaterialId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for material record"
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the project using this material"
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Project code identifier"
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the project"
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User who recorded the material usage"
+        },
+        {
+          "api_name": "supplierId",
+          "db_column": "SupplierId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Supplier providing the material"
+        },
+        {
+          "api_name": "notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Additional notes about the material usage"
+        },
+        {
+          "api_name": "purchaseOrderId",
+          "db_column": "PurchaseOrderId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to purchase order"
+        },
+        {
+          "api_name": "purchaseOrderNo",
+          "db_column": "PurchaseOrderNo",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Purchase order number"
+        },
+        {
+          "api_name": "purchaseOrderNote",
+          "db_column": "PurchaseOrderNote",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Notes on the purchase order"
+        },
+        {
+          "api_name": "purchaseOrderLineId",
+          "db_column": "PurchaseOrderLineId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Purchase order line item reference"
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Current state of the material record"
+        },
+        {
+          "api_name": "isEstimate",
+          "db_column": "IsEstimate",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if this is an estimated material usage"
+        },
+        {
+          "api_name": "isOrderRequired",
+          "db_column": "IsOrderRequired",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if an order is required for this material"
+        },
+        {
+          "api_name": "materialDateUtc",
+          "db_column": "MaterialDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "UTC date of material usage"
+        },
+        {
+          "api_name": "materialDate",
+          "db_column": "MaterialDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Local date of material usage"
+        },
+        {
+          "api_name": "materialItemCode",
+          "db_column": "MaterialItemCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Code identifier for the material item"
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Location where material is stored/used"
+        },
+        {
+          "api_name": "pricingMultiplier",
+          "db_column": "PricingMultiplier",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Multiplier applied to base pricing"
+        },
+        {
+          "api_name": "pricingUnitId",
+          "db_column": "PricingUnitId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Unit used for pricing calculations"
+        },
+        {
+          "api_name": "usageUnitId",
+          "db_column": "UsageUnitId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Unit used for usage calculations"
+        },
+        {
+          "api_name": "rowOrder",
+          "db_column": "RowOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Display order of the material record"
+        },
+        {
+          "api_name": "materialItemId",
+          "db_column": "MaterialItemId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the material item master record"
+        },
+        {
+          "api_name": "materialItemName",
+          "db_column": "MaterialItemName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the material item"
+        },
+        {
+          "api_name": "costCurrencyId",
+          "db_column": "CostCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency used for cost calculations"
+        },
+        {
+          "api_name": "chargeCurrencyId",
+          "db_column": "ChargeCurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Currency used for charge calculations"
+        },
+        {
+          "api_name": "quantity",
+          "db_column": "Quantity",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Quantity of material"
+        },
+        {
+          "api_name": "usageQuantity",
+          "db_column": "UsageQuantity",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Actual usage quantity"
+        },
+        {
+          "api_name": "cost",
+          "db_column": "Cost",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Cost amount for the material"
+        },
+        {
+          "api_name": "charge",
+          "db_column": "Charge",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Charge amount for the material"
+        },
+        {
+          "api_name": "length",
+          "db_column": "Length",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Length dimension of the material"
+        },
+        {
+          "api_name": "width",
+          "db_column": "Width",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Width dimension of the material"
+        },
+        {
+          "api_name": "height",
+          "db_column": "Height",
+          "data_type": "DECIMAL(18,6)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Height dimension of the material"
+        },
+        {
+          "api_name": "isBillable",
+          "db_column": "IsBillable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if this material is billable to the client"
+        },
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to associated task"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_materialstage",
+        "prod_table": "c{clientID}_integration_material",
+        "primary_key": [
+          "MaterialId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "MaterialItemId",
+          "MaterialDate"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Organization",
+      "description": "Organization configuration including features, settings, and domain information",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/organizations",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": []
+        }
+      },
+      "fields": [
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Organization name"
+        },
+        {
+          "api_name": "domains",
+          "db_column": "Domains",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "List of domains associated with the organization"
+        },
+        {
+          "api_name": "features",
+          "db_column": "Features",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "List of enabled features for the organization"
+        },
+        {
+          "api_name": "generalSettings",
+          "db_column": "GeneralSettings",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "General configuration settings"
+        },
+        {
+          "api_name": "accountingSettings",
+          "db_column": "AccountingSettings",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Accounting-specific configuration settings"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": false,
+        "nested_objects": [],
+        "array_fields": [
+          "domains",
+          "features"
+        ],
+        "jsonb_fields": [
+          "domains",
+          "features",
+          "generalSettings",
+          "accountingSettings"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_organizationstage",
+        "prod_table": "c{clientID}_integration_organization",
+        "primary_key": [
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectGroups",
+      "description": "Project groups that organize and categorize projects within the system",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/projectgroups",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "projectGroupId",
+          "db_column": "ProjectGroupId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the project group"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isDefault",
+          "db_column": "IsDefault",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "extAccTrackingId1",
+          "db_column": "ExtAccTrackingId1",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "extAccTrackingId2",
+          "db_column": "ExtAccTrackingId2",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "brandingThemeId",
+          "db_column": "BrandingThemeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectgroupsstage",
+        "prod_table": "c{clientID}_integration_projectgroups",
+        "primary_key": [
+          "ProjectGroupId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Code",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Projects",
+      "description": "Projects containing tasks, assignments, materials, expenses, and project management details",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/projects",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the project"
+        },
+        {
+          "api_name": "parentQuoteId",
+          "db_column": "ParentQuoteId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroupId",
+          "db_column": "ProjectGroupId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroupCode",
+          "db_column": "ProjectGroupCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroupName",
+          "db_column": "ProjectGroupName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerContactId",
+          "db_column": "CustomerContactId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "templateId",
+          "db_column": "TemplateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxRateId",
+          "db_column": "TaxRateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "managerUserId",
+          "db_column": "ManagerUserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerRef",
+          "db_column": "CustomerRef",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "specialInstructions",
+          "db_column": "SpecialInstructions",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDateUtc",
+          "db_column": "StartDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDateUtc",
+          "db_column": "EndDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fixedPriceAmount",
+          "db_column": "FixedPriceAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isOverhead",
+          "db_column": "IsOverhead",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "priority",
+          "db_column": "Priority",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "priceType",
+          "db_column": "PriceType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoiceNote",
+          "db_column": "InvoiceNote",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "url",
+          "db_column": "Url",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "allowedInCustomerPortal",
+          "db_column": "AllowedInCustomerPortal",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userCompletedDateUtc",
+          "db_column": "UserCompletedDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userCompletedDate",
+          "db_column": "UserCompletedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedTimeUtc",
+          "db_column": "UpdatedTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tasks",
+          "db_column": "tasks",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "color",
+          "db_column": "Color",
+          "data_type": "VARCHAR(10)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materials",
+          "db_column": "materials",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenses",
+          "db_column": "expenses",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "milestones",
+          "db_column": "milestones",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "roles",
+          "db_column": "roles",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialsUnderTasksRequired",
+          "db_column": "MaterialsUnderTasksRequired",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updateOptions",
+          "db_column": "updateOptions",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "clientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [
+          "tasks",
+          "materials",
+          "expenses",
+          "milestones",
+          "roles",
+          "updateOptions"
+        ],
+        "array_fields": [
+          "tasks",
+          "materials",
+          "expenses",
+          "milestones",
+          "roles"
+        ],
+        "jsonb_fields": [
+          "tasks",
+          "materials",
+          "expenses",
+          "milestones",
+          "roles",
+          "updateOptions"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectsstage",
+        "prod_table": "c{clientID}_integration_projects",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectGroupId",
+          "CustomerId",
+          "Status",
+          "UpdatedTimeUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "ProjectSummary",
+      "description": "Project summary report containing project details, financial information, and status",
+      "category": "reporting",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/reports/ProjectSummary",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "IncludeStatusProposal",
+            "IncludeStatusNotStarted",
+            "IncludeStatusInProgress",
+            "IncludeStatusCompleted",
+            "IncludeStatusInvoiced",
+            "IncludeStatusClosed",
+            "IncludeStatusOnHold",
+            "PageSize",
+            "Page"
+          ],
+          "pagination": {
+            "type": "page",
+            "page_param": "Page",
+            "size_param": "PageSize",
+            "default_size": 1000,
+            "max_size": null
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the project"
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroup",
+          "db_column": "ProjectGroup",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDateUtc",
+          "db_column": "StartDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDateUtc",
+          "db_column": "EndDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "completedDateUtc",
+          "db_column": "CompletedDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "lastModifiedUtc",
+          "db_column": "LastModifiedUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "manager",
+          "db_column": "Manager",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customer",
+          "db_column": "Customer",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerRef",
+          "db_column": "CustomerRef",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "priceType",
+          "db_column": "PriceType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedTime",
+          "db_column": "PlannedTime",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualTime",
+          "db_column": "ActualTime",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "incompleteTasksEffort",
+          "db_column": "IncompleteTasksEffort",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedTimeCost",
+          "db_column": "PlannedTimeCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedMaterialsCost",
+          "db_column": "PlannedMaterialsCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedExpensesCost",
+          "db_column": "PlannedExpensesCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedTimeRevenue",
+          "db_column": "PlannedTimeRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedMaterialsRevenue",
+          "db_column": "PlannedMaterialsRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedExpensesRevenue",
+          "db_column": "PlannedExpensesRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedMilestoneRevenue",
+          "db_column": "PlannedMilestoneRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedFixedPriceRevenue",
+          "db_column": "PlannedFixedPriceRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "plannedFixedPriceTaskRevenue",
+          "db_column": "PlannedFixedPriceTaskRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "timeCost",
+          "db_column": "TimeCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialsCost",
+          "db_column": "MaterialsCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expensesCost",
+          "db_column": "ExpensesCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoiced",
+          "db_column": "Invoiced",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoicable",
+          "db_column": "Invoicable",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "invoiceDetailsString",
+          "db_column": "InvoiceDetailsString",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "adjustments",
+          "db_column": "Adjustments",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalActualCost",
+          "db_column": "TotalActualCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalActualRevenue",
+          "db_column": "TotalActualRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalActualProfit",
+          "db_column": "TotalActualProfit",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPlannedCost",
+          "db_column": "TotalPlannedCost",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPlannedRevenue",
+          "db_column": "TotalPlannedRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalPlannedProfit",
+          "db_column": "TotalPlannedProfit",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualTimeRevenue",
+          "db_column": "ActualTimeRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualMaterialsRevenue",
+          "db_column": "ActualMaterialsRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualExpensesRevenue",
+          "db_column": "ActualExpensesRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualMilestoneRevenue",
+          "db_column": "ActualMilestoneRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualFixedPriceRevenue",
+          "db_column": "ActualFixedPriceRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "actualFixedPriceTaskRevenue",
+          "db_column": "ActualFixedPriceTaskRevenue",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "url",
+          "db_column": "Url",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "specialInstructions",
+          "db_column": "SpecialInstructions",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_projectsummarystage",
+        "prod_table": "c{clientID}_integration_projectsummary",
+        "primary_key": [
+          "ProjectId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "Status",
+          "Manager"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "PurchaseOrder",
+      "description": "Purchase order entity containing order details, supplier information, and status",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/PurchaseOrders",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "PurchaseOrderId",
+            "OrderNo",
+            "SupplierId",
+            "ProjectId",
+            "DatesInUtc",
+            "EarliestRaisedDate",
+            "LatestRaisedDate",
+            "PurchaseOrderStatuses",
+            "ReceivedStatuses",
+            "InvoicedStatuses",
+            "SimpleSearch",
+            "EarliestExpectedDeliveryDate",
+            "LatestExpectedDeliveryDate",
+            "Order",
+            "Page",
+            "PageSize",
+            "IncludeLines",
+            "IncludeFreightItems",
+            "IncludeDescendants",
+            "IncludeAncestors"
+          ],
+          "pagination": {
+            "type": "page",
+            "page_param": "Page",
+            "size_param": "PageSize",
+            "default_size": null,
+            "max_size": null
+          },
+          "incremental_sync": {
+            "timestamp_field": "EarliestRaisedDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental UPSERT synchronization based on raised date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "PurchaseOrderId",
+          "db_column": "PurchaseOrderId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the purchase order"
+        },
+        {
+          "api_name": "OrderNo",
+          "db_column": "OrderNo",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SupplierId",
+          "db_column": "SupplierId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ProjectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DatesInUtc",
+          "db_column": "DatesInUtc",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EarliestRaisedDate",
+          "db_column": "EarliestRaisedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LatestRaisedDate",
+          "db_column": "LatestRaisedDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PurchaseOrderStatuses",
+          "db_column": "PurchaseOrderStatuses",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ReceivedStatuses",
+          "db_column": "ReceivedStatuses",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "InvoicedStatuses",
+          "db_column": "InvoicedStatuses",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SimpleSearch",
+          "db_column": "SimpleSearch",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EarliestExpectedDeliveryDate",
+          "db_column": "EarliestExpectedDeliveryDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LatestExpectedDeliveryDate",
+          "db_column": "LatestExpectedDeliveryDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Order",
+          "db_column": "Order",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Page",
+          "db_column": "Page",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PageSize",
+          "db_column": "PageSize",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeLines",
+          "db_column": "IncludeLines",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeFreightItems",
+          "db_column": "IncludeFreightItems",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeDescendants",
+          "db_column": "IncludeDescendants",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeAncestors",
+          "db_column": "IncludeAncestors",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_purchaseorderstage",
+        "prod_table": "c{clientID}_integration_purchaseorder",
+        "primary_key": [
+          "PurchaseOrderId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "SupplierId",
+          "ProjectId"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Quote",
+      "description": "Quote entity containing quote details, customer information, pricing, and project data",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/quotes",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "pagination": {
+            "type": "offset",
+            "offset_param": "skip",
+            "limit_param": "take",
+            "default_size": null,
+            "max_size": null
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "quoteId",
+          "db_column": "QuoteId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the quote"
+        },
+        {
+          "api_name": "projectGroupId",
+          "db_column": "ProjectGroupId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroupCode",
+          "db_column": "ProjectGroupCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroupName",
+          "db_column": "ProjectGroupName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "code",
+          "db_column": "Code",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "specialInstructions",
+          "db_column": "SpecialInstructions",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerRef",
+          "db_column": "CustomerRef",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerContactId",
+          "db_column": "CustomerContactId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "templateId",
+          "db_column": "TemplateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDateUtc",
+          "db_column": "StartDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDateUtc",
+          "db_column": "EndDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expiryDateUtc",
+          "db_column": "ExpiryDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expiryDate",
+          "db_column": "ExpiryDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "salesPersonUserId",
+          "db_column": "SalesPersonUserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialsUnderTasksRequired",
+          "db_column": "MaterialsUnderTasksRequired",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "priceType",
+          "db_column": "PriceType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "currencyId",
+          "db_column": "CurrencyId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fixedPriceAmount",
+          "db_column": "FixedPriceAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "markupPercentage",
+          "db_column": "MarkupPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxRateId",
+          "db_column": "TaxRateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "color",
+          "db_column": "Color",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tasks",
+          "db_column": "Tasks",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materials",
+          "db_column": "Materials",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "expenses",
+          "db_column": "Expenses",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "milestones",
+          "db_column": "Milestones",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "roles",
+          "db_column": "Roles",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updateOptions",
+          "db_column": "UpdateOptions",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "label",
+          "db_column": "Label",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "updatedTimeUtc",
+          "db_column": "UpdatedTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [
+          "updateOptions"
+        ],
+        "array_fields": [
+          "tasks",
+          "materials",
+          "expenses",
+          "milestones",
+          "roles"
+        ],
+        "jsonb_fields": [
+          "tasks",
+          "materials",
+          "expenses",
+          "milestones",
+          "roles",
+          "updateOptions"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_quotestage",
+        "prod_table": "c{clientID}_integration_quote",
+        "primary_key": [
+          "QuoteId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "Status"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Sales",
+      "description": "Sales orders and invoices with filtering and pagination support",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/sales",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "SaleId",
+            "CustomerId",
+            "SaleNo",
+            "EarliestEffectiveDate",
+            "LatestEffectiveDate",
+            "DatesInUtc",
+            "IncludeStatusOnHold",
+            "IncludeStatusDraft",
+            "IncludeStatusInvoiced",
+            "IncludeStatusVoid",
+            "Page",
+            "PageSize",
+            "MaterialItemId",
+            "MaterialCategoryId",
+            "MaterialLocationId",
+            "IsCredit",
+            "IncludeImages"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "EarliestEffectiveDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on effective date"
+          },
+          "pagination": {
+            "type": "page",
+            "page_parameter": "Page",
+            "size_parameter": "PageSize"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "SaleId",
+          "db_column": "SaleId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "CustomerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "SaleNo",
+          "db_column": "SaleNo",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "EarliestEffectiveDate",
+          "db_column": "EarliestEffectiveDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "LatestEffectiveDate",
+          "db_column": "LatestEffectiveDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "DatesInUtc",
+          "db_column": "DatesInUtc",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeStatusOnHold",
+          "db_column": "IncludeStatusOnHold",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeStatusDraft",
+          "db_column": "IncludeStatusDraft",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeStatusInvoiced",
+          "db_column": "IncludeStatusInvoiced",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeStatusVoid",
+          "db_column": "IncludeStatusVoid",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Page",
+          "db_column": "Page",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "PageSize",
+          "db_column": "PageSize",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaterialItemId",
+          "db_column": "MaterialItemId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaterialCategoryId",
+          "db_column": "MaterialCategoryId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "MaterialLocationId",
+          "db_column": "MaterialLocationId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IsCredit",
+          "db_column": "IsCredit",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "IncludeImages",
+          "db_column": "IncludeImages",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_salesstage",
+        "prod_table": "c{clientID}_integration_sales",
+        "primary_key": [
+          "SaleId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "SaleNo"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "preserve",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Tasks",
+      "description": "Project tasks with assignments, materials, and time tracking information",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/tasks",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "startDateUtc",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss",
+            "description": "Parameter used for incremental synchronization based on start date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDateUtc",
+          "db_column": "StartDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDateUtc",
+          "db_column": "EndDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startedTimeUtc",
+          "db_column": "StartedTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startedTime",
+          "db_column": "StartedTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "completedTimeUtc",
+          "db_column": "CompletedTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "completedTime",
+          "db_column": "CompletedTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "assignments",
+          "db_column": "Assignments",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "materials",
+          "db_column": "Materials",
+          "data_type": "JSONB",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "parentId",
+          "db_column": "ParentId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "displayOrder",
+          "db_column": "DisplayOrder",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "description",
+          "db_column": "Description",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "estimatedMinutes",
+          "db_column": "EstimatedMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isLeafTask",
+          "db_column": "IsLeafTask",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isBillable",
+          "db_column": "IsBillable",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isOnHold",
+          "db_column": "IsOnHold",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "fixedPrice",
+          "db_column": "FixedPrice",
+          "data_type": "DECIMAL(15,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "data",
+        "is_array": true,
+        "nested_objects": [
+          "assignments",
+          "materials"
+        ],
+        "array_fields": [
+          "assignments"
+        ],
+        "jsonb_fields": [
+          "assignments",
+          "materials"
+        ]
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_tasksstage",
+        "prod_table": "c{clientID}_integration_tasks",
+        "primary_key": [
+          "TaskId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "Status",
+          "StartDateUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "preserve_as_jsonb",
+        "array_handling": "preserve_as_jsonb",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Templates",
+      "description": "Template configurations with filtering capabilities by ID, type, and name",
+      "category": "configuration",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/templates",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [
+            "TemplateId",
+            "TemplateType",
+            "Name"
+          ],
+          "incremental_sync": null
+        }
+      },
+      "fields": [
+        {
+          "api_name": "TemplateId",
+          "db_column": "TemplateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "TemplateType",
+          "db_column": "TemplateType",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "Name",
+          "db_column": "Name",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_id",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisation_id",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_templatesstage",
+        "prod_table": "c{clientID}_integration_templates",
+        "primary_key": [
+          "TemplateId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "TemplateType",
+          "Name"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TimeActuals",
+      "description": "Actual time tracking records with customer, project, task, and activity details",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/reports/TimeActuals",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "StartDate",
+            "EndDate"
+          ],
+          "optional": [
+            "PageSize",
+            "Page"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "StartDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Parameter used for incremental UPSERT synchronization based on start date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "timeId",
+          "db_column": "TimeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "startTimeUtc",
+          "db_column": "StartTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startTime",
+          "db_column": "StartTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerCode",
+          "db_column": "CustomerCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerName",
+          "db_column": "CustomerName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectGroup",
+          "db_column": "ProjectGroup",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskName",
+          "db_column": "TaskName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "activityId",
+          "db_column": "ActivityId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "activityCode",
+          "db_column": "ActivityCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "activityName",
+          "db_column": "ActivityName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentCode",
+          "db_column": "DepartmentCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentName",
+          "db_column": "DepartmentName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userName",
+          "db_column": "UserName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userEmail",
+          "db_column": "UserEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalMinutes",
+          "db_column": "TotalMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billableMinutes",
+          "db_column": "BillableMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing",
+          "db_column": "Billing",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_id",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisation_id",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_timeactualsstage",
+        "prod_table": "c{clientID}_integration_timeactuals",
+        "primary_key": [
+          "TimeId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "ProjectId",
+          "UserId",
+          "StartTimeUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "TimePlan",
+      "description": "Planned time allocation records with task hierarchy and resource planning details",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/reports/TimePlan",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "StartDate",
+            "EndDate"
+          ],
+          "optional": [
+            "PageSize",
+            "Page"
+          ],
+          "incremental_sync": {
+            "timestamp_field": "StartDate",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DD",
+            "description": "Parameter used for incremental UPSERT synchronization based on start date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerCode",
+          "db_column": "CustomerCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "customerName",
+          "db_column": "CustomerName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "taskName",
+          "db_column": "TaskName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "parentTaskId",
+          "db_column": "ParentTaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "parentTaskName",
+          "db_column": "ParentTaskName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grandParentTaskId",
+          "db_column": "GrandParentTaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "grandParentTaskName",
+          "db_column": "GrandParentTaskName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskStartDateUtc",
+          "db_column": "TaskStartDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskStartDate",
+          "db_column": "TaskStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskEndDateUtc",
+          "db_column": "TaskEndDateUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taskEndDate",
+          "db_column": "TaskEndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentCode",
+          "db_column": "DepartmentCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "departmentName",
+          "db_column": "DepartmentName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true
+        },
+        {
+          "api_name": "userName",
+          "db_column": "UserName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "userEmail",
+          "db_column": "UserEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "totalMinutes",
+          "db_column": "TotalMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "selfMinutes",
+          "db_column": "SelfMinutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "billing",
+          "db_column": "Billing",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "client_id",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "organisation_id",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_timeplanstage",
+        "prod_table": "c{clientID}_integration_timeplan",
+        "primary_key": [
+          "ProjectId",
+          "TaskId",
+          "UserId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "CustomerId",
+          "ProjectId",
+          "UserId",
+          "TaskStartDateUtc"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Times",
+      "description": "Time tracking entries for projects, tasks, and activities with user assignments and approval status",
+      "category": "transactional",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/times",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "startTime_gte",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss.SSS",
+            "description": "Parameter used for incremental UPSERT synchronization based on start time"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "timeId",
+          "db_column": "TimeId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the time entry"
+        },
+        {
+          "api_name": "projectId",
+          "db_column": "ProjectId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the associated project"
+        },
+        {
+          "api_name": "projectCode",
+          "db_column": "ProjectCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Human-readable project code"
+        },
+        {
+          "api_name": "projectName",
+          "db_column": "ProjectName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the project"
+        },
+        {
+          "api_name": "taskId",
+          "db_column": "TaskId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the associated task"
+        },
+        {
+          "api_name": "taskName",
+          "db_column": "TaskName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the task"
+        },
+        {
+          "api_name": "taskCompletionIndicated",
+          "db_column": "TaskCompletionIndicated",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if task completion is marked"
+        },
+        {
+          "api_name": "activityId",
+          "db_column": "ActivityId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the associated activity"
+        },
+        {
+          "api_name": "activityCode",
+          "db_column": "ActivityCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Code for the activity type"
+        },
+        {
+          "api_name": "activityName",
+          "db_column": "ActivityName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the activity"
+        },
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the user who logged the time"
+        },
+        {
+          "api_name": "userName",
+          "db_column": "UserName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the user"
+        },
+        {
+          "api_name": "notes",
+          "db_column": "Notes",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Additional notes for the time entry"
+        },
+        {
+          "api_name": "startTime",
+          "db_column": "StartTime",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Local start time of the time entry"
+        },
+        {
+          "api_name": "startTimeUtc",
+          "db_column": "StartTimeUtc",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "UTC start time of the time entry"
+        },
+        {
+          "api_name": "minutes",
+          "db_column": "Minutes",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Duration of the time entry in minutes"
+        },
+        {
+          "api_name": "state",
+          "db_column": "State",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Approval state of the time entry"
+        },
+        {
+          "api_name": "timeProfileId",
+          "db_column": "TimeProfileId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to time profile"
+        },
+        {
+          "api_name": "timeProfileName",
+          "db_column": "TimeProfileName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the time profile"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_timesstage",
+        "prod_table": "c{clientID}_integration_times",
+        "primary_key": [
+          "TimeId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "ProjectId",
+          "UserId",
+          "StartTime"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    },
+    {
+      "name": "Users",
+      "description": "User accounts with roles, permissions, and department assignments",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/users",
+        "method": "GET",
+        "query_parameters": {
+          "required": [],
+          "optional": [],
+          "incremental_sync": {
+            "timestamp_field": "modified_since",
+            "type": "simple",
+            "timestamp_format": "YYYY-MM-DDTHH:mm:ss.SSS",
+            "description": "Parameter used for incremental UPSERT synchronization based on modification date"
+          }
+        }
+      },
+      "fields": [
+        {
+          "api_name": "userId",
+          "db_column": "UserId",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the user"
+        },
+        {
+          "api_name": "customerId",
+          "db_column": "CustomerId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to customer if user is external"
+        },
+        {
+          "api_name": "firstName",
+          "db_column": "FirstName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's first name"
+        },
+        {
+          "api_name": "lastName",
+          "db_column": "LastName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's last name"
+        },
+        {
+          "api_name": "displayName",
+          "db_column": "DisplayName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's display name"
+        },
+        {
+          "api_name": "departmentName",
+          "db_column": "DepartmentName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Name of the user's department"
+        },
+        {
+          "api_name": "departmentId",
+          "db_column": "DepartmentId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to the department"
+        },
+        {
+          "api_name": "contactEmail",
+          "db_column": "ContactEmail",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's email address"
+        },
+        {
+          "api_name": "isActive",
+          "db_column": "IsActive",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if the user account is active"
+        },
+        {
+          "api_name": "isSelfAssignmentPermitted",
+          "db_column": "IsSelfAssignmentPermitted",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for self assignment to tasks"
+        },
+        {
+          "api_name": "isTimeWriter",
+          "db_column": "IsTimeWriter",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission to write time entries"
+        },
+        {
+          "api_name": "isMaterialWriter",
+          "db_column": "IsMaterialWriter",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission to write material entries"
+        },
+        {
+          "api_name": "timeZoneId",
+          "db_column": "TimeZoneId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's time zone identifier"
+        },
+        {
+          "api_name": "timeZoneName",
+          "db_column": "TimeZoneName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "User's time zone name"
+        },
+        {
+          "api_name": "isHelper",
+          "db_column": "IsHelper",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if user is a helper role"
+        },
+        {
+          "api_name": "isNonHuman",
+          "db_column": "IsNonHuman",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Indicates if account is for non-human entity"
+        },
+        {
+          "api_name": "isSystemAdministrator",
+          "db_column": "IsSystemAdministrator",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "System administrator permission"
+        },
+        {
+          "api_name": "isResourceAdministrator",
+          "db_column": "IsResourceAdministrator",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Resource administrator permission"
+        },
+        {
+          "api_name": "isProjectManager",
+          "db_column": "IsProjectManager",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Project manager permission"
+        },
+        {
+          "api_name": "isQuoteEstimator",
+          "db_column": "IsQuoteEstimator",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Quote estimator permission"
+        },
+        {
+          "api_name": "isPurchaser",
+          "db_column": "IsPurchaser",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Purchaser permission"
+        },
+        {
+          "api_name": "isSalesPerson",
+          "db_column": "IsSalesPerson",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Sales person permission"
+        },
+        {
+          "api_name": "isInvoicer",
+          "db_column": "IsInvoicer",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Invoicer permission"
+        },
+        {
+          "api_name": "isReporter",
+          "db_column": "IsReporter",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reporter permission"
+        },
+        {
+          "api_name": "canProjectManagerChangeProjectState",
+          "db_column": "CanProjectManagerChangeProjectState",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for project manager to change project state"
+        },
+        {
+          "api_name": "canProjectManagerSeeProjectProfit",
+          "db_column": "CanProjectManagerSeeProjectProfit",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for project manager to see project profit"
+        },
+        {
+          "api_name": "canProjectManagerEditProjectTemplates",
+          "db_column": "CanProjectManagerEditProjectTemplates",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for project manager to edit project templates"
+        },
+        {
+          "api_name": "canSalesPersonSeePricing",
+          "db_column": "CanSalesPersonSeePricing",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for sales person to see pricing"
+        },
+        {
+          "api_name": "canSalesPersonSeeDashboard",
+          "db_column": "CanSalesPersonSeeDashboard",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Permission for sales person to see dashboard"
+        },
+        {
+          "api_name": "isMaterialApprover",
+          "db_column": "IsMaterialApprover",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Material approver permission"
+        },
+        {
+          "api_name": "isExpenseApprover",
+          "db_column": "IsExpenseApprover",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Expense approver permission"
+        },
+        {
+          "api_name": "isTimeApprover",
+          "db_column": "IsTimeApprover",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Time approver permission"
+        },
+        {
+          "api_name": "defaultChargeRateId",
+          "db_column": "DefaultChargeRateId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false,
+          "comment": "Reference to default charge rate"
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Client identifier"
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false,
+          "comment": "Organisation identifier"
+        }
+      ],
+      "response_structure": {
+        "root_data_field": null,
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_usersstage",
+        "prod_table": "c{clientID}_integration_users",
+        "primary_key": [
+          "UserId",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "DepartmentId",
+          "IsActive"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    }
+  ],
+  "source_url": "/Users/haipham/DuAn/upwork/etani/etl-packages/dynamic_integrations/sample_data/tidywork",
+  "extraction_method": "file_analysis"
+}

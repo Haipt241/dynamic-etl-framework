@@ -13,9 +13,9 @@
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
     "HUBSPOT_CLIENT_ID": "lambda x: len(x) > 30 and '-' in x",
-    "HUBSPOT_CLIENT_SECRET": "lambda x: len(x) > 30",
-    "HUBSPOT_REFRESH_TOKEN": "lambda x: len(x) > 50 if x else True",
-    "HUBSPOT_ACCESS_TOKEN": "lambda x: (x.startswith('pat-') and len(x) >= 40) or len(x) > 50 if x else True",
+    "HUBSPOT_CLIENT_SECRET": "",
+    "HUBSPOT_REFRESH_TOKEN": "",
+    "HUBSPOT_ACCESS_TOKEN": "",
     "HUBSPOT_PORTAL_ID": "lambda x: x.isdigit() and len(x) >= 5",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
@@ -70,7 +70,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

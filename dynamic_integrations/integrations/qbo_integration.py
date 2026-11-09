@@ -203,9 +203,9 @@ class QBOIntegration(BaseIntegration):
     def setup_qbo_configuration(self):
         """Setup QBO-specific configuration from environment variables"""
         # Get environment variables with fallbacks
-        self.etani_client_id = os.getenv('EtaniClientID', 'REDACTED')
+        self.etani_client_id = os.getenv('EtaniClientID', 'BIGOLESHOECOMPANY_CLIENT2013')
         self.etani_organisation_id = os.getenv('EtaniOrganisationID', '7035')
-        self.realm_id = os.getenv('RealmID', 'REDACTED')
+        self.realm_id = os.getenv('RealmID', '193514518158004')
         self.db_destination = os.getenv('DB_Destination', 'EVA')
         self.trigger_type = os.getenv('TRIGGER_TYPE', 'MANUAL')
         self.reset_mode = os.getenv('Reset_Mode', False)
@@ -1569,7 +1569,7 @@ class QBOIntegration(BaseIntegration):
         
         # Prepare headers
         headers = {
-            'Authorization': 'Bearer ' + access_token,
+            'Authorization': 'REDACTED' + access_token,
             'Accept': 'application/json',
             'Cache-Control': 'no-cache'
         }

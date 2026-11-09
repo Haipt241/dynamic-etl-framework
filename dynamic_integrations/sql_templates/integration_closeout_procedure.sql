@@ -7,7 +7,7 @@
 -- Parameters:
 --   @ClientID: Client ID number (e.g., 6956)
 --   @OrganisationID: Organisation ID (e.g., 1755241633)
---   @EtaniClientID: Full client ID string (e.g., 'REDACTED')
+--   @EtaniClientID: Full client ID string (e.g., 'BIGOLESHOECOMPANY_CLIENT6956')
 --   @TriggerType: Trigger type ('MANUAL' or 'SCHEDULED')
 --   @JobRunID: Job run ID for tracking
 -- =============================================
@@ -104,7 +104,7 @@ DELIMITER ;
 -- CALL `Dynamic-ETL-PAYROLL_AU-Integration-CloseOut`(
 --     '6956',                              -- ClientID
 --     1755241633,                          -- OrganisationID
---     'REDACTED',      -- EtaniClientID
+--     'BIGOLESHOECOMPANY_CLIENT6956',      -- EtaniClientID
 --     'MANUAL',                            -- TriggerType
 --     0                                    -- JobRunID
 -- );

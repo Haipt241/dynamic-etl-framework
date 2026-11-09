@@ -19,10 +19,10 @@
         "offline_access"
       ],
       "client_id": "{{wfm_client_id}}",
-      "client_secret": "{{wfm_client_secret}}",
-      "access_token": "{{wfm_access_token}}",
-      "refresh_token": "{{wfm_refresh_token}}",
-       "rate_limiting": {
+      "client_secret": "",
+      "access_token": "",
+      "refresh_token": "",
+      "rate_limiting": {
         "requests_per_minute": 60,
         "burst_limit": 60
       }
@@ -46,7 +46,7 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": "Bearer {{wfm_access_token}}",
+      "Authorization": "",
       "User-Agent": "Etani-WFM-Integration/1.0"
     },
     "pagination": {

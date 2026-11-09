@@ -42,7 +42,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     },
     "api_username": {
       "env_var": "API_USERNAME",

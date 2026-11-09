@@ -11,8 +11,8 @@
       "type": "dual_key",
       "header": "AccessKey",
       "format": "Bearer + AccessKey combo",
-      "access_key": "REDACTED",
-      "tenant_access_key": "REDACTED"
+      "access_key": "",
+      "tenant_access_key": ""
     },
     "url_patterns": {
       "has_company_id": false,
@@ -26,8 +26,8 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "AccessKey": "{{apiTenantAccessKey}}",
-      "Authorization": "Bearer {{apiAccessKey}}"
+      "AccessKey": "",
+      "Authorization": ""
     },
     "pagination": {
       "type": "odata",
@@ -977,7 +977,9 @@
         "path": "/Contacts/{contact_key}",
         "method": "GET",
         "query_parameters": {
-          "required": {"$expand": "BusinessCards,ClientTeam"},
+          "required": {
+            "$expand": "BusinessCards,ClientTeam"
+          },
           "optional": [],
           "incremental_sync": {
             "type": "template",

@@ -68,12 +68,12 @@ class PowerBIManager:
         """Fallback default configuration"""
         return {
             "powerbi": {
-                "base_url": "REDACTED",
+                "base_url": "https://login.windows.net/5ff8562f-e5d0-4051-8c50-950156e3dd17/oauth2/token",
                 "api_base_url": "https://api.powerbi.com/v1.0/myorg",
-                "username": "REDACTED",
+                "username": "developer-powerbi@vpa-account.etani.com.au",
                 "password": "REDACTED",
                 "scope": "https://analysis.windows.net/powerbi/api",
-                "client_id": "REDACTED",
+                "client_id": "9559aaab-c759-40a1-b76a-fcbb8ddf7956",
                 "client_secret": "REDACTED"
             },
             "dataset_patterns": {

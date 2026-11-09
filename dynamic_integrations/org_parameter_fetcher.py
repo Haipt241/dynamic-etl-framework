@@ -250,8 +250,8 @@ class OrgParameterFetcher:
         # They are application-level credentials and must come from config defaults
         key_mapping = {
             'tenantId': 'xero_tenant_id',        # Org-specific tenant ID
-            'refresh_token': 'xero_refresh_token',  # Org-specific refresh token
-            'access_token': 'xero_access_token',    # Org-specific access token
+            'refresh_token': 'REDACTED',  # Org-specific refresh token
+            'access_token': 'REDACTED',    # Org-specific access token
             # clientId in Details JSON is Etani client number (6956), NOT OAuth client_id!
             # xero_client_id must come from config default (OAuth app credential)
         }

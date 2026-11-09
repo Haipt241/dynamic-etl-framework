@@ -1,0 +1,8 @@
+{
+  "total_endpoints": 4,
+  "endpoints": [
+
+  ],
+  "source_url": "/Users/haipham/DuAn/upwork/etani/etl-packages/dynamic_integrations/sample_data/xeroproject",
+  "extraction_method": "file_analysis"
+}

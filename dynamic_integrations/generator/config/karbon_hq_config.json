@@ -14,8 +14,8 @@
   ],
   "env_var_validations": {
     "EtaniClientID": "lambda x: 'CLIENT' in x",
-    "KARBON_ACCESS_KEY": "lambda x: len(x) > 30 and '-' in x",
-    "KARBON_TENANT_ACCESS_KEY": "lambda x: x.startswith('eyJ') and len(x) > 100",
+    "KARBON_ACCESS_KEY": "",
+    "KARBON_TENANT_ACCESS_KEY": "",
     "DB_Destination": "lambda x: x in ['EVA', 'CMS', 'DW']"
   },
   "env_vars_config": {
@@ -45,7 +45,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "exclude_fields": [

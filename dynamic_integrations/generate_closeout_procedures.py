@@ -138,7 +138,7 @@ DELIMITER ;
 -- CALL `{procedure_name}`(
 --     '6956',                              -- ClientID
 --     1755241633,                          -- OrganisationID
---     'REDACTED',      -- EtaniClientID
+--     'BIGOLESHOECOMPANY_CLIENT6956',      -- EtaniClientID
 --     'MANUAL',                            -- TriggerType
 --     0                                    -- JobRunID
 -- );

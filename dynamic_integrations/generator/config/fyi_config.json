@@ -66,7 +66,7 @@
     },
     "reset_mode": {
       "env_var": "Reset_Mode",
-      "default_value": ""
+      "default_value": false
     }
   },
   "error_handling": {
@@ -87,7 +87,7 @@
   "client_credentials": {
     "note": "Store actual credentials in environment variables",
     "access_id": "60769807-d42b-4022-844e-efaa9a235a58",
-    "access_secret": "REDACTED"
+    "access_secret": "a33f6644259a2b590ea0d028c14f4425d48169140fe92e50ff223caf1a30bfb4"
   },
   "sync_settings": {
     "full_sync_frequency": "daily",

@@ -1,0 +1,1051 @@
+{
+  "total_endpoints": 32,
+  "endpoints": [
+    {
+      "name": "Employee",
+      "description": "Master data entity representing detailed employee information including personal details, employment terms, banking, and tax information",
+      "category": "master_data",
+      "priority": "medium",
+      "api_details": {
+        "path": "/api/v2/business/{businessId}/employee/unstructured",
+        "method": "GET",
+        "query_parameters": {
+          "required": [
+            "businessId"
+          ],
+          "optional": []
+        }
+      },
+      "is_child_endpoint": true,
+      "child_endpoint_config": [
+        {
+          "parent_table": "business",
+          "parent_id_column": "Id",
+          "parent_id_source": "businessId",
+          "map_id_to_column": "BusinessId",
+          "child_endpoint_type": "url_based"
+        }
+      ],
+      "fields": [
+        {
+          "api_name": "id",
+          "db_column": "Id",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": true,
+          "comment": "Unique identifier for the employee"
+        },
+        {
+          "api_name": "anniversaryDate",
+          "db_column": "AnniversaryDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "australianResident",
+          "db_column": "AustralianResident",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "automaticallyApplyPublicHolidayNotWorkedEarningsLines",
+          "db_column": "AutomaticallyApplyPublicHolidayNotWorkedEarningsLines",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "automaticallyPayEmployee",
+          "db_column": "AutomaticallyPayEmployee",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "awardId",
+          "db_column": "AwardId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount1_AccountName",
+          "db_column": "BankAccount1AccountName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount1_AccountNumber",
+          "db_column": "BankAccount1AccountNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount1_AllocatedPercentage",
+          "db_column": "BankAccount1AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount1_BSB",
+          "db_column": "BankAccount1BSB",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount1_FixedAmount",
+          "db_column": "BankAccount1FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount2_AccountName",
+          "db_column": "BankAccount2AccountName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount2_AccountNumber",
+          "db_column": "BankAccount2AccountNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount2_AllocatedPercentage",
+          "db_column": "BankAccount2AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount2_BSB",
+          "db_column": "BankAccount2BSB",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount2_FixedAmount",
+          "db_column": "BankAccount2FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount3_AccountName",
+          "db_column": "BankAccount3AccountName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount3_AccountNumber",
+          "db_column": "BankAccount3AccountNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount3_AllocatedPercentage",
+          "db_column": "BankAccount3AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount3_BSB",
+          "db_column": "BankAccount3BSB",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "bankAccount3_FixedAmount",
+          "db_column": "BankAccount3FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "businessAwardPackage",
+          "db_column": "BusinessAwardPackage",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "claimMedicareLevyReduction",
+          "db_column": "ClaimMedicareLevyReduction",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "claimTaxFreeThreshold",
+          "db_column": "ClaimTaxFreeThreshold",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "closelyHeldEmployee",
+          "db_column": "CloselyHeldEmployee",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "closelyHeldReporting",
+          "db_column": "CloselyHeldReporting",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "contractorABN",
+          "db_column": "ContractorABN",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateCreated",
+          "db_column": "DateCreated",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateOfBirth",
+          "db_column": "DateOfBirth",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateTaxFileDeclarationReported",
+          "db_column": "DateTaxFileDeclarationReported",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dateTaxFileDeclarationSigned",
+          "db_column": "DateTaxFileDeclarationSigned",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "disableAutoProgression",
+          "db_column": "DisableAutoProgression",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "dvlPaySlipDescription",
+          "db_column": "DvlPaySlipDescription",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emailAddress",
+          "db_column": "EmailAddress",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact1_Address",
+          "db_column": "EmergencyContact1Address",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact1_AlternateContactNumber",
+          "db_column": "EmergencyContact1AlternateContactNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact1_ContactNumber",
+          "db_column": "EmergencyContact1ContactNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact1_Name",
+          "db_column": "EmergencyContact1Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact1_Relationship",
+          "db_column": "EmergencyContact1Relationship",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact2_Address",
+          "db_column": "EmergencyContact2Address",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact2_AlternateContactNumber",
+          "db_column": "EmergencyContact2AlternateContactNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact2_ContactNumber",
+          "db_column": "EmergencyContact2ContactNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact2_Name",
+          "db_column": "EmergencyContact2Name",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "emergencyContact2_Relationship",
+          "db_column": "EmergencyContact2Relationship",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employingEntityABN",
+          "db_column": "EmployingEntityABN",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employingEntityId",
+          "db_column": "EmployingEntityId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employmentAgreement",
+          "db_column": "EmploymentAgreement",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employmentAgreementId",
+          "db_column": "EmploymentAgreementId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "employmentType",
+          "db_column": "EmploymentType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "endDate",
+          "db_column": "EndDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "externalId",
+          "db_column": "ExternalId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "firstName",
+          "db_column": "FirstName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "gender",
+          "db_column": "Gender",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hasApprovedWorkingHolidayVisa",
+          "db_column": "HasApprovedWorkingHolidayVisa",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hasWithholdingVariation",
+          "db_column": "HasWithholdingVariation",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "homePhone",
+          "db_column": "HomePhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hoursPerDay",
+          "db_column": "HoursPerDay",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "hoursPerWeek",
+          "db_column": "HoursPerWeek",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "includeInPortableLongServiceLeaveReport",
+          "db_column": "IncludeInPortableLongServiceLeaveReport",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isEnabledForTimesheets",
+          "db_column": "IsEnabledForTimesheets",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isExemptFromFloodLevy",
+          "db_column": "IsExemptFromFloodLevy",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isExemptFromPayrollTax",
+          "db_column": "IsExemptFromPayrollTax",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "isSeasonalWorker",
+          "db_column": "IsSeasonalWorker",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "jobTitle",
+          "db_column": "JobTitle",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveAccrualStartDateType",
+          "db_column": "LeaveAccrualStartDateType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveTemplate",
+          "db_column": "LeaveTemplate",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "leaveYearStart",
+          "db_column": "LeaveYearStart",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "locations",
+          "db_column": "Locations",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "maximumQuarterlySuperContributionsBase",
+          "db_column": "MaximumQuarterlySuperContributionsBase",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "medicareLevyExemption",
+          "db_column": "MedicareLevyExemption",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "medicareLevyReductionDependentCount",
+          "db_column": "MedicareLevyReductionDependentCount",
+          "data_type": "INT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "medicareLevyReductionSpouse",
+          "db_column": "MedicareLevyReductionSpouse",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "medicareLevySurchargeWithholdingTier",
+          "db_column": "MedicareLevySurchargeWithholdingTier",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "middleName",
+          "db_column": "MiddleName",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "mobilePhone",
+          "db_column": "MobilePhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "otherTaxOffset",
+          "db_column": "OtherTaxOffset",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "overrideTemplateRate",
+          "db_column": "OverrideTemplateRate",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payConditionRuleSet",
+          "db_column": "PayConditionRuleSet",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "payRateTemplate",
+          "db_column": "PayRateTemplate",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paySchedule",
+          "db_column": "PaySchedule",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "paySlipNotificationType",
+          "db_column": "PaySlipNotificationType",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "portableLongServiceLeaveId",
+          "db_column": "PortableLongServiceLeaveId",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalAddressIsOverseas",
+          "db_column": "PostalAddressIsOverseas",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalAddressLine2",
+          "db_column": "PostalAddressLine2",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalCountry",
+          "db_column": "PostalCountry",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalPostCode",
+          "db_column": "PostalPostCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalState",
+          "db_column": "PostalState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalStreetAddress",
+          "db_column": "PostalStreetAddress",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "postalSuburb",
+          "db_column": "PostalSuburb",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "preferredName",
+          "db_column": "PreferredName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "previousSurname",
+          "db_column": "PreviousSurname",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "primaryLocation",
+          "db_column": "PrimaryLocation",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "primaryPayCategory",
+          "db_column": "PrimaryPayCategory",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rate",
+          "db_column": "Rate",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rateUnit",
+          "db_column": "RateUnit",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "reportingDimensionValues",
+          "db_column": "ReportingDimensionValues",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialAddressIsOverseas",
+          "db_column": "ResidentialAddressIsOverseas",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialAddressLine2",
+          "db_column": "ResidentialAddressLine2",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialCountry",
+          "db_column": "ResidentialCountry",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialPostCode",
+          "db_column": "ResidentialPostCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialState",
+          "db_column": "ResidentialState",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialStreetAddress",
+          "db_column": "ResidentialStreetAddress",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "residentialSuburb",
+          "db_column": "ResidentialSuburb",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "rosteringNotificationChoices",
+          "db_column": "RosteringNotificationChoices",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "seniorsTaxOffset",
+          "db_column": "SeniorsTaxOffset",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "singleTouchPayroll",
+          "db_column": "SingleTouchPayroll",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "startDate",
+          "db_column": "StartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "status",
+          "db_column": "Status",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "stslDebt",
+          "db_column": "StslDebt",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_AllocatedPercentage",
+          "db_column": "SuperFund1AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_EmployerNominatedFund",
+          "db_column": "SuperFund1EmployerNominatedFund",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_FixedAmount",
+          "db_column": "SuperFund1FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_FundName",
+          "db_column": "SuperFund1FundName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_MemberNumber",
+          "db_column": "SuperFund1MemberNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund1_ProductCode",
+          "db_column": "SuperFund1ProductCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_AllocatedPercentage",
+          "db_column": "SuperFund2AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_EmployerNominatedFund",
+          "db_column": "SuperFund2EmployerNominatedFund",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_FixedAmount",
+          "db_column": "SuperFund2FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_FundName",
+          "db_column": "SuperFund2FundName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_MemberNumber",
+          "db_column": "SuperFund2MemberNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund2_ProductCode",
+          "db_column": "SuperFund2ProductCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_AllocatedPercentage",
+          "db_column": "SuperFund3AllocatedPercentage",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_EmployerNominatedFund",
+          "db_column": "SuperFund3EmployerNominatedFund",
+          "data_type": "BOOLEAN",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_FixedAmount",
+          "db_column": "SuperFund3FixedAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_FundName",
+          "db_column": "SuperFund3FundName",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_MemberNumber",
+          "db_column": "SuperFund3MemberNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superFund3_ProductCode",
+          "db_column": "SuperFund3ProductCode",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "superThresholdAmount",
+          "db_column": "SuperThresholdAmount",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "surname",
+          "db_column": "Surname",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "tags",
+          "db_column": "Tags",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxCategory",
+          "db_column": "TaxCategory",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxFileNumber",
+          "db_column": "TaxFileNumber",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "taxVariation",
+          "db_column": "TaxVariation",
+          "data_type": "DECIMAL(18,2)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "terminationReason",
+          "db_column": "TerminationReason",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "title",
+          "db_column": "Title",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "workPhone",
+          "db_column": "WorkPhone",
+          "data_type": "TEXT",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "workTypes",
+          "db_column": "WorkTypes",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "workingHolidayVisaCountry",
+          "db_column": "WorkingHolidayVisaCountry",
+          "data_type": "VARCHAR(255)",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "workingHolidayVisaStartDate",
+          "db_column": "WorkingHolidayVisaStartDate",
+          "data_type": "DATETIME",
+          "nullable": true,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "ClientID",
+          "db_column": "ClientID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        },
+        {
+          "api_name": "OrganisationID",
+          "db_column": "OrganisationID",
+          "data_type": "VARCHAR(255)",
+          "nullable": false,
+          "is_primary_key": false
+        }
+      ],
+      "response_structure": {
+        "root_data_field": "",
+        "is_array": true,
+        "nested_objects": [],
+        "array_fields": [],
+        "jsonb_fields": []
+      },
+      "database_schema": {
+        "stage_table": "c{clientID}_{orgID}_integration_employeestage",
+        "prod_table": "c{clientID}_integration_employee",
+        "primary_key": [
+          "Id",
+          "OrganisationID"
+        ],
+        "indexes": [
+          "OrganisationID",
+          "FirstName",
+          "Surname",
+          "EmailAddress"
+        ]
+      },
+      "transformation": {
+        "type": "simple",
+        "nested_handling": "flatten",
+        "array_handling": "expand_to_rows",
+        "date_format": "iso8601",
+        "null_handling": "preserve"
+      }
+    }
+  ],
+  "source_url": "/Users/haipham/DuAn/upwork/etani/etl-packages/dynamic_integrations/sample_data/keypay",
+  "extraction_method": "file_analysis"
+}

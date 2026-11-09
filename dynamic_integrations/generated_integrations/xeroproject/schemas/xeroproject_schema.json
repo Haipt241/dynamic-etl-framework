@@ -20,10 +20,10 @@
         "offline_access"
       ],
       "client_id": "{{xero_client_id}}",
-      "client_secret": "{{xero_client_secret}}",
-      "access_token": "{{xero_access_token}}",
-      "refresh_token": "{{xero_refresh_token}}",
-       "rate_limiting": {
+      "client_secret": "",
+      "access_token": "",
+      "refresh_token": "",
+      "rate_limiting": {
         "requests_per_minute": 60,
         "burst_limit": 60,
         "daily_limit": 5000
@@ -51,7 +51,7 @@
     "headers": {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      "Authorization": "Bearer {{xero_access_token}}",
+      "Authorization": "",
       "Xero-tenant-id": "{{xero_tenant_id}}",
       "User-Agent": "Etani-XeroProjects-Integration/1.0"
     },
@@ -338,13 +338,15 @@
       "category": "transactional",
       "priority": "high",
       "is_child_endpoint": true,
-      "child_endpoint_config": [{
-        "parent_table": "projects",
-        "parent_id_column": "projectId",
-        "parent_id_source": "ProjectId",
-        "child_endpoint_type": "url_based",
-        "is_query_pattern": true
-      }],
+      "child_endpoint_config": [
+        {
+          "parent_table": "projects",
+          "parent_id_column": "projectId",
+          "parent_id_source": "ProjectId",
+          "child_endpoint_type": "url_based",
+          "is_query_pattern": true
+        }
+      ],
       "api_details": {
         "path": "/projects/{projectId}/tasks",
         "method": "GET",
@@ -537,13 +539,15 @@
       "category": "transactional",
       "priority": "high",
       "is_child_endpoint": true,
-      "child_endpoint_config": [{
-        "parent_table": "projects",
-        "parent_id_column": "projectId",
-        "parent_id_source": "ProjectId",
-        "child_endpoint_type": "url_based",
-        "is_query_pattern": true
-      }],
+      "child_endpoint_config": [
+        {
+          "parent_table": "projects",
+          "parent_id_column": "projectId",
+          "parent_id_source": "ProjectId",
+          "child_endpoint_type": "url_based",
+          "is_query_pattern": true
+        }
+      ],
       "api_details": {
         "path": "/projects/{projectId}/time",
         "method": "GET",

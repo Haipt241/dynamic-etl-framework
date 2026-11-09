@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  eva_api:
+    container_name: "etani_etl"
+    build:
+      dockerfile: Dockerfile_api
+      context: ./
+    volumes:
+      - ./:/app/
+    ports:
+      - "5000:5000"
+    networks:
+      - etani_network
+    env_file:
+      - .env  # Use a .env file for environment variables
+    environment:
+      - ENVNAME=${ENVNAME}  # Reads from .env
+    command: bash run-local-api.sh
+    restart: unless-stopped  # Ensures the container restarts if it crashes
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "20"
+
+networks:
+  etani_network:
+    driver: bridge
+
+  
+
+
