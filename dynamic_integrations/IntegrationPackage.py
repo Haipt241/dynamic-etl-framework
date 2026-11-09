@@ -831,18 +831,7 @@ def _create_legacy_integration(integration_name: str, config: Optional[Dict[str,
     
     try:
         if integration_name == 'XEROBLUE':
-            # Try to import and create XeroBlue integration
-            try:
-                from .integrations.xeroblue_integration import XeroblueIntegration
-            except ImportError:
-                try:
-                    from integrations.xeroblue_integration import XeroblueIntegration
-                except ImportError:
-                    # Try alternative paths using dynamic resolution
-                    try:
-                        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
-                    except ImportError:
-                        raise ImportError("Could not import XeroblueIntegration. Please ensure the integration module is available.")
+            from .integrations.xeroblue_integration import XeroblueIntegration
             
             return XeroblueIntegration(config)
             
@@ -991,15 +980,8 @@ def _initialize_legacy_registrations():
     """Initialize registrations for existing integrations"""
     try:
         # Register XeroBlue if available
-        try:
-            from .integrations.xeroblue_integration import XeroblueIntegration
-            register_integration('XEROBLUE', XeroblueIntegration)
-        except ImportError:
-            try:
-                from integrations.xeroblue_integration import XeroblueIntegration
-                register_integration('XEROBLUE', XeroblueIntegration)
-            except ImportError:
-                pass  # XeroBlue not available
+        from .integrations.xeroblue_integration import XeroblueIntegration
+        register_integration('XEROBLUE', XeroblueIntegration)
         
         # Add other integrations here as they become available
         

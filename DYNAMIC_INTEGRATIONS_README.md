@@ -238,11 +238,6 @@ docker run --rm \
     --param XeroTenantID=$XeroTenantID \
     --param DB_Destination=$DB_Destination
 
-# Run with docker-compose
-docker-compose run --rm app \
-  python run_dynamic_integration.py --integration qbo \
-    --param EtaniClientID=CLIENT123 \
-    --param RealmID=456789
 ```
 
 ### Docker Environment Variables

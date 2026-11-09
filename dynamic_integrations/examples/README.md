@@ -71,10 +71,10 @@ print(f"Status: {result.get('status')}")
 ### Example 2: Auto-Detect Mode (New Feature)
 ```python
 from dynamic_integrations import create_integration_package
-from dynamic_integrations.integrations.xeroblue_integration_enhanced import XeroBlueIntegrationEnhanced
+from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
 
 # Create integration instance
-xeroblue = XeroBlueIntegrationEnhanced(config)
+xeroblue = XeroblueIntegration(config)
 
 # Auto-detect operation mode
 orchestrator = create_integration_package(xeroblue)
@@ -270,32 +270,6 @@ def your_example():
 
 if __name__ == "__main__":
     your_example()
-```
-
-## 🔄 Migration from Legacy Code
-
-### From Original UPSERT
-```python
-# Old way
-from IntegrationPackageUpsert import create_package_upsert
-
-# New way (backward compatible)
-from dynamic_integrations import create_package_upsert
-
-# New way (recommended)
-from dynamic_integrations import create_integration_package
-```
-
-### From Original INSERT
-```python
-# Old way
-from integrations.integration_package_insert import create_package_insert
-
-# New way (backward compatible)
-from dynamic_integrations import create_package_insert
-
-# New way (recommended)
-from dynamic_integrations import create_integration_package
 ```
 
 ## 📚 Additional Resources

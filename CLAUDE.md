@@ -12,18 +12,6 @@ The project uses a **dynamic integration generator** that creates SQL objects an
 
 ### Running Integrations Locally
 
-**Legacy integrations (Xero/QBO):**
-```bash
-# Xero UPSERT
-USE_AWS_DB=True DB_Destination="DW" JOB_ID=0 JOB_RUN_ID=0 TRIGGER_TYPE="MANUAL" \
-  EtaniClientID="BIGOLESHOECOMPANY_CLIENT1518" EtaniOrganisationID="5393" \
-  XeroTenantID="865512af-e7d8-4d42-8568-73084279eb43" \
-  python -u "XEROBLUE - UPSERT.py"
-
-# QBO testing
-python dynamic_integrations/examples/quick_qbo_example.py
-```
-
 **Dynamic integrations (recommended):**
 ```bash
 # DATABASE-DRIVEN mode (Lambda-friendly - only provide org_id)
@@ -63,22 +51,13 @@ python test_sql_error_logging.py
 ```bash
 # Build and push dynamic integration image
 ./build_and_push_dynamic_image.sh
-
-# Build legacy Xero/QBO image
-docker build --build-arg AZURE_CLIENT_ID=xxx --build-arg AZURE_CLIENT_SECRET=yyy \
-  -t etani-etl-python:latest -f ./Dockerfile_api . && \
-  docker tag etani-etl-python:latest etanietl.azurecr.io/xero-etl-python:latest && \
-  docker push etanietl.azurecr.io/xero-etl-python:latest
-
-# Run with docker-compose
-docker-compose run --rm app python run_dynamic_integration.py --integration qbo --mode insert
 ```
 
 ### Dynamic Integration Generator Workflow
 
 ```bash
 # 1. Generate SQL from schema
-python dynamic_integrations/generator/generator.py /path/to/schema.json --sql --force
+python dynamic_integrations/generator.py /path/to/schema.json --sql --force
 
 # 2. Execute SQL to create database objects
 python dynamic_integrations/sql_executor.py --integration qbo --section all
@@ -87,7 +66,7 @@ python dynamic_integrations/sql_executor.py --integration qbo --section all
 python update_config.py --integration qbo --param EtaniClientID=CLIENT123
 
 # 4. Generate Python integration file
-python dynamic_integrations/generator/generator.py /path/to/schema.json --dynamic-integration-file --force
+python dynamic_integrations/generator.py /path/to/schema.json --dynamic-integration-file --force
 
 # 5. Run the integration
 python run_dynamic_integration.py --integration qbo --mode insert
@@ -113,13 +92,7 @@ python run_dynamic_integration.py --integration qbo --mode insert
   - Cost tracking integration via global `cost_tracker` instance
   - Query monitoring integration via `QueryMonitoringClient`
 
-**3. Legacy Integration Scripts**
-- `XEROBLUE - UPSERT.py` - Xero full sync (legacy)
-- `XEROBLUE - INSERT.py` - Xero initial load (legacy)
-- `QBO - UPSERT.py` - QuickBooks sync (legacy)
-- `main.py` - MYOB AccountRight integration (legacy)
-
-**4. Supporting Infrastructure**
+**3. Supporting Infrastructure**
 - **config.py** - Configuration management (credentials, connection strings)
 - **utils.py** - Shared utilities (acronym generation, timestamp formatting)
 - **query_monitoring_client.py** - Query performance tracking for optimization
@@ -281,12 +254,9 @@ See `.vscode/launch.json` for pre-configured debug configurations:
 
 **Do not edit auto-generated files directly:**
 - `dynamic_integrations/generated_integrations/{integration}/` - Regenerate via generator
-- `sql_object_scripts.py` - Contains legacy SQL definitions (being phased out)
-- `create_dynamic_sqlobjects_*.py` - Legacy SQL object creation scripts
 
 **Key configuration files:**
 - `requirements.txt` - Python dependencies (pandas, sqlalchemy, boto3, etc.)
-- `docker-compose.yml` - Local Docker development setup
 - `Dockerfile_dynamic` - Dynamic integration container image
 - `.env` - Local environment variables (not committed)
 

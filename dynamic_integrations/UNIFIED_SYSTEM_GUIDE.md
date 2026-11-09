@@ -452,12 +452,6 @@ for batch in endpoint_batches:
 - `test_unified_system_comprehensive.py` - Comprehensive test suite
 - `examples/integration_agnostic_example.py` - Working examples
 
-### Legacy Compatibility
-- Original `IntegrationPackageUpsert.py` preserved as `original_IntegrationPackageUpsert.py`
-- Original `integration_package_insert.py` preserved as `original_integration_package_insert.py`
-
----
-
 ## 📝 Example: Complete XeroBlue Integration
 
 ```python

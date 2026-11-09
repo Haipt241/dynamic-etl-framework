@@ -42,16 +42,6 @@ python run_dynamic_integration.py --integration fyi --mode upsert \
 mysql -h <host> -u <username> -p vibedb_cms < MYSQL_SP_Revisions/setup_service_integration_mapping.sql
 ```
 
-**Or use Python script:**
-```bash
-python -c "
-import os
-os.environ['USE_AWS_DB'] = 'True'
-# Run setup automatically
-exec(open('MYSQL_SP_Revisions/setup_service_integration_mapping.sql').read())
-"
-```
-
 **What this does:**
 - Adds `integration_name` column to `vibedb_cms.service` table
 - Populates 19 service records with integration mappings
@@ -143,7 +133,6 @@ run_dynamic_integration.py         # ⭐ MAIN ENTRY POINT - Start here!
 │       └── ... (20+ integrations)
 │
 ├── sql_helper.py                  # Database abstraction layer
-├── aws_db_helper.py               # AWS RDS connection pooling
 ├── config.py                      # Configuration management
 └── utils.py                       # Shared utilities
 ```
@@ -231,9 +220,6 @@ pytest tests/
 
 # Run specific test
 pytest tests/test_consolidated_cms_functionality.py
-
-# Test AWS connection
-python archives/test_scripts/test_aws_connection.py
 ```
 
 ---
@@ -242,7 +228,6 @@ python archives/test_scripts/test_aws_connection.py
 
 - **[DYNAMIC_INTEGRATIONS_README.md](DYNAMIC_INTEGRATIONS_README.md)** - Complete user guide for dynamic integrations
 - **[CLAUDE.md](CLAUDE.md)** - Developer guidance for Claude Code
-- **[CLEANUP_PLAN.md](CLEANUP_PLAN.md)** - Repository cleanup documentation
 - **[docs/](docs/)** - Additional guides and documentation
 
 ---
@@ -252,26 +237,11 @@ python archives/test_scripts/test_aws_connection.py
 The system is **integration-agnostic**. Add new integrations without modifying core code:
 
 1. Create schema JSON: `dynamic_integrations/generator/config/{integration}_schema.json`
-2. Generate SQL: `python dynamic_integrations/generator/generator.py schema.json --sql --force`
-3. Generate integration: `python dynamic_integrations/generator/generator.py schema.json --dynamic-integration-file --force`
+2. Generate SQL: `python dynamic_integrations/generator.py schema.json --sql --force`
+3. Generate integration: `python dynamic_integrations/generator.py schema.json --dynamic-integration-file --force`
 4. Run: `python run_dynamic_integration.py --integration {name} --mode insert`
 
 See `dynamic_integrations/INTEGRATION_AGNOSTIC_GUIDE.md` for details.
-
----
-
-## 🗂️ Legacy Files
-
-**Legacy Xero integrations** (still actively maintained):
-- `XEROBLUE - INSERT.py` - Xero initial load
-- `XEROBLUE - UPSERT.py` - Xero incremental sync
-- `IntegrationPackageUpsert.py` - Legacy orchestrator
-
-**Archived files** moved to `archives/`:
-- `archives/maintenance_scripts/` - One-off fix/check scripts
-- `archives/test_scripts/` - Old test files
-- `archives/legacy_etl/` - Old integration implementations
-- `archives/migration_docs/` - AWS/Azure migration documentation
 
 ---
 
@@ -299,12 +269,3 @@ See `dynamic_integrations/INTEGRATION_AGNOSTIC_GUIDE.md` for details.
 - **Issues**: Report in GitHub issues
 - **Documentation**: See `docs/` folder
 - **Development**: See `CLAUDE.md` for architectural guidance
-
----
-
-## 📦 Repository Stats
-
-- **142 files** cleaned up and archived
-- **12 core Python files** in root (down from 106!)
-- **20+ active integrations** in `dynamic_integrations/generated_integrations/`
-- **Plug-and-play architecture** - add integrations without modifying core code

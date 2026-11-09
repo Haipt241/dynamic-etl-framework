@@ -1,7 +1,6 @@
 # Requirements for ETL packages
 # Includes all dependencies for:
 # - run_dynamic_integration.py (dynamic integration runner)
-# - XPM workers and other ETL scripts
 # - Database connectivity (SQLAlchemy, pyodbc, pymysql)
 # - Cloud services (AWS boto3, Azure storage)
 # - Authentication (OAuth, JWT, MSAL)
