@@ -938,21 +938,13 @@ class SchemaExtractor:
                     "virtual_endpoints_created": 0
                 }
             
-            # Step 2: Initialize integration and run discovery mode to get sample data
-            # Import the specific integration class from the generated_integrations folder
-            integration_class_name = f"{integration_name.upper()}Integration"
-            module_path = f"generated_integrations.{integration_name}.{integration_name}_integration"
-            
+            from dynamic_integrations.generator.configured_integration import create_integration
+
             try:
-                integration_module = __import__(module_path, fromlist=[integration_class_name])
-                integration_class = getattr(integration_module, integration_class_name)
-                integration = integration_class()
-            except (ImportError, AttributeError) as e:
-                return {
-                    "status": "error",
-                    "error": f"Could not load integration class {integration_class_name} from {module_path}: {str(e)}"
-                }
-            
+                integration = create_integration(integration_name)
+            except (ImportError, AttributeError, ValueError) as e:
+                return {"status": "error", "error": f"Could not load integration: {e}"}
+
             print(f"🚀 Running discovery mode to collect sample data...")
             discovery_result = integration.run_full_sync(endpoint_list=json_endpoints, discovery_mode=True)
             

@@ -42,7 +42,6 @@ class ChildEndpointHandler(SingletonBase):
         self.integration = integration_instance
         self.logger = logging.getLogger(f"ChildEndpointHandler.{integration_instance.integration_name}")
 
-        # Threading will be handled by ThreadPoolManager - no need for WriteCoordinator
         self.logger.info(f"🚀 ChildEndpointHandler initialized with threading support")
 
     def _get_thread_pool_manager(self, endpoint: str) -> ThreadPoolManager:

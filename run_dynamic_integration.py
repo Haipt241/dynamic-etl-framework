@@ -392,8 +392,10 @@ class IntegrationWorkflowOrchestrator:
             # Set environment variables
             self._set_environment_variables()
 
-            # Update integration config file if it exists
-            if self.config_file.exists():
+            # Existing adapters can read runtime values directly from their config file.
+            # The shared adapter builds its runtime config from the environment in memory.
+            adapter_file = self.integration_dir / f"{self.integration_name}_integration.py"
+            if adapter_file.is_file() and self.config_file.exists():
                 with open(self.config_file, 'r', encoding='utf-8') as f:
                     config = json.load(f)
 
@@ -418,7 +420,7 @@ class IntegrationWorkflowOrchestrator:
                     if param_value is not None:
                         config_data["default_value"] = param_value
                         updated_count += 1
-                        print(f"  [OK] Updated {config_field}: {param_value}")
+                        print(f"  [OK] Updated {config_field}")
 
                 # Save updated config
                 with open(self.config_file, 'w', encoding='utf-8') as f:
@@ -454,13 +456,13 @@ class IntegrationWorkflowOrchestrator:
                     
                     if param_value is not None and env_var:
                         os.environ[env_var] = str(param_value)
-                        print(f"  [CONFIG] Set {env_var}={param_value}")
+                        print(f"  [CONFIG] Set {env_var}")
             else:
                 # Fallback: use direct mapping for common parameters
                 for param_name, param_value in self.parameters.items():
                     env_var = param_name.upper()
                     os.environ[env_var] = str(param_value)
-                    print(f"  [CONFIG] Set {env_var}={param_value}")
+                    print(f"  [CONFIG] Set {env_var}")
 
         except Exception as e:
             print(f"[WARNING] Warning: Error setting environment variables: {e}")
@@ -475,21 +477,9 @@ class IntegrationWorkflowOrchestrator:
             print("[SYNC] Refreshing AWS engines if needed...")
             from sql_helper import refresh_aws_engines_if_needed
             refresh_aws_engines_if_needed()
-            # Import the specific integration class dynamically
-            integration_module_path = f"dynamic_integrations.generated_integrations.{self.integration_name}.{self.integration_name}_integration"
+            from dynamic_integrations.generator.configured_integration import create_integration
 
             try:
-                import importlib
-                integration_module = importlib.import_module(integration_module_path)
-
-                # Get the integration class (assumes class name is like QBOIntegration, FYIIntegration)
-                class_name = f"{self.integration_name.upper()}Integration"
-                if not hasattr(integration_module, class_name):
-                    # Try capitalized version
-                    class_name = f"{self.integration_name.capitalize()}Integration"
-
-                integration_class = getattr(integration_module, class_name)
-
                 # Create integration instance with UPSERT mode
                 config = {}
                 if upsert_mode:
@@ -514,12 +504,10 @@ class IntegrationWorkflowOrchestrator:
                     else:
                         print(f"  [DATA] Enabling UPSERT mode with auto-detected timestamp params")
                 
-                # Pass refresh_token if available
-                if hasattr(self, 'refresh_token') and self.refresh_token:
-                    integration_instance = integration_class(config if config else None, refresh_token=self.refresh_token)
-                    print(f"  [SECURE] Passing refresh_token to integration")
-                else:
-                    integration_instance = integration_class(config if config else None)
+                integration_instance = create_integration(
+                    self.integration_name, config or None, refresh_token=getattr(self, "refresh_token", None)
+                )
+                class_name = type(integration_instance).__name__
 
                 print(f"  [CONFIG] Created {class_name} instance")
                 

@@ -28,7 +28,6 @@ class GeneratorController:
         self.handlers = None
         self.schema_path = None
         self.generate_sql = False
-        self.generate_integration = False
         self.generate_test = False
         self.force = False
     
@@ -48,7 +47,6 @@ class GeneratorController:
         # Set up paths and flags using generator.py args
         self.schema_path = Path(self.args.input)  # Use 'input' from generator.py
         self.generate_sql = self.args.sql
-        self.generate_integration = self.args.integration_name
         self.generate_test = self.args.test
         self.force = self.args.force
         
@@ -81,11 +79,6 @@ class GeneratorController:
                 for sql_type in selected_sql_types:
                     print(f"\n🚀 Generating SQL ({sql_type})...")
                     self.handlers.handle_sql(schemas, sql_type)
-
-            # Generate integration files
-            if self.generate_integration:
-                print("\n🚀 Generating integration modules...")
-                self.handlers.handle_integration(schemas)
 
             # Generate test files
             if self.generate_test:
