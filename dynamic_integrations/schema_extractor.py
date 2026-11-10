@@ -594,7 +594,7 @@ class SchemaExtractor:
         self.schema_parser = SchemaParser()
         self.schema_validator = SchemaValidator()
     
-    def schema_from_samples(self, name, base_url, endpoint, path, records, primary_key="id"):
+    def schema_from_samples(self, name, base_url, endpoint, path, records, primary_key="id", defer_primary_key=False):
         """Build a reviewable schema offline; nested arrays use the existing ETL contract.
 
         Inspect all supplied records. Unknown/heterogeneous fields are stored as TEXT.
@@ -637,7 +637,7 @@ class SchemaExtractor:
                     dtype = "TEXT"
                 fields.append({"api_name": api_name, "db_column": column,
                                "data_type": dtype, "nullable": nullable,
-                               "is_primary_key": force_key})
+                               "is_primary_key": force_key, "sample_has_nulls": any(v is None for v in values)})
                 return column
 
             def walk(objects, prefix=""):
@@ -651,18 +651,19 @@ class SchemaExtractor:
                     elif present and all(isinstance(v, list) for v in present):
                         items = [item for values_ in present for item in values_]
                         # Preserve unkeyed arrays as JSON text to avoid inventing identities.
-                        if items and all(isinstance(v, dict) and v.get("id") is not None for v in items):
+                        if key and items and all(isinstance(v, dict) and v.get("id") is not None for v in items):
                             child = identifier(table + "_" + source.replace(".", "_"))
                             build(child, items, "id", ancestors + (table,))
                             extractions.append({"table_name": child, "source_field": source})
                         else:
                             add(source, values)
+                            fields[-1]["is_json_value"] = True
                     else:
                         add(source, values, any(v is None for v in values), source == key)
             walk(rows)
-            if not any(f["is_primary_key"] for f in fields):
+            if key and not any(f["is_primary_key"] for f in fields):
                 raise ValueError(f"Primary key {key} missing in {table}")
-            if any(row.get(key) is None for row in rows):
+            if key and any(row.get(key) is None for row in rows):
                 raise ValueError(f"Primary key {key} must be present in every sample record")
             for ancestor in ancestors:
                 add(ancestor.lower() + "Id", [""], False, True)
@@ -680,6 +681,8 @@ class SchemaExtractor:
                 entry["api_details"] = {"path": path, "method": "GET", "query_parameters": {}}
                 entry["response_structure"] = {"root_data_field": "", "is_array": True}
             endpoints.append(entry)
+        if defer_primary_key and not all(row.get(primary_key) is not None for row in records):
+            primary_key = None
         build(endpoint, records, primary_key)
         return {"integration_name": name.upper(), "display_name": name,
                 "api_config": {"base_url": base_url, "authentication": {"type": "api_key"}},

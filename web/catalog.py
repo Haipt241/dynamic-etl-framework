@@ -45,7 +45,7 @@ def clean_config(config):
     return config
 
 
-def validate(definition):
+def validate(definition, require_primary_keys=True):
     slug(definition['name'])
     schema, config = definition['schema'], definition['config']
     if not isinstance(schema, dict) or not isinstance(config, dict):
@@ -77,6 +77,19 @@ def validate(definition):
                 raise ValueError(f'Unsupported SQL type: {field.get("data_type")}')
         if not columns:
             raise ValueError(f'No columns defined for {name}')
+        if require_primary_keys:
+            keys = [field for field in endpoint['fields'] if field.get('is_primary_key')]
+            if not any(f['db_column'].lower() not in ('clientid', 'organisationid') for f in keys):
+                raise ValueError(f'Select a primary key for table {name} in the schema review')
+            for field in keys:
+                if field.get('nullable') or field.get('sample_has_nulls'):
+                    raise ValueError(f'Primary key cannot be nullable: {name}.{field["db_column"]}')
+                if field.get('is_json_value') or field['data_type'].upper() in ('TEXT', 'LONGTEXT', 'MEDIUMTEXT', 'JSON', 'JSONB'):
+                    raise ValueError(f'Primary key needs an indexable scalar type: {name}.{field["db_column"]}')
+            selected = [f['db_column'] for f in keys]
+            if endpoint.get('database_schema', {}).get('primary_key') != selected:
+                raise ValueError(f'Primary key metadata differs from selected columns in {name}')
+
     return definition
 
 
@@ -96,7 +109,8 @@ def infer(data):
         raise ValueError('For custom/OAuth auth, clone an existing provider configuration')
     endpoint = data.get('endpoint', 'Records')
     schema = SchemaExtractor().schema_from_samples(name, data['base_url'], endpoint,
-                data.get('path', '/'), records, data.get('primary_key', 'id'))
+                data.get('path', '/'), records, data.get('primary_key') or 'id',
+                defer_primary_key=not bool(data.get('primary_key')))
     schema['endpoints'][0]['response_structure']['root_data_field'] = data_path
     schema['api_config']['authentication']['type'] = auth
     pagination = {'type': data.get('pagination', 'page'), 'limit_param': data.get('size_param', 'limit'),
@@ -115,7 +129,7 @@ def infer(data):
               'env_vars_config': fields, 'required_env_vars': [v['env_var'] for v in fields.values()],
               'response_config': {'response_type': 'dict' if data_path else 'list', 'response_data_field': data_path},
               'rate_limiting': schema['api_config']['rate_limiting']}
-    return validate({'name': name, 'schema': schema, 'config': config})
+    return validate({'name': name, 'schema': schema, 'config': config}, require_primary_keys=False)
 
 
 def generate_sql(definition):

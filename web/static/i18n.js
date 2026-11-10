@@ -123,6 +123,7 @@
   "Mở tab Job đã lưu, chọn job để xem chi tiết. Khởi tạo DB nếu cần, sau đó chạy và theo dõi từng worker ở tab giám sát.": "Open Saved jobs and select a job to inspect its details. Initialize the database if needed, then run and monitor each worker in the monitoring tab.",
   "Nhật ký job": "Run log"
 });
+  Object.assign(messages, {"Chọn PK trực tiếp trên các cột bên dưới. Chọn nhiều cột để tạo khoá chính ghép. PK không được NULL; mẫu dữ liệu không chứng minh tính duy nhất của toàn bộ API.": "Select PK columns below. Choose multiple columns for a composite primary key. Keys cannot be NULL; samples cannot prove uniqueness across the entire API.", "Chưa chọn khoá chính": "Primary key not selected", "Mảng chưa có định danh cha được giữ dạng JSON text để tránh tạo quan hệ sai.": "Arrays without a parent identity are kept as JSON text to avoid incorrect relationships.", "Cột PK dạng text đã chuyển sang VARCHAR(255). Kiểm tra độ dài dữ liệu trước khi lưu.": "The text key column was changed to VARCHAR(255). Verify data lengths before saving.", "NULL trong mẫu": "NULL in sample"});
   const reverse = new Map(Object.entries(messages).map(([vi,en]) => [en,vi]));
   const patterns = [
     [/^(\d+) bảng \/ endpoint$/, n => `${n} tables / endpoints`],

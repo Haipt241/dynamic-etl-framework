@@ -37,7 +37,7 @@ Legacy integrations are retained in the codebase for internal comparison and reg
 | Base URL + endpoint | Xác định API được gọi / Identify the API to call |
 | Auth + header | Chọn cách xác thực; secret nhập khi chạy / Select authentication; enter secrets at runtime |
 | Data path | Chỉ ra mảng bản ghi, ví dụ `data.items`; để trống nếu JSON gốc là mảng / Locate the record array, e.g. `data.items`; leave empty for a root array |
-| Primary key | Chọn trường định danh ổn định; cần kiểm tra tính duy nhất từ hệ thống nguồn / Choose a stable identity field and verify uniqueness at the source |
+| Primary key | Chọn một hoặc nhiều cột trực tiếp trên bảng ở bước duyệt schema; không cần nhập khi khai báo API / Select one or multiple columns in the visual schema review, rather than entering a key during API setup |
 | Pagination + page size | Lấy các trang kế tiếp / Retrieve subsequent pages |
 | Rate limit | Giới hạn số request mỗi phút theo API / Set the API request budget per minute |
 | Sample JSON | Suy luận cấu trúc; không chứng minh dữ liệu đầy đủ / Infer structure; does not prove data completeness |
@@ -81,3 +81,13 @@ flowchart TD
 Các giá trị định tuyến như client/organisation được lưu trực tiếp hoặc tham chiếu biến môi trường. Auth/token/password dùng tên biến môi trường (ví dụ `VENDOR_API_KEY`), không lưu secret trong SQLite. Có thể nhập secret tạm trong chi tiết job cho từng lần chạy; nó chỉ nằm trong bộ nhớ worker. / Routing values such as client/organisation may be saved literally or as environment references. Auth/token/password values use environment names, not plaintext secrets in SQLite. Temporary per-run secret inputs remain in worker memory.
 
 Lưu phiên bản/job chưa thực thi SQL. Chọn **Khởi tạo DB & đồng bộ lần đầu** khi sẵn sàng chạy SQL đã duyệt. Không chạy hai job cùng integration/client/organisation đồng thời để tránh ghi chồng dữ liệu. / Saving a version/job does not execute SQL. Choose **Initialize DB & first sync** to execute reviewed SQL. Concurrent runs for the same integration/client/organisation are rejected to avoid overlapping writes.
+
+## Duyệt bảng và chọn PK / Visual table and key review
+
+Sau khi phân tích mẫu, chọn bảng trong danh sách để mở phần duyệt cột. Tích một cột cho PK đơn hoặc nhiều cột cho PK ghép. Các cột khoá được tô màu và hiển thị trong `PK (...)`; NULL bị tắt. Cột có NULL trong mẫu hoặc chứa mảng JSON không thể được chọn làm PK. Khi chọn cột TEXT, tool chuyển sang VARCHAR(255) và yêu cầu kiểm tra độ dài.
+
+After sample inference, select a table from the overview and choose one or multiple PK columns. Key rows are highlighted and summarized as `PK (...)`; nullable is disabled. Columns containing sample NULLs or JSON arrays cannot be selected. Selecting a TEXT key changes it to VARCHAR(255), with a data-length review notice.
+
+Mẫu không có `id` vẫn được phân tích. Phải chọn PK trước khi sinh SQL/lưu phiên bản. `OrganisationID` vẫn được gợi ý để tách dữ liệu tổ chức; riêng cột này không đủ làm khoá bản ghi. Nested extraction tiếp tục dùng `identity_field` riêng để nối cha–con; thay PK SQL không tự đổi quan hệ đó. Nếu chưa có định danh cha, mảng được giữ dạng JSON text thay vì tạo FK sai. Chưa có trình chỉnh quan hệ FK ghép trực quan.
+
+Samples without `id` can be analyzed. Select a PK before generating SQL or saving. `OrganisationID` remains a suggested scope column but is insufficient on its own. Nested extraction retains its separate `identity_field`; editing SQL keys does not redefine parent-child relationships. Arrays without a parent identity remain JSON text. A visual composite-FK editor is not yet available.

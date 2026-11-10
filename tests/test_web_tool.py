@@ -55,7 +55,7 @@ def test_sample_schema_and_nested_contract():
     assert 'ordersid' in sql['stage'].lower()
 
 
-@pytest.mark.parametrize('rows', [[], [{'missing': 1}], [{'id': None}]])
+@pytest.mark.parametrize('rows', [[], [1], ['invalid']])
 def test_reject_unusable_samples(rows):
     with pytest.raises(ValueError):
         infer({'name': 'empty', 'base_url': 'https://example.test', 'sample': rows})
@@ -227,3 +227,46 @@ def test_imported_template_can_use_existing_entity_model(client):
     assert result.status_code == 200
     assert '-- web_test.Orders:' in result.json['sql']['stage']
     assert 'ordersId' in result.json['sql']['stage']
+
+
+def test_deferred_primary_key_and_composite_sql():
+    value = infer({'name': 'composite_test', 'base_url': 'https://example.test',
+                   'sample': [{'order_no': 'A', 'line_no': 1}, {'order_no': 'A', 'line_no': 2}]})
+    endpoint = value['schema']['endpoints'][0]
+    assert endpoint['identity_field'] is None
+    with pytest.raises(ValueError, match='Select a primary key'):
+        generate_sql(value)
+    for field in endpoint['fields']:
+        field['is_primary_key'] = field['api_name'] in ('order_no', 'line_no', 'OrganisationID')
+        if field['is_primary_key']:
+            field['nullable'] = False
+        if field['api_name'] == 'order_no':
+            field['data_type'] = 'VARCHAR(255)'
+    endpoint['database_schema']['primary_key'] = [f['db_column'] for f in endpoint['fields'] if f['is_primary_key']]
+    sql = generate_sql(value)
+    for kind in ('stage', 'prod'):
+        assert 'primary key (order_no, line_no, organisationid)' in sql[kind].lower()
+    endpoint['fields'][0]['nullable'] = True
+    with pytest.raises(ValueError, match='cannot be nullable'):
+        generate_sql(value)
+
+
+def test_nested_arrays_without_parent_identity_are_preserved():
+    value = infer({'name': 'unkeyed_test', 'base_url': 'https://example.test',
+                   'sample': [{'code': 'A', 'lines': [{'id': 1}]}]})
+    assert len(value['schema']['endpoints']) == 1
+    endpoint = value['schema']['endpoints'][0]
+    assert not endpoint['nested_extractions']
+    assert next(f for f in endpoint['fields'] if f['api_name'] == 'lines')['is_json_value']
+
+
+def test_primary_key_rejects_known_null_and_conflicting_metadata():
+    value = draft()
+    endpoint = value['schema']['endpoints'][0]
+    endpoint['database_schema']['primary_key'] = []
+    with pytest.raises(ValueError, match='metadata differs'):
+        generate_sql(value)
+    endpoint['database_schema']['primary_key'] = [f['db_column'] for f in endpoint['fields'] if f['is_primary_key']]
+    endpoint['fields'][0]['sample_has_nulls'] = True
+    with pytest.raises(ValueError, match='cannot be nullable'):
+        generate_sql(value)
