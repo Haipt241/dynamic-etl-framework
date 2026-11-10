@@ -84,7 +84,7 @@ def infer(data):
     from dynamic_integrations.schema_extractor import SchemaExtractor
     name = slug(data['name'])
     if (PROVIDERS / name).exists():
-        raise ValueError('This provider already exists. Load it for editing or choose a new name.')
+        raise ValueError('This integration name is already in use. Choose a different name.')
     sample = data['sample']
     data_path = data.get('data_path', '').strip()
     if data_path:

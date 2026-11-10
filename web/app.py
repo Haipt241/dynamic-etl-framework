@@ -1,8 +1,6 @@
 """HTTP routes for the local integration workbench."""
 import atexit
-import json
 import secrets
-from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
 
@@ -70,16 +68,6 @@ def create_app(directory=None, manager_factory=JobManager):
     @app.get('/')
     def index():
         return render_template('index.html', token=token)
-
-    @app.get('/api/providers')
-    def providers():
-        return jsonify(catalog.providers())
-
-    @app.get('/api/providers/<name>')
-    def provider(name):
-        data = catalog.load_provider(name)
-        data['config'] = catalog.clean_config(data['config'])
-        return jsonify(data)
 
     @app.post('/api/infer')
     def infer():

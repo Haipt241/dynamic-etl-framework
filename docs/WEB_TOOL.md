@@ -20,11 +20,11 @@ py -3 -m venv .venv
 .venv\Scripts\python.exe run_web.py
 ```
 
-Open http://127.0.0.1:8765. `--port` and `--data-dir` are optional. The server binds only to loopback and uses a per-session request token. It is a local single-user tool, not a public multi-user deployment. UI/schema/SQL design does not require an AWS or DB connection. Executing a job uses the existing MySQL/AWS infrastructure, credentials and external services. Existing native DB drivers (including ODBC if required by the selected workflow) must be installed on each OS.
+Open http://127.0.0.1:8765. Select **Tiếng Việt / English** in the header; the selection is remembered in this browser. The embedded workflow guide is available in both languages. See [the bilingual user workflow](USER_WORKFLOW.md). `--port` and `--data-dir` are optional. The server binds only to loopback and uses a per-session request token. It is a local single-user tool, not a public multi-user deployment. UI/schema/SQL design does not require an AWS or DB connection. Executing a job uses the existing MySQL/AWS infrastructure, credentials and external services. Existing native DB drivers (including ODBC if required by the selected workflow) must be installed on each OS.
 
 ## Workflow
 
-1. Load one of the 21 installed providers or enter API base URL, GET path, authentication method, pagination parameters, rate limit, response data path and a sample JSON payload.
+1. Enter API base URL, GET path, authentication method, pagination parameters, rate limit, response data path and a sample JSON payload, or open a definition previously saved in the tool. The 21 legacy integrations are retained internally for regression comparison and are not offered as user-selectable templates.
 2. Analyze samples. All supplied records contribute fields. Nested objects flatten into columns. Arrays of objects with an `id` generate virtual endpoints and `nested_extractions`; other arrays stay JSON text. Unknown/mixed types are conservative TEXT and need review. Samples cannot establish complete fields, source uniqueness or production schema stability.
 3. Add further endpoints using the checkbox. Review columns/types/keys in the table. Advanced schema/config fields remain available for provider-specific pagination, OAuth, transforms and reconciliation.
 4. Preview stage/prod/view/procedure SQL. Existing providers with unchanged schemas use their original SQL assets. New schemas use `UnifiedSQLGenerator` without AI. Imported SQL templates use sandboxed Jinja with `integration_name`, `entities` (each entity has `name` and `fields`) and `generated_sql`. A wrapper can use `{{generated_sql}}`; a replacement can loop over entities and fields. Unknown template variables fail preview. Existing database placeholders such as `{clientID}` remain literal until execution. Imported SQL is user-authored code and must be reviewed before execution.
@@ -59,7 +59,7 @@ Each job has a private asset snapshot and process environment. Web workers resol
 - Repeated jobs run sequential cycles. After successful INSERT, subsequent cycles use UPSERT. Failed repeated UPSERT cycles retry up to three attempts with backoff; failed INSERT is not automatically replayed. `completed_with_errors` is partial, never green success.
 - Job state persists in SQLite; page-level checkpoints and automatic recovery across server crashes remain future work. API-specific incremental behavior depends on the configured provider.
 - Stopping a running worker can leave partial database work. Reconcile before resuming.
-- Default new-provider form supports GET, page/offset pagination and four simple auth modes. OAuth/custom request methods reuse installed configurations through the advanced editor. API probing, a visual reconcile screen, schema migrations and arbitrary DB destinations are not implemented.
+- Default new-provider form supports GET, page/offset pagination and four simple auth modes. OAuth/custom request methods require compatible configuration through the advanced editor. API probing, a visual reconcile screen, schema migrations and arbitrary DB destinations are not implemented.
 - When editing legacy schemas, validation may expose existing duplicate fields or provider-specific types; unchanged providers retain their original schemas/SQL. No provider migration has been assumed.
 
 ## Offline validation

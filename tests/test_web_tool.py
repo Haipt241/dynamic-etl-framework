@@ -88,6 +88,11 @@ def test_http_review_template_and_persistent_version(client):
 
 def test_request_boundaries(client):
     http, _ = client
+    page = http.get('/').data.decode()
+    assert 'id="language"' in page
+    assert 'id="provider"' not in page and 'id="load-provider"' not in page
+    assert http.get('/api/providers').status_code == 404
+    assert http.get('/api/providers/simpro').status_code == 404
     assert http.get('/api/providers', headers={'X-Tool-Token': ''}).status_code == 403
     assert http.get('/api/providers', headers={'Host': 'evil.example'}).status_code == 403
     assert http.post('/api/jobs', json={'definition_id': 'missing'}).status_code == 400
