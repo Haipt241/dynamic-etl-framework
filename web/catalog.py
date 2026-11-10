@@ -94,6 +94,51 @@ def validate(definition, require_primary_keys=True):
 
 
 def infer(data):
+    if 'endpoints' in data:
+        rows = data['endpoints']
+        if not isinstance(rows, list) or not rows:
+            raise ValueError('Provide a non-empty endpoint list')
+        combined = None
+        names = set()
+        base = data['base_url'].rstrip('/')
+        for index, row in enumerate(rows, 1):
+            try:
+                if not isinstance(row, dict):
+                    raise ValueError('Endpoint must be an object')
+                endpoint = row.get('name') or row.get('endpoint')
+                if not endpoint:
+                    raise ValueError('Endpoint name is required')
+                path = row.get('url') or row.get('path')
+                if not isinstance(path, str) or not path.strip():
+                    raise ValueError('URL/path is required')
+                path = path.strip()
+                if urlparse(path).scheme:
+                    if not path.startswith(base + '/'):
+                        raise ValueError('Endpoint URL must be under the integration base URL')
+                    path = path[len(base):]
+                if not path.startswith('/') or path.startswith('//') or '#' in path:
+                    raise ValueError('Use a relative /path or a URL under the base URL, without fragments')
+                if any(part in ('.', '..') for part in path.split('?')[0].split('/')):
+                    raise ValueError('Relative traversal is not supported')
+                if 'sample' not in row:
+                    raise ValueError('Sample JSON is required to infer columns')
+                item = {k: v for k, v in data.items() if k != 'endpoints'}
+                item.update(endpoint=endpoint, path=path, sample=row['sample'],
+                            data_path=row.get('data_path', ''))
+                result = infer(item)
+                for table in result['schema']['endpoints']:
+                    if table['name'].lower() in names:
+                        raise ValueError(f'Duplicate table: {table["name"]}')
+                    names.add(table['name'].lower())
+                if combined is None:
+                    combined = result
+                    # Response roots belong to individual endpoints, not the integration.
+                    combined['config']['response_config'] = {}
+                else:
+                    combined['schema']['endpoints'].extend(result['schema']['endpoints'])
+            except (ValueError, KeyError, TypeError) as error:
+                raise ValueError(f'Endpoint row {index}: {error}') from error
+        return validate(combined, require_primary_keys=False)
     from dynamic_integrations.schema_extractor import SchemaExtractor
     name = slug(data['name'])
     if (PROVIDERS / name).exists():

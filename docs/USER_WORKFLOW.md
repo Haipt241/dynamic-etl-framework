@@ -91,3 +91,20 @@ After sample inference, select a table from the overview and choose one or multi
 Mẫu không có `id` vẫn được phân tích. Phải chọn PK trước khi sinh SQL/lưu phiên bản. `OrganisationID` vẫn được gợi ý để tách dữ liệu tổ chức; riêng cột này không đủ làm khoá bản ghi. Nested extraction tiếp tục dùng `identity_field` riêng để nối cha–con; thay PK SQL không tự đổi quan hệ đó. Nếu chưa có định danh cha, mảng được giữ dạng JSON text thay vì tạo FK sai. Chưa có trình chỉnh quan hệ FK ghép trực quan.
 
 Samples without `id` can be analyzed. Select a PK before generating SQL or saving. `OrganisationID` remains a suggested scope column but is insufficient on its own. Nested extraction retains its separate `identity_field`; editing SQL keys does not redefine parent-child relationships. Arrays without a parent identity remain JSON text. A visual composite-FK editor is not yet available.
+
+## Nhập tài liệu và nhiều endpoint / Import documents and multiple endpoints
+
+1. Import tài liệu API hoặc dán nội dung ở mục **Import tài liệu API / dữ liệu raw**.
+   Hỗ trợ OpenAPI/Swagger JSON/YAML, Postman có response mẫu, JSON raw và text có `GET URL`.
+2. Bấm **Phân tích tài liệu**; kiểm tra base URL, danh sách endpoint, tên bảng snake_case,
+   đường dẫn JSON và cảnh báo thiếu dữ liệu. JSON raw không có URL thì cần bổ sung URL.
+3. Có thể dán danh sách `orders | /orders | data.items` và nạp nhiều file JSON mẫu
+   theo tên endpoint, thay vì khai báo từng endpoint một.
+4. **Phân tích tất cả endpoint** → duyệt bảng/PK → sinh SQL → lưu phiên bản → lưu job.
+   Nested extraction và SQL generator hiện có được tái sử dụng.
+
+Import a document, review proposed endpoints and snake_case names, attach missing
+samples, then analyze all endpoints together. Review tables/PKs and SQL before
+saving the version and job. The importer does not call APIs, infer URLs from data,
+or interpret arbitrary PDF/Word documents. Schema-only OpenAPI definitions need
+real response samples in this version.

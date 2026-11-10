@@ -112,7 +112,7 @@ class URLBuilder(SingletonBase):
         # Build final URL with query string
         if query_params:
             query_string = urllib.parse.urlencode(query_params)
-            complete_url += f"?{query_string}"
+            complete_url += ("&" if "?" in complete_url else "?") + query_string
         
         return complete_url
     
@@ -160,7 +160,7 @@ class URLBuilder(SingletonBase):
                     auth_query_string = urllib.parse.urlencode(query_params)
                     complete_url += f"?{auth_query_string}&{query_string}"
                 else:
-                    complete_url += f"?{query_string}"
+                    complete_url += ("&" if "?" in complete_url else "?") + query_string
         else:
             # Only auth params
             if query_params:
@@ -257,9 +257,9 @@ class URLBuilder(SingletonBase):
         if query_params:
             query_string = urllib.parse.urlencode(query_params)
             if complete_url:
-                complete_url += f"?{query_string}"
+                complete_url += ("&" if "?" in complete_url else "?") + query_string
             if detail_url:
-                detail_url += f"?{query_string}"
+                detail_url += ("&" if "?" in detail_url else "?") + query_string
         # else:
         #     # Fall back to config-based approach
         #     endpoint_config = self.config.get('endpoints_config', {}).get(endpoint, {})

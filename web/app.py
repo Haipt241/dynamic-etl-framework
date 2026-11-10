@@ -71,6 +71,12 @@ def create_app(directory=None, manager_factory=JobManager):
     def index():
         return render_template('index.html', token=token)
 
+    @app.post('/api/discover')
+    def discover():
+        from .importer import discover
+        data = payload()
+        return jsonify(discover(data['content'], data.get('filename', 'input.json')))
+
     @app.post('/api/infer')
     def infer():
         return jsonify(catalog.infer(payload()))

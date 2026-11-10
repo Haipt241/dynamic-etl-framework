@@ -82,3 +82,29 @@ Tests cover schema inference/nested contracts, original provider SQL, review/sav
 `GET /api/jobs` remains the run-history endpoint. Every new execution links to `saved_job_id` and records mode/interval. Existing run history is migrated additively; previously saved integration versions remain accessible. Legacy direct-run API requests remain supported, but the UI uses saved jobs.
 
 New versions materialize `definitions/<version>/schema.json`, `config.json`, and stage/prod/view/procedure SQL under the web data directory. Workers use their own runtime snapshots. Saved jobs persist across server restarts, while interrupted executions require an explicit restart. The manager currently supports four concurrent worker processes, with a provider/client/organisation duplicate guard. This is a local process manager, not a distributed queue or cron service.
+
+## Import API documents and multiple endpoints
+
+Preparation now accepts OpenAPI/Swagger JSON/YAML, Postman collections with saved JSON
+responses, an endpoint manifest (`base_url`, `endpoints` with `name`, `url`/`path`,
+`sample`, optional `data_path`), raw JSON, or text containing explicit `GET https://...`
+lines. This parser runs locally without an LLM or API calls. Only GET is supported.
+OpenAPI examples are read from response media examples; schema-only definitions,
+external references and arbitrary PDF/Word/prose are not converted automatically.
+Missing samples and URL variables are reported for review. Raw JSON cannot reveal
+an API URL: supply the URL, and review the proposed response data path.
+
+Names proposed by document import use lowercase snake_case (max 48 characters),
+with `_2`, `_3` for duplicate proposals. Nested table names follow the existing
+`parent_array_field` convention; the combined schema rejects any table collision.
+The existing SQL generator adds the client/organisation/integration prefixes.
+Manual endpoint names and saved legacy schemas retain their original names.
+
+Alternatively paste Tab/pipe-separated `name | /path | data.path` rows or import
+an endpoint list JSON file. Upload multiple sample files named after endpoints
+(e.g. `orders.json`, `customers.json`). Review/edit each row, then Analyze all
+endpoints, review table columns and composite PKs, preview SQL, save the version,
+and save/run a job as before. All endpoints share base URL, auth and pagination;
+absolute endpoint URLs must be under the configured base URL. Different hosts
+require separate integrations. Samples are used for inference and are not saved
+in published versions; loading a version restores all endpoint paths and schemas.

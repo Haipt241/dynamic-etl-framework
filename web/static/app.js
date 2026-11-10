@@ -1,5 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
+let designDirty = false;
 let draft = null, definitionId = null, sql = {}, templates = {}, logId = null;
 let selectedJob = null, selectedDefinition = null, savedJobs = [], literalParameters = new Set();
 const token = document.querySelector('meta[name="tool-token"]').content;
@@ -11,7 +12,7 @@ async function api(path, body) {
 function action(id, callback) { $(id).addEventListener('click', async event => { event.preventDefault(); $(id).disabled=true; try {await callback();} catch(e) {notice(e.message,true);} finally {$(id).disabled=false;} }); }
 function text(tag, value, cls) {const node=document.createElement(tag);node.textContent=value;if(cls)node.className=cls;return node;}
 function changed(){definitionId=null;sql={};$('reviewed').checked=false;$('sql-preview').textContent='Cấu hình đã thay đổi. Sinh SQL để duyệt lại.';$('active-definition').textContent='Bản nháp chưa lưu.';}
-function ensureApplied(){if(draft&&(JSON.stringify(JSON.parse($('schema-json').value))!==JSON.stringify(draft.schema)||JSON.stringify(JSON.parse($('config-json').value))!==JSON.stringify(draft.config)))throw Error('Cấu hình nâng cao chưa được áp dụng. Bấm Áp dụng cấu hình nâng cao trước.');}
+function ensureApplied(){if(designDirty)throw Error('Khai báo API đã thay đổi. Phân tích lại trước khi lưu schema hoặc job.');if(draft&&(JSON.stringify(JSON.parse($('schema-json').value))!==JSON.stringify(draft.schema)||JSON.stringify(JSON.parse($('config-json').value))!==JSON.stringify(draft.config)))throw Error('Cấu hình nâng cao chưa được áp dụng. Bấm Áp dụng cấu hình nâng cao trước.');}
 function syncJson() {$('schema-json').value=JSON.stringify(draft.schema,null,2);$('config-json').value=JSON.stringify(draft.config,null,2);}
 function variableNames(definition){return [...new Set([...(definition.config.required_env_vars||[]),...Object.values(definition.config.env_vars_config||{}).map(f=>f.env_var).filter(Boolean)])];}
 function showParameters(bindings={}){
@@ -62,11 +63,58 @@ function renderFields(){
     }table.append(body);const wrap=document.createElement('div');wrap.className='table-wrap';wrap.append(table);card.append(wrap);root.append(card);
   }
 }
-function loadDraft(data){draft={name:data.name,schema:data.schema,config:data.config};templates=data.templates||{};definitionId=data.id||null;sql=data.sql||{};$('name').value=data.name;$('base_url').value=data.schema.api_config.base_url;const first=data.schema.endpoints.find(e=>!e.is_virtual_endpoint);if(first){$('endpoint').value=first.name;$('path').value=first.api_details?.path||'/';$('data_path').value=first.response_structure?.root_data_field||'';}const auth=data.config.auth_type;if(auth&&!Array.from($('auth').options).some(o=>o.value===auth))$('auth').add(new Option(auth+' · cấu hình provider',auth));$('auth').value=auth||'api_key';$('reviewed').checked=false;syncJson();renderFields();showParameters();$('sql-preview').textContent=sql[$('sql-kind').value]||'Sinh SQL để xem trước.';$('active-definition').textContent=definitionId?`${data.name} · phiên bản ${definitionId.slice(0,8)}`:'Bản nháp chưa lưu.';}
+function loadDraft(data){designDirty=false;draft={name:data.name,schema:data.schema,config:data.config};templates=data.templates||{};definitionId=data.id||null;sql=data.sql||{};$('name').value=data.name;$('base_url').value=data.schema.api_config.base_url;if(!data._keepSamples)renderEndpointRows(data.schema.endpoints.filter(e=>!e.is_virtual_endpoint).map(e=>({name:e.name,path:e.api_details?.path||'/',data_path:e.response_structure?.root_data_field||''})));const auth=data.config.auth_type;if(auth&&!Array.from($('auth').options).some(o=>o.value===auth))$('auth').add(new Option(auth+' · cấu hình provider',auth));$('auth').value=auth||'api_key';$('reviewed').checked=false;designDirty=false;syncJson();renderFields();showParameters();$('sql-preview').textContent=sql[$('sql-kind').value]||'Sinh SQL để xem trước.';$('active-definition').textContent=definitionId?`${data.name} · phiên bản ${definitionId.slice(0,8)}`:'Bản nháp chưa lưu.';}
 async function refreshDefinitions(){const rows=await api('definitions');$('saved').replaceChildren(new Option('Chọn phiên bản',''));for(const row of rows)$('saved').add(new Option(`${row.name} · ${new Date(row.created*1000).toLocaleString()} · ${row.id.slice(0,8)}`,row.id));if(definitionId)$('saved').value=definitionId;}
 action('load-saved',async()=>{if(!$('saved').value)throw Error('Chọn phiên bản trước.');loadDraft(await api('definitions/'+$('saved').value));notice('Đã mở phiên bản.');});
-$('design-form').addEventListener('submit',async event=>{event.preventDefault();const button=event.submitter;button.disabled=true;try{const data={};for(const id of ['name','base_url','endpoint','path','data_path','auth','header','rate_limit','pagination','page_param','size_param','page_size'])data[id]=$(id).value;data.sample=JSON.parse($('sample').value);const inferred=await api('infer',data);if($('append-endpoint').checked&&draft){if(draft.name!==inferred.name||draft.schema.api_config.base_url!==inferred.schema.api_config.base_url)throw Error('Endpoint phải thuộc cùng tên integration và base URL.');const names=new Set(draft.schema.endpoints.map(e=>e.name.toLowerCase()));if(inferred.schema.endpoints.some(e=>names.has(e.name.toLowerCase())))throw Error('Tên endpoint hoặc bảng con đã tồn tại.');inferred.schema={...draft.schema,endpoints:[...draft.schema.endpoints,...inferred.schema.endpoints]};inferred.config=draft.config;}loadDraft(inferred);notice('Đã suy luận schema. Kiểm tra khoá chính, kiểu dữ liệu và bảng con.');$('schema').scrollIntoView({behavior:'smooth'});}catch(e){notice(e.message,true);}finally{button.disabled=false;}});
-$('sample-file').addEventListener('change',async event=>{const file=event.target.files[0];if(file){if(file.size>4000000){notice('Mẫu JSON tối đa 4 MB.',true);return;}$('sample').value=await file.text();}});
+let sourceFilename='input.json';
+$('source-file').addEventListener('change',async event=>{try{const file=event.target.files[0];if(file){if(file.size>4000000)throw Error('Mẫu JSON tối đa 4 MB.');sourceFilename=file.name;$('source-document').value=await file.text();}}catch(e){notice(e.message,true);}});
+action('discover-endpoints',async()=>{
+  const result=await api('discover',{content:$('source-document').value,filename:sourceFilename});
+  if(result.base_url)$('base_url').value=result.base_url;
+  renderEndpointRows(result.endpoints);
+  $('discovery-report').hidden=false;
+  $('discovery-report').textContent=result.endpoints.map(r=>r.name+' ← '+r.source).concat(result.warnings).join('\n');
+  notice('Đã đề xuất endpoint. Duyệt URL, tên bảng và mẫu JSON trước khi phân tích schema.');
+});
+function renderEndpointRows(rows){
+  designDirty=true;
+  $('endpoint-rows').replaceChildren();
+  for(const row of rows)addEndpointRow(row);
+}
+function addEndpointRow(row={}){
+  designDirty=true;
+  const card=text('article','','endpoint-row');const grid=text('div','','grid three');
+  for(const [key,label,value] of [['name','Endpoint',row.name||row.endpoint||''],['path','URL / path',row.url||row.path||''],['data_path','JSON data path',row.data_path||'']]){
+    const field=text('label',label),input=document.createElement('input');input.dataset.key=key;input.value=value;input.required=key!=='data_path';field.append(input);grid.append(field);
+  }
+  const sample=document.createElement('textarea');sample.dataset.key='sample';sample.rows=3;sample.placeholder='Sample JSON';sample.value=row.sample===undefined?'':JSON.stringify(row.sample,null,2);
+  const remove=text('button','Xoá dòng','secondary');remove.type='button';remove.onclick=()=>{card.remove();designDirty=true;};card.append(grid,sample,remove);$('endpoint-rows').append(card);
+}
+function importEndpointList(value){
+  let rows;
+  if(value.trim().startsWith('[')||value.trim().startsWith('{')){const parsed=JSON.parse(value);rows=Array.isArray(parsed)?parsed:parsed.endpoints;}
+  else rows=value.trim().split(/\r?\n/).filter(line=>line.trim()).map(line=>{const [name,path,data_path='']=line.split(/\t|\|/).map(v=>v.trim());return {name,path,data_path};});
+  if(!Array.isArray(rows)||!rows.length||rows.some(r=>!r||typeof r!=='object'||!r.name&&!r.endpoint||!r.path&&!r.url))throw Error('Danh sách cần tên endpoint và URL/path cho mỗi dòng.');
+  renderEndpointRows(rows);
+}
+action('import-endpoints',()=>importEndpointList($('endpoint-import').value));
+action('add-endpoint',()=>addEndpointRow());
+$('endpoint-list-file').addEventListener('change',async event=>{try{const file=event.target.files[0];if(file){if(file.size>4000000)throw Error('Mẫu JSON tối đa 4 MB.');importEndpointList(await file.text());}}catch(e){notice(e.message,true);}});
+$('endpoint-samples').addEventListener('change',async event=>{try{
+  const rows=[...document.querySelectorAll('.endpoint-row')];const pending=[];
+  for(const file of event.target.files){if(file.size>4000000)throw Error('Mẫu JSON tối đa 4 MB.');const name=file.name.replace(/\.json$/i,'');const matches=rows.filter(r=>r.querySelector('[data-key=name]').value.toLowerCase()===name.toLowerCase());if(matches.length!==1)throw Error('Không tìm được endpoint duy nhất cho file: '+file.name);pending.push([matches[0],JSON.parse(await file.text())]);}
+  for(const [row,sample] of pending)row.querySelector('[data-key=sample]').value=JSON.stringify(sample,null,2);
+  designDirty=true;notice('Đã nạp các mẫu JSON.');
+}catch(e){notice(e.message,true);}});
+$('design-form').addEventListener('submit',async event=>{event.preventDefault();const button=event.submitter;button.disabled=true;try{
+  const data={};for(const id of ['name','base_url','auth','header','rate_limit','pagination','page_param','size_param','page_size'])data[id]=$(id).value;
+  data.endpoints=[...document.querySelectorAll('.endpoint-row')].map((row,index)=>{const item={};for(const key of ['name','path','data_path'])item[key]=row.querySelector('[data-key='+key+']').value;try{item.sample=JSON.parse(row.querySelector('[data-key=sample]').value);}catch(_){throw Error('Sample JSON: '+(item.name||index+1));}return item;});
+  const inferred=await api('infer',data);loadDraft({...inferred,_keepSamples:true});notice('Đã suy luận schema. Kiểm tra khoá chính, kiểu dữ liệu và bảng con.');$('schema').scrollIntoView({behavior:'smooth'});
+}catch(e){notice(e.message,true);}finally{button.disabled=false;}});
+renderEndpointRows([{name:'Records',path:'/records'}]);
+designDirty=false;
+$('design-form').addEventListener('input',()=>{designDirty=true;});
+
 action('apply-json',async()=>{if(!draft)throw Error('Tạo integration hoặc mở phiên bản đã lưu trước.');draft.schema=JSON.parse($('schema-json').value);draft.config=JSON.parse($('config-json').value);changed();renderFields();showParameters();notice('Đã áp dụng cấu hình nâng cao; cần sinh lại SQL.');});
 $('template-file').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;const template=await file.text();if(!template.trim()){notice('Template SQL không được để trống.',true);return;}templates[$('sql-kind').value]=template;changed();notice(`Đã import template ${$('sql-kind').value}. Sinh SQL để kiểm tra.`);});
 action('clear-template',async()=>{delete templates[$('sql-kind').value];changed();notice('Đã khôi phục template mặc định.');});
