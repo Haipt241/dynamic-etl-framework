@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Union, Any
 
-from reliability_controlling import RetryStrategy, enterprise_retry
+from dynamic_integrations.reliability import RetryStrategy, enterprise_retry
 
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1029,7 +1029,7 @@ class SchemaExtractor:
                     "virtual_endpoints_created": 0
                 }
             
-            from dynamic_integrations.generator.configured_integration import create_integration
+            from dynamic_integrations.runtime.configured_integration import create_integration
 
             try:
                 integration = create_integration(integration_name)

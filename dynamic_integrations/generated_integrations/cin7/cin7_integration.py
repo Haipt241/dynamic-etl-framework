@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Any
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from dynamic_integrations.generator.integration_dynamic import DynamicIntegration
+from dynamic_integrations.runtime.integration_dynamic import DynamicIntegration
 from dynamic_integrations.generator.utils import Utils
 
 

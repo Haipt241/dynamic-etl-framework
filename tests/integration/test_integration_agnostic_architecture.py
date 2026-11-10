@@ -110,7 +110,7 @@ def test_xeroblue_architecture_safe():
         print("Step 1: Testing XeroBlue integration import...")
         
         # Try to import WITHOUT initializing heavy operations
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         print("✅ XeroBlue integration import successful")
         
         print("\nStep 2: Testing lightweight initialization...")

@@ -1,6 +1,6 @@
 """Compatibility adapter generated for callers that still import a provider class."""
 
-from dynamic_integrations.generator.configured_integration import ConfiguredIntegration
+from dynamic_integrations.runtime.configured_integration import ConfiguredIntegration
 
 
 class __INTEGRATION_NAME__Integration(ConfiguredIntegration):

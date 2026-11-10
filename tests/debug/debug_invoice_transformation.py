@@ -22,7 +22,7 @@ def test_invoice_debug():
     print("🐞 DEBUG: Testing Invoice Transformation")
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create minimal config to avoid database calls
         config = {'test_mode': True, 'skip_cms': True}

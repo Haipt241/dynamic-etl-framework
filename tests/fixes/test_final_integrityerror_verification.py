@@ -23,7 +23,7 @@ def test_organisationid_correct_value():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}
@@ -55,7 +55,7 @@ def test_defaults_prevent_nulls():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}
@@ -113,7 +113,7 @@ def test_filtering_edge_cases():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': False}  # Disable defaults to test pure filtering
@@ -177,7 +177,7 @@ def test_real_world_scenario():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}

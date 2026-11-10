@@ -9,11 +9,11 @@ import sys
 import os
 
 from dynamic_integrations.singleton_manager import SingletonBase
-from sql_helper import get_max_etl_update_time
+from dynamic_integrations.database.sql_helper import get_max_etl_update_time
 
 # Add parent directory to path for utils
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
-from utils import format_timestamp
+from dynamic_integrations.etl.value_utils import format_timestamp
 
 
 class QueryBuilder(SingletonBase):

@@ -76,7 +76,7 @@ project_root = os.path.dirname(os.path.dirname(script_dir))
 sys.path.insert(0, project_root)
 
 from sqlalchemy import text
-from sql_helper import eva_main_engine
+from dynamic_integrations.database.sql_helper import eva_main_engine
 
 
 @dataclass

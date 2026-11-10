@@ -45,7 +45,11 @@ Open http://127.0.0.1:8765. Select **Tiếng Việt / English** in the header; t
 | `dynamic_integrations/paths.py` | Shared resolution of original or job-local runtime assets |
 | `dynamic_integrations/schema_extractor.py` | Existing discovery plus offline sample-to-schema API |
 | `dynamic_integrations/discovery/` | Existing CLI discovery helpers, moved out of archives |
-| `dynamic_integrations/generator/` | Existing auth, SQL generation, rate limit, reconciliation and shared adapter |
+| `dynamic_integrations/generator/` | Schema/config and SQL generation |
+| `dynamic_integrations/runtime/` | Shared workflow, configured adapter, rate limit, reconciliation and child endpoints |
+| `dynamic_integrations/auth/` | Authentication, token refresh and token locking |
+| `dynamic_integrations/database/`, `monitoring/`, `storage/`, `reliability/` | Reused infrastructure services |
+| `dynamic_integrations/compatibility/` | Historical package orchestration and provider-specific logic |
 | `dynamic_integrations/etl/` | Existing extraction and transformation, including nested data |
 | `reference/` | Historical examples, manual SQL and one-off scripts; not runtime |
 

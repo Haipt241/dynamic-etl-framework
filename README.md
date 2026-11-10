@@ -114,34 +114,19 @@ python reference/check_service_table_structure.py
 
 ## 🏗️ System Architecture
 
-```
-run_dynamic_integration.py         # ⭐ MAIN ENTRY POINT - Start here!
-│
-├── dynamic_integrations/          # Core dynamic ETL system
-│   ├── IntegrationPackage.py      # Main orchestrator (integration-agnostic)
-│   ├── base_integration.py        # Base class for all integrations
-│   │
-│   ├── generator/                 # Schema → SQL + Python generator
-│   │   ├── integration_dynamic.py # Integration code generator
-│   │   ├── unified_sql_generator.py # SQL generator
-│   │   ├── auth_manager.py        # OAuth/authentication
-│   │   └── config/                # Integration configs
-│   │
-│   ├── etl/                       # ETL engine
-│   │   ├── data_extraction.py     # API data extraction
-│   │   ├── data_transformation.py # Data transformation
-│   │   └── extractors/            # Extraction modules
-│   │
-│   └── generated_integrations/    # Auto-generated integrations
-│       ├── qbo/                   # QuickBooks
-│       ├── fyi/                   # FYI
-│       ├── karbon_hq/             # Karbon
-│       └── ... (20+ integrations)
-│
-├── sql_helper.py                  # Database abstraction layer
-├── config.py                      # Configuration management
-└── utils.py                       # Shared utilities
-```
+| Folder | Responsibility |
+| --- | --- |
+| `dynamic_integrations/` | Shared runtime, auth, database, storage, monitoring, retry, ETL, generation and compatibility |
+| `web/` | Bilingual web UI, HTTP API, definitions and job control |
+| `scripts/` | Operational commands |
+| `tests/` | Automated checks and diagnostic tests |
+| `docs/` | Architecture and operating guides |
+| `reference/` | Historical comparison material; not imported by the application |
+| `var/` | Mutable runtime data, excluded from Git |
+
+`run_dynamic_integration.py` and `run_web.py` remain the root entry points.
+See [repository layout and compatibility](docs/REPOSITORY_LAYOUT.md).
+
 
 ---
 
@@ -259,7 +244,7 @@ See `dynamic_integrations/INTEGRATION_AGNOSTIC_GUIDE.md` for details.
 - Ensure security groups allow connections
 
 ### Integration Failures
-- Check logs: `logs/sql_errors/`
+- Check logs: `var/logs/sql_errors/`
 - Verify required parameters via `--param`
 - Check organization status in CMS
 

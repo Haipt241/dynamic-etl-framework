@@ -91,7 +91,7 @@ class SQLObjectBase(ABC):
         try:
             # Import here to avoid circular imports
             try:
-                from sql_helper import ExecuteEVASQL
+                from dynamic_integrations.database.sql_helper import ExecuteEVASQL
             except ImportError:
                 # Fallback for testing
                 def ExecuteEVASQL(*args): pass
@@ -186,7 +186,7 @@ class ProductionViewsManager(SQLObjectBase):
         super().__init__(config, engine, error_list)
         # Production views use main engine
         try:
-            from sql_helper import eva_main_engine
+            from dynamic_integrations.database.sql_helper import eva_main_engine
             self.main_engine = eva_main_engine
         except ImportError:
             self.main_engine = engine
@@ -211,7 +211,7 @@ class ProductionViewsManager(SQLObjectBase):
         """Override to use main engine for views"""
         try:
             try:
-                from sql_helper import ExecuteEVASQL
+                from dynamic_integrations.database.sql_helper import ExecuteEVASQL
             except ImportError:
                 def ExecuteEVASQL(*args): pass
             
@@ -237,7 +237,7 @@ class FXViewsManager(SQLObjectBase):
     def __init__(self, config: SQLObjectConfig, engine, error_list: List[str]):
         super().__init__(config, engine, error_list)
         try:
-            from sql_helper import eva_main_engine
+            from dynamic_integrations.database.sql_helper import eva_main_engine
             self.main_engine = eva_main_engine
         except ImportError:
             self.main_engine = engine
@@ -296,7 +296,7 @@ class FXViewsManager(SQLObjectBase):
         """Override to use main engine for FX views"""
         try:
             try:
-                from sql_helper import ExecuteEVASQL
+                from dynamic_integrations.database.sql_helper import ExecuteEVASQL
             except ImportError:
                 def ExecuteEVASQL(*args): pass
             
@@ -344,7 +344,7 @@ class SQLObjectManagerOrchestrator:
     def _initialize_engines(self):
         """Initialize database engines"""
         try:
-            from sql_helper import eva_engine, eva_main_engine
+            from dynamic_integrations.database.sql_helper import eva_engine, eva_main_engine
             self.eva_engine = eva_engine
             self.eva_main_engine = eva_main_engine
         except ImportError:

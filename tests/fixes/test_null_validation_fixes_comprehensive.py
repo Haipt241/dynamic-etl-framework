@@ -29,7 +29,7 @@ def test_overpayments_full_flow():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}
@@ -112,7 +112,7 @@ def test_banktransactions_full_flow():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}
@@ -199,7 +199,7 @@ def test_expenseclaims_full_flow():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}
@@ -281,7 +281,7 @@ def test_prepayments_full_flow():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}

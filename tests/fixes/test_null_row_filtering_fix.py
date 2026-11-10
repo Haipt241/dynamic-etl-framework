@@ -23,7 +23,7 @@ def test_null_row_filtering():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance with minimal config
         config = {'rate_limit': 60, 'apply_default_values': True}
@@ -95,7 +95,7 @@ def test_complete_pipeline_with_defaults_and_filtering():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -178,7 +178,7 @@ def test_edge_cases():
     print("=" * 25)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}
@@ -232,7 +232,7 @@ def test_integration_with_stage_loading():
     print("=" * 45)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Mock the LoadToEvaStageTable function to avoid actual database calls
         original_load_func = None
@@ -292,9 +292,9 @@ def test_integration_with_stage_loading():
         try:
             # Mock sys.modules for sql_helper
             import types
-            sql_helper_mock = types.ModuleType('sql_helper')
+            sql_helper_mock = types.ModuleType('dynamic_integrations.database.sql_helper')
             sql_helper_mock.LoadToEvaStageTable = mock_load_to_eva_stage_table
-            sys.modules['sql_helper'] = sql_helper_mock
+            sys.modules['dynamic_integrations.database.sql_helper'] = sql_helper_mock
             
             integration._load_to_stage_table(test_data, 'CreditNotes', 'append', 'test_stage_table')
             print("   ✅ Stage loading completed without IntegrityError")

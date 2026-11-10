@@ -5,9 +5,14 @@ Upload token to AWS S3
 This script uploads a token file to AWS S3 bucket in the correct folder structure.
 """
 
+# Support direct operational CLI execution.
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import os
 import sys
-from .s3_upload_tool import S3Uploader
+from dynamic_integrations.storage.s3_upload_tool import S3Uploader
 from dotenv import load_dotenv
 
 # Load environment variables from .env file

@@ -24,7 +24,7 @@ def test_creditnotes_integrityerror_fix():
     print("=" * 45)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -96,7 +96,7 @@ def test_organisationid_fix():
     print("=" * 30)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}
@@ -139,7 +139,7 @@ def test_multiple_endpoints_protection():
     print("=" * 45)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.error_list = []
@@ -194,7 +194,7 @@ def test_pipeline_integration():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}

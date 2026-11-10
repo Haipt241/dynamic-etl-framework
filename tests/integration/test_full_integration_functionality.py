@@ -84,7 +84,7 @@ def test_integration_creation():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         config = {
             'rate_limit': 60,

@@ -20,7 +20,7 @@ def test_table_name_construction():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance with realistic configuration
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -83,7 +83,7 @@ def test_endpoint_routing_logic():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {}

@@ -8,7 +8,7 @@ into the dynamic integration workflow.
 import logging
 from typing import Optional, List, Dict, Any
 
-from sql_helper import ReadMySQLTable
+from dynamic_integrations.database.sql_helper import ReadMySQLTable
 from .powerbi_manager import PowerBIManager
 
 

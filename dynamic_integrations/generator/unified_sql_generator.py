@@ -119,7 +119,7 @@ class UnifiedSQLGenerator:
         
         # Initialize enterprise retry monitor
         try:
-            from reliability_controlling import ChunkMonitor
+            from dynamic_integrations.reliability import ChunkMonitor
             monitor = ChunkMonitor(
                 operation_name=f"sql_generation_{sql_type}",
                 integration_name=self.integration_name

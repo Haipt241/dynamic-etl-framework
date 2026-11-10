@@ -5,6 +5,11 @@ This approach stores AWS credentials in Azure Key Vault, which might be
 preferable if you already use Azure Key Vault for other secrets.
 """
 
+# Support direct operational CLI execution.
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import json
 import logging
 import boto3

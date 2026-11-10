@@ -26,7 +26,7 @@ def test_textclause_fix():
     print("=" * 30)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -62,7 +62,7 @@ def test_creditnotes_column_fix():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -147,7 +147,7 @@ def test_invoices_still_work():
     print("=" * 30)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)

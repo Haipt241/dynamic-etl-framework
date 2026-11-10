@@ -11,7 +11,7 @@ from dynamic_integrations.singleton_manager import SingletonBase
 from dynamic_integrations.etl.extractors.thread_pool_manager import (
     ThreadPoolManager, calculate_optimal_workers
 )
-from sql_helper import eva_engine, get_max_etl_update_time
+from dynamic_integrations.database.sql_helper import eva_engine, get_max_etl_update_time
 
 # Global variable for custom time-from parameter
 CUSTOM_TIME_FROM = None

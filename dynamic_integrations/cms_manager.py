@@ -170,7 +170,7 @@ class CMSManager:
         """
         try:
             # Import ReadMySQLTable function
-            from sql_helper import ReadMySQLTable
+            from dynamic_integrations.database.sql_helper import ReadMySQLTable
             
             query = self._build_cms_query()
             endpoint = 'ETANI'
@@ -318,7 +318,7 @@ class CMSManager:
         """Log error using available logging functions"""
         try:
             # Try to import and use logging functions
-            from sql_helper import LoggingDetails, update_container_logs
+            from dynamic_integrations.database.sql_helper import LoggingDetails, update_container_logs
             
             # Log the error
             if self.job_id and self.job_run_id:
@@ -466,7 +466,7 @@ def update_cms_status(organisation_id: str, status: int, client_id: str = None, 
         Dict with success status and message
     """
     try:
-        from sql_helper import ExecuteCMSSP
+        from dynamic_integrations.database.sql_helper import ExecuteCMSSP
         
         if error_list is None:
             error_list = []

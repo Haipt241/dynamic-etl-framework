@@ -11,8 +11,8 @@ from typing import List, Dict
 # Import enterprise retry system
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent.parent))  # Add etl-packages root
-    from reliability_controlling.core.exceptions import GenerationRetryableError
-    from reliability_controlling import enterprise_retry, RetryStrategy
+    from dynamic_integrations.reliability.core.exceptions import GenerationRetryableError
+    from dynamic_integrations.reliability import enterprise_retry, RetryStrategy
 except ImportError:
     print("⚠️ Enterprise retry system not found, using fallback")
     enterprise_retry = lambda **kwargs: lambda func: func  # Fallback decorator

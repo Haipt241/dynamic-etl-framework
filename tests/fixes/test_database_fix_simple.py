@@ -19,7 +19,7 @@ def test_report_column_filtering():
     print("🔧 Testing Database Column Error Fix")
     print("=" * 40)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Create integration instance
     integration = XeroblueIntegration.__new__(XeroblueIntegration)

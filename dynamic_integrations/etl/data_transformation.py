@@ -15,8 +15,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from dynamic_integrations.generator.utils import Utils
-from utils import ConvertDataTypes
-from sql_helper import LoadToEvaStageTable, ExecuteEvaSP, get_firm_id, update_container_logs
+from dynamic_integrations.etl.value_utils import ConvertDataTypes
+from dynamic_integrations.database.sql_helper import LoadToEvaStageTable, ExecuteEvaSP, get_firm_id, update_container_logs
 
 
 class DataTransformer:
@@ -903,7 +903,7 @@ class DataTransformer:
         try:
             # PRIMARY: Query database first for accurate column list
             try:
-                from sql_helper import eva_engine
+                from dynamic_integrations.database.sql_helper import eva_engine
                 from sqlalchemy import text
 
                 query = text("""

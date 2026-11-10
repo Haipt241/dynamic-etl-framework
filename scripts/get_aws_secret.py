@@ -3,6 +3,11 @@ Script to retrieve and display AWS RDS credentials from AWS Secrets Manager.
 This script directly calls AWS Secrets Manager using boto3.
 """
 
+# Support direct operational CLI execution.
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import sys
 import json
 import boto3

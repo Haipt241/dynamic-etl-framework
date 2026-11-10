@@ -120,7 +120,7 @@ def test_job_snapshot_and_partial_status(tmp_path, monkeypatch):
             print('secret: do-not-persist')
             return {'status': 'success', 'sync_result': {'result': {'status': 'completed_with_errors'}}}
     with monkeypatch.context() as patch:
-        patch.setitem(sys.modules, 'run_dynamic_integration', SimpleNamespace(IntegrationWorkflowOrchestrator=Runner))
+        patch.setitem(sys.modules, 'dynamic_integrations.runtime.workflow', SimpleNamespace(IntegrationWorkflowOrchestrator=Runner))
         patch.chdir(tmp_path)
         patch.setenv('ETL_RUNTIME_DIR', 'before')
         run_job(str(tmp_path), ident, value, {'WEB_TEST_API_KEY': 'do-not-persist'}, 'upsert', 0, threading.Event())
@@ -146,7 +146,7 @@ def test_insert_result_and_recurring_upsert(tmp_path, monkeypatch):
             sync = {'result': {'status': 'completed'}}
             return {'status': 'success', 'steps': {'integration_sync': sync}} if modes[-1] == 'insert' else {'status': 'success', 'sync_result': sync}
     with monkeypatch.context() as patch:
-        patch.setitem(sys.modules, 'run_dynamic_integration', SimpleNamespace(IntegrationWorkflowOrchestrator=Runner))
+        patch.setitem(sys.modules, 'dynamic_integrations.runtime.workflow', SimpleNamespace(IntegrationWorkflowOrchestrator=Runner))
         patch.chdir(tmp_path); patch.setenv('ETL_RUNTIME_DIR', 'before')
         run_job(str(tmp_path), ident, value, {}, 'insert', 10, Stop())
     assert modes == ['insert', 'upsert']
@@ -195,9 +195,9 @@ def test_nested_samples_flow_through_existing_transformer():
     import subprocess
     script = r'''
 import sys, types, logging
-fake = types.ModuleType('sql_helper')
+fake = types.ModuleType('dynamic_integrations.database.sql_helper')
 fake.__getattr__ = lambda name: (lambda *a, **k: None)
-sys.modules['sql_helper'] = fake
+sys.modules['dynamic_integrations.database.sql_helper'] = fake
 from web.catalog import infer
 from dynamic_integrations.etl.data_transformation import DataTransformer
 sample = {'data': {'items': [{'order_key': 0, 'customer': {'name': 'A'},

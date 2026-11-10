@@ -21,7 +21,7 @@ def test_accounts_endpoint_processing():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance with full configuration
         config = {'debug': True}

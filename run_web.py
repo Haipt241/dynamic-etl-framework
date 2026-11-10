@@ -3,6 +3,7 @@
 import argparse
 import multiprocessing
 from pathlib import Path
+from dynamic_integrations.paths import web_data_directory
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
     from web.app import create_app
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8765)
-    parser.add_argument('--data-dir', type=Path, default=Path(__file__).resolve().parent / '.etl-tool')
+    parser.add_argument('--data-dir', type=Path, default=web_data_directory())
     args = parser.parse_args()
     args.data_dir.mkdir(parents=True, exist_ok=True)
     try:

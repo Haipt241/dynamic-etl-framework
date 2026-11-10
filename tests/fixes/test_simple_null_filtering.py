@@ -19,7 +19,7 @@ def test_basic_null_filtering():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create minimal integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)

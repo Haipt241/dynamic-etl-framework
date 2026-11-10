@@ -66,7 +66,7 @@ def run_job(directory, ident, definition, parameters, mode, interval, stop):
             os.environ.update({k: str(v) for k, v in parameters.items()})
             os.environ['ETL_RUNTIME_DIR'] = str(runtime)
             os.chdir(job_dir)
-            from run_dynamic_integration import IntegrationWorkflowOrchestrator
+            from dynamic_integrations.runtime.workflow import IntegrationWorkflowOrchestrator
             cycles, failures = 0, 0
             while not stop.is_set():
                 store.update_job(ident, 'running', cycles=cycles)

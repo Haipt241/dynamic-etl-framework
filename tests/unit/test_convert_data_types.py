@@ -7,7 +7,7 @@ import traceback
 
 # for Automation process
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils import ConvertDataTypes
+from dynamic_integrations.etl.value_utils import ConvertDataTypes
 
 json_folder = os.path.join(os.path.dirname(__file__), '..', 'json')
 output_folder = os.path.join(os.path.dirname(__file__), '..','output')

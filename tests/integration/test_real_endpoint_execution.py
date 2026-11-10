@@ -34,7 +34,7 @@ def test_actual_endpoint_execution():
     
     try:
         # Import and create integration
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         from dynamic_integrations import create_package_upsert
         
         print("\nStep 1: Creating integration instance...")

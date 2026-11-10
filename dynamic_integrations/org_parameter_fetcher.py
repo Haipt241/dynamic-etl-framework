@@ -32,7 +32,7 @@ class OrgParameterFetcher:
             return self.__class__._SERVICE_TO_INTEGRATION
 
         try:
-            from sql_helper import get_cms_engine
+            from dynamic_integrations.database.sql_helper import get_cms_engine
 
             engine = get_cms_engine()
             query = text("""
@@ -138,7 +138,7 @@ class OrgParameterFetcher:
     def _fetch_cms_data(self) -> Optional[Dict[str, Any]]:
         """Query client_service table for org details"""
         try:
-            from sql_helper import get_cms_engine
+            from dynamic_integrations.database.sql_helper import get_cms_engine
 
             engine = get_cms_engine()
 

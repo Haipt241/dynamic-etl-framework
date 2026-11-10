@@ -23,7 +23,7 @@ def test_organisationid_fix():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance with minimal config
         config = {'rate_limit': 60, 'apply_default_values': True}
@@ -110,7 +110,7 @@ def test_string_default_prevention():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance 
         integration = XeroblueIntegration.__new__(XeroblueIntegration)

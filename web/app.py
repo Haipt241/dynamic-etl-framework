@@ -1,4 +1,5 @@
 """HTTP routes for the local integration workbench."""
+from dynamic_integrations.paths import web_data_directory
 import atexit
 import secrets
 
@@ -13,7 +14,7 @@ def create_app(directory=None, manager_factory=JobManager):
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
     token = secrets.token_urlsafe(32)
-    store = Store(directory or catalog.ROOT / '.etl-tool')
+    store = Store(directory or web_data_directory())
     jobs = manager_factory(store)
     app.extensions.update(etl_store=store, etl_jobs=jobs)
     atexit.register(jobs.close)

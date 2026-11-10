@@ -24,7 +24,7 @@ def test_report_data_structure_handling():
     print("=" * 50)
     
     # Import the integration (minimal setup)
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Create minimal integration instance
     integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -138,7 +138,7 @@ def test_column_filtering_improvements():
     print("\\n🔍 Testing Improved Column Filtering")
     print("=" * 40)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Create minimal integration instance
     integration = XeroblueIntegration.__new__(XeroblueIntegration)
