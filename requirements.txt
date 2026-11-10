@@ -85,3 +85,7 @@ psutil>=5.8.0
 
 # Data serialization
 msgpack>=1.0.0
+
+# Local web workbench (Windows/macOS/Linux)
+Flask>=3.0,<4
+waitress>=3.0,<4

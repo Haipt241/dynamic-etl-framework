@@ -1,0 +1,71 @@
+# Integration Workbench
+
+## Run locally
+
+Use Python 3.10 or newer. The Python server and browser UI use the same code on Windows, macOS and Linux. Windows execution still needs validation on a Windows machine; it uses `multiprocessing` spawn and Waitress rather than Unix-only process APIs.
+
+macOS / Linux:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python run_web.py
+```
+
+Windows PowerShell:
+
+```powershell
+py -3 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe run_web.py
+```
+
+Open http://127.0.0.1:8765. `--port` and `--data-dir` are optional. The server binds only to loopback and uses a per-session request token. It is a local single-user tool, not a public multi-user deployment. UI/schema/SQL design does not require an AWS or DB connection. Executing a job uses the existing MySQL/AWS infrastructure, credentials and external services. Existing native DB drivers (including ODBC if required by the selected workflow) must be installed on each OS.
+
+## Workflow
+
+1. Load one of the 21 installed providers or enter API base URL, GET path, authentication method, pagination parameters, rate limit, response data path and a sample JSON payload.
+2. Analyze samples. All supplied records contribute fields. Nested objects flatten into columns. Arrays of objects with an `id` generate virtual endpoints and `nested_extractions`; other arrays stay JSON text. Unknown/mixed types are conservative TEXT and need review. Samples cannot establish complete fields, source uniqueness or production schema stability.
+3. Add further endpoints using the checkbox. Review columns/types/keys in the table. Advanced schema/config fields remain available for provider-specific pagination, OAuth, transforms and reconciliation.
+4. Preview stage/prod/view/procedure SQL. Existing providers with unchanged schemas use their original SQL assets. New schemas use `UnifiedSQLGenerator` without AI. Imported SQL templates use sandboxed Jinja with `integration_name`, `entities` (each entity has `name` and `fields`) and `generated_sql`. A wrapper can use `{{generated_sql}}`; a replacement can loop over entities and fields. Unknown template variables fail preview. Existing database placeholders such as `{clientID}` remain literal until execution. Imported SQL is user-authored code and must be reviewed before execution.
+5. Save an immutable definition version. Secrets must be entered in runtime parameter inputs or the server environment, not embedded in advanced schema/config JSON. Normal env defaults and the historical `client_credentials` block are removed from saved config.
+6. Select the saved version, enter the required client/organisation/auth parameters, choose INSERT or UPSERT and an optional repeat interval. Confirm DB writes explicitly. **The existing INSERT SQL contains DROP TABLE. Review it and use a dedicated destination for initial validation.**
+7. Inspect status and redacted logs, or stop the job. Closing a browser tab leaves the server running. Graceful server shutdown stops workers; an unexpected server restart marks unfinished jobs interrupted. Resume is an explicit new run, not a claim of exactly-once recovery.
+
+## Components
+
+| Location | Responsibility / reused component |
+| --- | --- |
+| `run_web.py` | Waitress entry point, single-server file lock, dotenv |
+| `web/app.py` | Local HTTP API and request validation |
+| `web/catalog.py` | Provider listing, validation, bridge to SchemaExtractor and UnifiedSQLGenerator |
+| `web/store.py` | SQLite definitions and job status, no parameter persistence |
+| `web/jobs.py` | Spawned worker processes, snapshots, repeat/stop, redacted logs |
+| `web/templates/`, `web/static/` | Browser UI, no build step or CDN |
+| `dynamic_integrations/paths.py` | Shared resolution of original or job-local runtime assets |
+| `dynamic_integrations/schema_extractor.py` | Existing discovery plus offline sample-to-schema API |
+| `dynamic_integrations/discovery/` | Existing CLI discovery helpers, moved out of archives |
+| `dynamic_integrations/generator/` | Existing auth, SQL generation, rate limit, reconciliation and shared adapter |
+| `dynamic_integrations/etl/` | Existing extraction and transformation, including nested data |
+| `reference/` | Historical examples, manual SQL and one-off scripts; not runtime |
+
+All installed provider Python adapters remain in their original runtime package for compatibility. They are actively loaded; they cannot be deleted with the reference folder. Existing public package exports initialize lazily so opening the UI does not initialize DB clients. Registry initialization remains intact when callers request the historical package API.
+
+Each job has a private asset snapshot and process environment. Web workers resolve runtime config values in memory without rewriting provider files. The manager prevents simultaneous jobs for the same provider/client/organisation and allows at most four jobs. Providers sharing a vendor/account quota may still need a shared limiter across processes; the existing per-integration limiter is reused, not replaced by a global quota service.
+
+## Reliability and current limits
+
+- Request-level rate limiting, retry and reconciliation use existing ETL behavior. The UI does not claim to verify all source data independently.
+- Repeated jobs run sequential cycles. After successful INSERT, subsequent cycles use UPSERT. Failed repeated UPSERT cycles retry up to three attempts with backoff; failed INSERT is not automatically replayed. `completed_with_errors` is partial, never green success.
+- Job state persists in SQLite; page-level checkpoints and automatic recovery across server crashes remain future work. API-specific incremental behavior depends on the configured provider.
+- Stopping a running worker can leave partial database work. Reconcile before resuming.
+- Default new-provider form supports GET, page/offset pagination and four simple auth modes. OAuth/custom request methods reuse installed configurations through the advanced editor. API probing, a visual reconcile screen, schema migrations and arbitrary DB destinations are not implemented.
+- When editing legacy schemas, validation may expose existing duplicate fields or provider-specific types; unchanged providers retain their original schemas/SQL. No provider migration has been assumed.
+
+## Offline validation
+
+```sh
+python -m pytest -q tests/test_web_tool.py tests/fixes/test_simple_null_filtering.py tests/fixes/test_date_comparison_fix.py tests/unit/test_convert_data_types.py
+```
+
+Tests cover schema inference/nested contracts, original provider SQL, review/save/template paths, process spawning, duplicate-job prevention, cancellation, partial results, recurring INSERT→UPSERT and recovery metadata. Provider API calls and actual DB writes are not exercised by these tests.

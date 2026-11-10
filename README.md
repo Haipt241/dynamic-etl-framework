@@ -2,6 +2,12 @@
 
 **Extract, Transform, Load data from business platforms to MySQL databases.**
 
+## Web workbench
+
+Run `python run_web.py` and open <http://127.0.0.1:8765> after installing `requirements.txt`.
+The web UI supports sample JSON → schema review → SQL preview/import → versioned configuration → isolated jobs.
+Existing adapters and the CLI remain available. See [setup and architecture](docs/WEB_TOOL.md).
+
 ## 🚀 Quick Start
 
 ### Main Entry Point
@@ -39,7 +45,7 @@ python run_dynamic_integration.py --integration fyi --mode upsert \
 
 ```bash
 # Execute the service integration mapping setup
-mysql -h <host> -u <username> -p vibedb_cms < MYSQL_SP_Revisions/setup_service_integration_mapping.sql
+mysql -h <host> -u <username> -p vibedb_cms < reference/MYSQL_SP_Revisions/setup_service_integration_mapping.sql
 ```
 
 **What this does:**
@@ -79,7 +85,7 @@ python run_dynamic_integration.py --org-id 5678 --mode insert  # Full setup
 **Verify setup:**
 ```bash
 # Check if integration_name column exists and is populated
-python check_service_table_structure.py
+python reference/check_service_table_structure.py
 ```
 
 ---

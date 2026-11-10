@@ -593,16 +593,18 @@ IMPORTANT: In your SQL output, replace:
     def load_integration_config(integration_name: str) -> Dict:
         """Load integration-specific configuration from config file (always fresh)"""
 
-        config_file = os.path.join(
-            os.path.dirname(__file__),
-            'config',
-            f'{integration_name.lower()}_config.json'
-        )
+        from dynamic_integrations.paths import provider_config_path
+        config_file = provider_config_path(integration_name)
 
         try:
             if os.path.exists(config_file):
                 with open(config_file, 'r', encoding='utf-8') as f:
                     config = json.load(f)
+                    if os.environ.get('ETL_RUNTIME_DIR'):
+                        for field in config.get('env_vars_config', {}).values():
+                            env_var = field.get('env_var')
+                            if env_var and env_var in os.environ:
+                                field['default_value'] = os.environ[env_var]
                     return config
             else:
                 print(f"[WARNING] Config file not found for {integration_name}: {config_file}")

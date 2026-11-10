@@ -2,7 +2,7 @@
 
 Historical examples, one-off scripts, manual SQL revisions and design notes are collected here. They are not part of the supported runtime. Paths inside these snapshots are historical; do not execute them as deployment scripts.
 
-Live provider adapters, schemas and SQL remain in `dynamic_integrations/generated_integrations/` because the existing CLI still loads them. They are not disposable reference files. `archives/legacy_etl/` also remains a live dependency of the supported generator CLI. Deleting either requires migration and parity tests first.
+Live provider adapters, schemas and SQL remain in `dynamic_integrations/generated_integrations/` because the existing CLI still loads them. They are not disposable reference files. `dynamic_integrations/discovery/` contains the active discovery helpers formerly under `archives/legacy_etl/`. Deleting either requires migration and parity tests first.
 
 The active runtime is organized as follows:
 

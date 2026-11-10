@@ -24,7 +24,7 @@ from reliability_controlling import RetryStrategy, enterprise_retry
 # Add current directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from generator.utils import Utils
+from dynamic_integrations.generator.utils import Utils
 
 
 class BaseInfoExtractor:
@@ -594,6 +594,97 @@ class SchemaExtractor:
         self.schema_parser = SchemaParser()
         self.schema_validator = SchemaValidator()
     
+    def schema_from_samples(self, name, base_url, endpoint, path, records, primary_key="id"):
+        """Build a reviewable schema offline; nested arrays use the existing ETL contract.
+
+        Inspect all supplied records. Unknown/heterogeneous fields are stored as TEXT.
+        Samples cannot establish completeness or uniqueness in the source system.
+        """
+        import hashlib
+        import re
+        if not records or not all(isinstance(row, dict) for row in records):
+            raise ValueError("Sample must contain a non-empty array of objects")
+        endpoints = []
+
+        def identifier(value):
+            if value == "id":
+                return "Id"
+            value = re.sub(r"[^a-zA-Z0-9_]", "_", value)
+            if not value or value[0].isdigit():
+                value = "Field_" + value
+            if len(value) > 25:
+                value = value[:16] + "_" + hashlib.sha256(value.encode()).hexdigest()[:8]
+            return value
+
+        def build(table, rows, key, ancestors=()):
+            fields, extractions = [], []
+            used = set()
+            def add(api_name, values, nullable=True, force_key=False):
+                column = identifier(api_name.replace(".", "_"))
+                if column.lower() in used:
+                    raise ValueError("Duplicate column after normalization: " + column)
+                used.add(column.lower())
+                present = [v for v in values if v is not None]
+                types = {self._infer_data_type(v) for v in present}
+                dtype = types.pop() if len(types) == 1 else "TEXT"
+                if force_key:
+                    dtype = "VARCHAR(255)"
+                elif dtype == "INT":
+                    dtype = "BIGINT"
+                elif dtype.startswith("DECIMAL"):
+                    dtype = "DOUBLE"
+                elif dtype == "VARCHAR(255)":
+                    dtype = "TEXT"
+                fields.append({"api_name": api_name, "db_column": column,
+                               "data_type": dtype, "nullable": nullable,
+                               "is_primary_key": force_key})
+                return column
+
+            def walk(objects, prefix=""):
+                keys = dict.fromkeys(k for obj in objects for k in obj)
+                for field in keys:
+                    source = f"{prefix}.{field}" if prefix else field
+                    values = [obj.get(field) for obj in objects]
+                    present = [v for v in values if v is not None]
+                    if present and all(isinstance(v, dict) for v in present):
+                        walk([v if isinstance(v, dict) else {} for v in values], source)
+                    elif present and all(isinstance(v, list) for v in present):
+                        items = [item for values_ in present for item in values_]
+                        # Preserve unkeyed arrays as JSON text to avoid inventing identities.
+                        if items and all(isinstance(v, dict) and v.get("id") is not None for v in items):
+                            child = identifier(table + "_" + source.replace(".", "_"))
+                            build(child, items, "id", ancestors + (table,))
+                            extractions.append({"table_name": child, "source_field": source})
+                        else:
+                            add(source, values)
+                    else:
+                        add(source, values, any(v is None for v in values), source == key)
+            walk(rows)
+            if not any(f["is_primary_key"] for f in fields):
+                raise ValueError(f"Primary key {key} missing in {table}")
+            if any(row.get(key) is None for row in rows):
+                raise ValueError(f"Primary key {key} must be present in every sample record")
+            for ancestor in ancestors:
+                add(ancestor.lower() + "Id", [""], False, True)
+                fields[-1]["is_foreign_key"] = True
+            for field in ("ClientID", "OrganisationID"):
+                if field.lower() not in used:
+                    add(field, [""], False, field == "OrganisationID")
+                    fields[-1]["data_type"] = "VARCHAR(255)"
+            entry = {"name": table, "fields": fields, "identity_field": key,
+                     "database_schema": {"primary_key": [f["db_column"] for f in fields if f["is_primary_key"]]},
+                     "nested_extractions": extractions}
+            if ancestors:
+                entry["is_virtual_endpoint"] = True
+            else:
+                entry["api_details"] = {"path": path, "method": "GET", "query_parameters": {}}
+                entry["response_structure"] = {"root_data_field": "", "is_array": True}
+            endpoints.append(entry)
+        build(endpoint, records, primary_key)
+        return {"integration_name": name.upper(), "display_name": name,
+                "api_config": {"base_url": base_url, "authentication": {"type": "api_key"}},
+                "endpoints": sorted(endpoints, key=lambda e: bool(e.get("is_virtual_endpoint")))}
+
     def extract_schemas(self, 
                        endpoints_source: str,
                        base_info_source: str = None,
@@ -1520,10 +1611,7 @@ class SchemaExtractor:
         elif isinstance(value, float):
             return "DECIMAL(10,2)"
         elif isinstance(value, str):
-            if "date" in str(value).lower() or "time" in str(value).lower():
-                return "DATETIME"
-            else:
-                return "VARCHAR(255)"
+            return "VARCHAR(255)"
         elif isinstance(value, (dict, list)):
             return "TEXT"
         else:
@@ -1696,7 +1784,7 @@ class SchemaExtractor:
             print(f"🔍 Searching for JSON fields in {integration_name} schema...")
             
             # Use common utility function from Utils
-            from generator.utils import Utils
+            from dynamic_integrations.generator.utils import Utils
             
             # Load existing schema file
             schema_dir = Path(f"generated_integrations/{integration_name.lower()}/schemas")

@@ -25,9 +25,9 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 from urllib.parse import urlparse
 
-from archives.legacy_etl.integration_entities_qbo import EntityWizard
-from archives.legacy_etl.integration_entities_xero import XeroEntityWizard
-from archives.legacy_etl.integrations_entities_dynamic import DynamicEntityWizard, MySQLTableGenerator, \
+from dynamic_integrations.discovery.integration_entities_qbo import EntityWizard
+from dynamic_integrations.discovery.integration_entities_xero import XeroEntityWizard
+from dynamic_integrations.discovery.integrations_entities_dynamic import DynamicEntityWizard, MySQLTableGenerator, \
     SQLAlchemyModelGenerator
 
 # Add parent directory to path

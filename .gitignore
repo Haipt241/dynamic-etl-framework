@@ -71,3 +71,6 @@ sample_data/
 retry_failures/
 analysis_generated/
 reconciliation_failures_*.json
+
+# Local web definitions, job snapshots and logs
+.etl-tool/

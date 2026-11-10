@@ -75,11 +75,11 @@ class IntegrationWorkflowOrchestrator:
                 break
 
         # Set up paths using absolute paths
-        current_dir = Path(__file__).parent
-        self.integration_dir = current_dir / "dynamic_integrations" / "generated_integrations" / self.integration_name
+        from dynamic_integrations.paths import provider_directory, provider_config_path
+        self.integration_dir = provider_directory(self.integration_name)
         self.schema_file = self.integration_dir / "schemas" / f"{self.integration_name}_schema.json"
         self.sql_dir = self.integration_dir / "sql"
-        self.config_file = current_dir / "dynamic_integrations" / "generator" / "config" / f"{self.integration_name}_config.json"
+        self.config_file = provider_config_path(self.integration_name)
 
         print(f"[START] Integration Workflow Orchestrator initialized")
         print(f"[PACKAGE] Integration: {self.integration_name}")
@@ -395,7 +395,7 @@ class IntegrationWorkflowOrchestrator:
             # Existing adapters can read runtime values directly from their config file.
             # The shared adapter builds its runtime config from the environment in memory.
             adapter_file = self.integration_dir / f"{self.integration_name}_integration.py"
-            if adapter_file.is_file() and self.config_file.exists():
+            if adapter_file.is_file() and self.config_file.exists() and not os.environ.get("ETL_RUNTIME_DIR"):
                 with open(self.config_file, 'r', encoding='utf-8') as f:
                     config = json.load(f)
 
@@ -583,10 +583,9 @@ class IntegrationWorkflowOrchestrator:
             if not self.sql_dir.exists():
                 issues.append(f"SQL directory missing: {self.sql_dir}")
 
-            # Check integration file exists
-            integration_file = self.integration_dir / f"{self.integration_name}_integration.py"
-            if not integration_file.exists():
-                issues.append(f"Integration file missing: {integration_file}")
+            # Providers without custom Python run through ConfiguredIntegration.
+            if not self.config_file.exists():
+                issues.append(f"Integration config missing: {self.config_file}")
 
             if issues:
                 return {

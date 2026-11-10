@@ -232,9 +232,10 @@ class DynamicIntegration(ChildEndpointMixin, BaseIntegration):
             if schema_filename is None:
                 schema_filename = f"{self.integration_name.lower()}_schema.json"
             
+            from dynamic_integrations.paths import provider_directory
             # Try to find schema file
             possible_paths = [
-                os.path.join(os.path.dirname(__file__), '..', 'generated_integrations', self.integration_name.lower(), 'schemas', schema_filename),
+                str(provider_directory(self.integration_name) / 'schemas' / schema_filename),
                 os.path.join(os.getcwd(), 'schemas', schema_filename)
             ]
             
