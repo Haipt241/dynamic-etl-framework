@@ -8,6 +8,16 @@ Các integration cũ được giữ trong mã nguồn để đối chiếu và k
 
 Legacy integrations are retained in the codebase for internal comparison and regression testing. They are not exposed as selectable templates. **Saved versions** contains configurations previously saved through the tool.
 
+## Ba tab / Three tabs
+
+| Tab | Tiếng Việt | English |
+| --- | --- | --- |
+| Chuẩn bị integration / Prepare integration | Thiết kế API, duyệt schema và SQL, lưu phiên bản rồi đặt tên và lưu job. Schema/config và SQL được xuất thành file theo phiên bản. | Design the API, review schema/SQL, save a version, then name and save a reusable job. Versioned schema/config and SQL files are materialized. |
+| Job đã lưu / Saved jobs | Chọn job để xem đầy đủ integration, schema, SQL, tham số và chu kỳ. Có thể tạo job mới từ job hiện tại. | Select a job to inspect its integration, schema, SQL, bindings and interval. Clone its configuration into a new job. |
+| Chạy & giám sát / Run & monitor | Mỗi lần chạy có ID, worker và log riêng. Chạy nhiều job, xem trạng thái và dừng riêng từng lần chạy. | Each execution has its own ID, worker and log. Run multiple jobs, monitor them and stop individual executions. |
+
+**Job đã lưu khác lần chạy:** job tồn tại sau khi tắt server; một job có thể có nhiều lần chạy trong lịch sử. Không tự chạy lại khi server khởi động. / **Saved jobs differ from runs:** a job survives server shutdown and may have many historical runs. Restarting the server does not automatically start jobs.
+
 | Bước / Step | Tiếng Việt | English | Kết quả / Result |
 | --- | --- | --- | --- |
 | 1. API | Nhập tên integration, base URL, endpoint GET, phương thức auth, header, phân trang, rate limit, đường dẫn dữ liệu và mẫu JSON. | Enter the integration name, base URL, GET endpoint, authentication, header, pagination, rate limit, data path and sample JSON. | Bản khai báo API / API definition |
@@ -15,8 +25,9 @@ Legacy integrations are retained in the codebase for internal comparison and reg
 | 3. Duyệt / Review | Kiểm tra tên cột, kiểu SQL, khoá chính, nullable và bảng con. Dùng **Thêm endpoint vào bản nháp** cho API cùng integration. | Review column names, SQL types, primary keys, nullability and child tables. Use **Add endpoint to draft** for more endpoints in the same integration. | Schema đã kiểm tra / Reviewed schema |
 | 4. SQL | Bấm **Sinh & xem SQL**, xem stage/prod/view/procedure. Có thể import template SQL rồi sinh lại. | Select **Generate & preview SQL** and inspect stage/prod/view/procedure output. Optionally import a SQL template and regenerate. | SQL để duyệt, chưa ghi DB / SQL for review, no DB writes |
 | 5. Phiên bản / Version | Xác nhận đã duyệt schema và SQL, bấm **Lưu phiên bản**. Thay đổi về sau được lưu thành phiên bản mới. | Confirm review and select **Save version**. Later changes are saved as a new version. | Cấu hình cố định cho job / Immutable job definition |
-| 6. Thực thi / Execute | Nhập client/organisation, secret và tham số bắt buộc. Chọn INSERT hoặc UPSERT, đặt chu kỳ và xác nhận ghi DB. | Enter client/organisation, secrets and required parameters. Select INSERT or UPSERT, set the interval and confirm DB writes. | Worker riêng / Isolated worker |
-| 7. Giám sát / Monitor | Xem trạng thái, số vòng, log; dừng job nếu cần. Sau lỗi hoặc dừng giữa chừng, kiểm tra/đối soát dữ liệu trước khi chạy lại. | Inspect status, cycles and logs; stop a job if needed. After failure or interruption, check/reconcile data before restarting. | Lịch sử thực thi / Execution history |
+| 6. Lưu job / Save job | Đặt tên, chọn chế độ và chu kỳ, khai báo giá trị client/organisation hoặc tên biến môi trường. Secret chỉ lưu dưới dạng tham chiếu. | Name the job, set mode/interval and bind client/organisation values or environment variable names. Credentials are stored only as references. | Job tái sử dụng / Reusable job |
+| 7. Thực thi / Execute | Chọn job ở tab Job đã lưu. Xem chi tiết, xác nhận ghi DB rồi chạy. Nút Khởi tạo DB chạy INSERT một lần; nút Chạy job dùng chế độ đã lưu. | Select a saved job, inspect details, confirm DB writes and run. Initialize DB runs INSERT once; Run job uses the saved mode. | Worker riêng / Isolated worker |
+| 8. Giám sát / Monitor | Xem trạng thái, số vòng, log; dừng job nếu cần. Sau lỗi hoặc dừng giữa chừng, kiểm tra/đối soát dữ liệu trước khi chạy lại. | Inspect status, cycles and logs; stop a job if needed. After failure or interruption, check/reconcile data before restarting. | Lịch sử thực thi / Execution history |
 
 ## Dữ liệu đầu vào / Inputs
 
@@ -41,7 +52,11 @@ flowchart TD
     C --> D{"Review approved?"}
     D -->|No| B
     D -->|Yes| E["Save version"]
-    E --> F["Start isolated worker"]
+    E --> S["Save named job and parameter bindings"]
+    S --> T["Select job and inspect configuration"]
+    T --> F["Start isolated worker with a new run ID"]
+    T --> P["Initialize DB: one INSERT run"]
+    P --> G
     F --> G["Existing ETL: API → transform → DB"]
     G --> H{"Cycle result"}
     H -->|Success, repeat enabled| I["Wait, then UPSERT"]
@@ -60,3 +75,9 @@ flowchart TD
 - Reconciliation dùng logic runtime hiện có; chưa có màn hình đối soát riêng hoặc bằng chứng tự động rằng mọi dữ liệu API đã được lấy đủ. / Reconciliation uses existing runtime logic; there is no dedicated reconciliation screen or independent automatic proof of source completeness yet.
 - Form thông thường hỗ trợ GET và bốn kiểu auth cơ bản. OAuth hoặc auth đặc thù cần cấu hình nâng cao tương thích; phương thức auth chưa được runtime hỗ trợ cần bổ sung code. / The standard form supports GET and four basic auth modes. OAuth/custom auth requires compatible advanced configuration; unsupported authentication methods require runtime code.
 - Ngôn ngữ UI đổi được, còn tên trường API, giá trị cấu hình, SQL và log kỹ thuật giữ nguyên để đối chiếu chính xác. / UI language can change; API field names, configuration values, SQL and technical logs remain unchanged for accurate diagnosis.
+
+## Tham số và dữ liệu / Parameters and data
+
+Các giá trị định tuyến như client/organisation được lưu trực tiếp hoặc tham chiếu biến môi trường. Auth/token/password dùng tên biến môi trường (ví dụ `VENDOR_API_KEY`), không lưu secret trong SQLite. Có thể nhập secret tạm trong chi tiết job cho từng lần chạy; nó chỉ nằm trong bộ nhớ worker. / Routing values such as client/organisation may be saved literally or as environment references. Auth/token/password values use environment names, not plaintext secrets in SQLite. Temporary per-run secret inputs remain in worker memory.
+
+Lưu phiên bản/job chưa thực thi SQL. Chọn **Khởi tạo DB & đồng bộ lần đầu** khi sẵn sàng chạy SQL đã duyệt. Không chạy hai job cùng integration/client/organisation đồng thời để tránh ghi chồng dữ liệu. / Saving a version/job does not execute SQL. Choose **Initialize DB & first sync** to execute reviewed SQL. Concurrent runs for the same integration/client/organisation are rejected to avoid overlapping writes.

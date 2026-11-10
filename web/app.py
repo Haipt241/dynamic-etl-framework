@@ -8,6 +8,7 @@ from flask import Flask, jsonify, render_template, request
 from . import catalog
 from .jobs import JobManager
 from .store import Store
+from .job_definitions import LITERAL_PARAMETERS, validate_job, resolve_parameters
 
 
 def create_app(directory=None, manager_factory=JobManager):
@@ -97,6 +98,39 @@ def create_app(directory=None, manager_factory=JobManager):
         body['templates'] = data.get('templates', {})
         body['sql'] = sql_preview(body)
         return jsonify(id=store.save(body)), 201
+
+    @app.get('/api/saved-jobs')
+    def saved_job_list():
+        return jsonify(store.saved_jobs())
+
+    @app.get('/api/job-parameters')
+    def job_parameter_policy():
+        return jsonify(literal_parameters=sorted(LITERAL_PARAMETERS))
+
+    @app.post('/api/saved-jobs')
+    def save_job():
+        data = payload()
+        definition = store.definition(data['definition_id'])
+        return jsonify(id=store.save_job(validate_job(data, definition))), 201
+
+    @app.get('/api/saved-jobs/<ident>')
+    def saved_job_detail(ident):
+        job = store.saved_job(ident)
+        return jsonify(job=job, definition=store.definition(job['definition_id']))
+
+    @app.post('/api/saved-jobs/<ident>/run')
+    def run_saved_job(ident):
+        data = payload()
+        if data.get('confirm_write') is not True:
+            raise ValueError('Confirm that this job will write to the configured database')
+        job = store.saved_job(ident)
+        definition = store.definition(job['definition_id'])
+        parameters = resolve_parameters(job, definition, data.get('parameters', {}))
+        mode = 'insert' if data.get('initialize') is True else job['mode']
+        # Explicit initialization runs once. Normal execution uses the saved schedule.
+        interval = 0 if data.get('initialize') is True else job['interval']
+        run_id = jobs.start(definition, parameters, mode, interval, saved_job_id=ident)
+        return jsonify(id=run_id, saved_job_id=ident), 202
 
     @app.get('/api/jobs')
     def job_list():

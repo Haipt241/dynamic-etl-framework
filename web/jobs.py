@@ -110,7 +110,7 @@ class JobManager:
         self.lock = threading.RLock()
         store.recover()
 
-    def start(self, definition, parameters, mode, interval):
+    def start(self, definition, parameters, mode, interval, saved_job_id=None):
         if mode not in ('insert', 'upsert') or interval < 0 or (interval and interval < 10):
             raise ValueError('Mode must be insert/upsert; repeat interval must be 0 or at least 10 seconds')
         # Only known config inputs may become environment variables.
@@ -129,7 +129,7 @@ class JobManager:
                 raise ValueError('A job is already running for this provider/client/organisation')
             if len(self.running) >= 4:
                 raise ValueError('Maximum 4 simultaneous jobs; stop a job first')
-            ident = self.store.create_job(definition)
+            ident = self.store.create_job(definition, saved_job_id, mode, interval)
             event = self.context.Event()
             process = self.context.Process(target=run_job, args=(str(self.store.directory), ident, definition,
                                                                 parameters, mode, interval, event), daemon=True)

@@ -89,6 +89,40 @@
     'Tải lại trang trước khi gửi yêu cầu.': 'Reload the tool page before making requests',
     'Không tìm thấy phiên bản.': 'Definition not found'
   };
+  Object.assign(messages, {
+  "01 · Chuẩn bị integration": "01 · Prepare integration",
+  "02 · Job đã lưu": "02 · Saved jobs",
+  "03 · Chạy & giám sát": "03 · Run & monitor",
+  "Tạo job từ phiên bản đã duyệt": "Create a job from a reviewed version",
+  "Tên job": "Job name",
+  "Lưu job": "Save job",
+  "Job đã lưu": "Saved jobs",
+  "Tạo job mới": "Create a new job",
+  "Job lưu phiên bản integration, tham số và chu kỳ. Thông tin xác thực được tham chiếu qua biến môi trường; có thể nhập tạm khi chạy.": "A job saves its integration version, parameters and interval. Credentials use environment references or temporary inputs at launch.",
+  "Lưu job không ghi DB. Chọn Khởi tạo DB trong chi tiết job để chạy SQL đã duyệt.": "Saving a job does not write to the database. Choose Initialize DB in the job details to execute the reviewed SQL.",
+  "Chọn job để xem integration, schema, SQL và cấu hình chạy.": "Select a job to inspect its integration, schema, SQL and execution settings.",
+  "Cấu hình integration và job": "Integration and job configuration",
+  "Schema đã duyệt": "Reviewed schema",
+  "SQL đã duyệt": "Reviewed SQL",
+  "Tham số cho lần chạy này": "Parameters for this run",
+  "Để trống để dùng cấu hình job. Giá trị nhập ở đây chỉ dùng cho lần chạy, không lưu vào job.": "Leave blank to use the saved job configuration. Overrides apply only to this run and are not saved.",
+  "Chạy job đã chọn": "Run selected job",
+  "Khởi tạo DB & đồng bộ lần đầu": "Initialize DB & first sync",
+  "Dùng làm job mới": "Use as a new job",
+  "Mỗi lần chạy có worker, cấu hình và log riêng. Khởi tạo DB chạy INSERT một lần; chạy định kỳ dùng chế độ đã lưu.": "Each run has its own worker, configuration and log. DB initialization runs INSERT once; recurring execution uses the saved mode.",
+  "Chọn job để chạy": "Select a job to run",
+  "Job / Lần chạy": "Job / Run",
+  "Nhật ký lần chạy": "Run log",
+  "Biến môi trường": "Environment variable",
+  "Giá trị cố định": "Fixed value",
+  "Đã lưu job. Có thể chọn job và chạy nhiều worker độc lập.": "Job saved. Select jobs to start independent workers.",
+  "Chưa có job đã lưu. Tạo integration, duyệt SQL và lưu job.": "No saved jobs yet. Prepare an integration, review SQL and save a job.",
+  "Chọn job trước.": "Select a job first.",
+  "Lưu job.": "Save a job.",
+  "Đặt tên job, chọn phiên bản integration, tham số và chu kỳ chạy. Job được lưu để sử dụng lại.": "Name the job and choose its integration version, parameters and interval. The job is saved for reuse.",
+  "Mở tab Job đã lưu, chọn job để xem chi tiết. Khởi tạo DB nếu cần, sau đó chạy và theo dõi từng worker ở tab giám sát.": "Open Saved jobs and select a job to inspect its details. Initialize the database if needed, then run and monitor each worker in the monitoring tab.",
+  "Nhật ký job": "Run log"
+});
   const reverse = new Map(Object.entries(messages).map(([vi,en]) => [en,vi]));
   const patterns = [
     [/^(\d+) bảng \/ endpoint$/, n => `${n} tables / endpoints`],
@@ -109,7 +143,7 @@
     if(language==='en') {
       for(const [pattern, render] of patterns){const match=canonical.match(pattern);if(match){result=render(...match.slice(1));break;}}
       const nav=canonical.match(/^(0[123])\s+(.*)$/);
-      if(nav)result=nav[1]+'   '+(messages[nav[2]]||nav[2]);
+      if(nav&&!messages[canonical])result=nav[1]+'   '+(messages[nav[2]]||nav[2]);
     }
     return source.replace(trimmed,result);
   }
@@ -120,7 +154,7 @@
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
     while(walker.nextNode()) {
       const node=walker.currentNode;
-      if(!node.nodeValue.trim()||node.parentElement.closest('script,style,textarea,code,#log-id,#field-editor td,#jobs td:first-child:not([colspan]),#parameters label'))continue;
+      if(!node.nodeValue.trim()||node.parentElement.closest('script,style,textarea,code,#log-id,#field-editor td,#jobs td:first-child:not([colspan]),#parameters label > input,#run-parameters label,#job-detail-config,#job-detail-schema,#job-detail-sql,#job-detail-title,#job-detail-version,#job-detail-summary,#saved-jobs-list button'))continue;
       let record=nodes.get(node);
       if(!record||node.nodeValue!==record.last)record={source:node.nodeValue,last:node.nodeValue};
       // SQL itself is never localized; only the exact placeholder messages are recognized.

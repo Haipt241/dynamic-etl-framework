@@ -29,7 +29,7 @@ Open http://127.0.0.1:8765. Select **Tiếng Việt / English** in the header; t
 3. Add further endpoints using the checkbox. Review columns/types/keys in the table. Advanced schema/config fields remain available for provider-specific pagination, OAuth, transforms and reconciliation.
 4. Preview stage/prod/view/procedure SQL. Existing providers with unchanged schemas use their original SQL assets. New schemas use `UnifiedSQLGenerator` without AI. Imported SQL templates use sandboxed Jinja with `integration_name`, `entities` (each entity has `name` and `fields`) and `generated_sql`. A wrapper can use `{{generated_sql}}`; a replacement can loop over entities and fields. Unknown template variables fail preview. Existing database placeholders such as `{clientID}` remain literal until execution. Imported SQL is user-authored code and must be reviewed before execution.
 5. Save an immutable definition version. Secrets must be entered in runtime parameter inputs or the server environment, not embedded in advanced schema/config JSON. Normal env defaults and the historical `client_credentials` block are removed from saved config.
-6. Select the saved version, enter the required client/organisation/auth parameters, choose INSERT or UPSERT and an optional repeat interval. Confirm DB writes explicitly. **The existing INSERT SQL contains DROP TABLE. Review it and use a dedicated destination for initial validation.**
+6. In the preparation tab, create a named saved job pinned to the reviewed integration version. Save client/organisation values and environment references for credentials, a mode and an optional repeat interval. In Saved jobs, open the detail panel and start that job. Initialize DB performs one INSERT run; normal execution uses the saved mode. Confirm DB writes explicitly. **The existing INSERT SQL contains DROP TABLE. Review it and use a dedicated destination for initial validation.**
 7. Inspect status and redacted logs, or stop the job. Closing a browser tab leaves the server running. Graceful server shutdown stops workers; an unexpected server restart marks unfinished jobs interrupted. Resume is an explicit new run, not a claim of exactly-once recovery.
 
 ## Components
@@ -39,7 +39,8 @@ Open http://127.0.0.1:8765. Select **Tiếng Việt / English** in the header; t
 | `run_web.py` | Waitress entry point, single-server file lock, dotenv |
 | `web/app.py` | Local HTTP API and request validation |
 | `web/catalog.py` | Provider listing, validation, bridge to SchemaExtractor and UnifiedSQLGenerator |
-| `web/store.py` | SQLite definitions and job status, no parameter persistence |
+| `web/store.py` | SQLite integration versions, reusable jobs, execution history, versioned schema/config/SQL files |
+| `web/job_definitions.py` | Job validation and environment references; authentication values are never persisted |
 | `web/jobs.py` | Spawned worker processes, snapshots, repeat/stop, redacted logs |
 | `web/templates/`, `web/static/` | Browser UI, no build step or CDN |
 | `dynamic_integrations/paths.py` | Shared resolution of original or job-local runtime assets |
@@ -73,3 +74,11 @@ python -m pytest -q tests/test_web_tool.py tests/fixes/test_simple_null_filterin
 ```
 
 Tests cover schema inference/nested contracts, original provider SQL, review/save/template paths, process spawning, duplicate-job prevention, cancellation, partial results, recurring INSERT→UPSERT and recovery metadata. Provider API calls and actual DB writes are not exercised by these tests.
+
+## Saved jobs and runs
+
+`GET/POST /api/saved-jobs` lists/creates reusable jobs. `GET /api/saved-jobs/<id>` returns the pinned integration definition and reviewed SQL. `POST /api/saved-jobs/<id>/run` starts a fresh worker execution; `initialize: true` selects one INSERT cycle. Optional runtime overrides are not persisted.
+
+`GET /api/jobs` remains the run-history endpoint. Every new execution links to `saved_job_id` and records mode/interval. Existing run history is migrated additively; previously saved integration versions remain accessible. Legacy direct-run API requests remain supported, but the UI uses saved jobs.
+
+New versions materialize `definitions/<version>/schema.json`, `config.json`, and stage/prod/view/procedure SQL under the web data directory. Workers use their own runtime snapshots. Saved jobs persist across server restarts, while interrupted executions require an explicit restart. The manager currently supports four concurrent worker processes, with a provider/client/organisation duplicate guard. This is a local process manager, not a distributed queue or cron service.
