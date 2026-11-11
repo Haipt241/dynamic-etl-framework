@@ -141,6 +141,6 @@ Some other tests are historical diagnostics that require external infrastructure
 - [Setup, architecture, API routes and limitations](docs/WEB_TOOL.md)
 - [Repository layout and compatibility](docs/REPOSITORY_LAYOUT.md)
 - [Static demo: build and GitHub Pages deployment](docs/DEMO.md)
-- [Existing CLI integration guide](DYNAMIC_INTEGRATIONS_README.md)
+- [Existing CLI integration guide](docs/RUN_DYNAMIC_INTEGRATION_GUIDE.md)
 
 The active implementation is on `cleanup/dynamic-integration-only`, reviewed in [PR #1](https://github.com/Haipt241/dynamic-etl-framework/pull/1).
