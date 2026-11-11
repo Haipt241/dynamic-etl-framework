@@ -108,3 +108,21 @@ samples, then analyze all endpoints together. Review tables/PKs and SQL before
 saving the version and job. The importer does not call APIs, infer URLs from data,
 or interpret arbitrary PDF/Word documents. Schema-only OpenAPI definitions need
 real response samples in this version.
+
+## Phân tích doc → config + schema / Agent-assisted preparation
+
+1. Nhập tên integration, dán/upload tài liệu text hoặc nhập URL các trang hướng dẫn API.
+2. Ghi endpoint cần tích hợp, cách auth hoặc thông tin đã biết vào ô yêu cầu. Tick dùng
+   form nếu muốn base URL/auth/phân trang trong form được xem là khai báo đã xác nhận.
+3. Bấm **Agent → đề xuất config & schema**. Theo dõi trạng thái; lỗi provider hiện rõ.
+4. Duyệt nguồn trích dẫn, thông tin còn thiếu, số endpoint/bảng; chọn endpoint cần lấy.
+5. Sửa riêng **Config JSON** và **Schema JSON**. Nếu sửa schema, cập nhật danh sách
+   endpoint. Xác nhận đã kiểm tra hai đầu ra rồi bấm **Áp dụng bản đã duyệt**.
+6. Duyệt cột/PK trực quan, sinh SQL, lưu phiên bản. Hai file config/schema được lưu
+   cùng phiên bản để dùng khi tạo job. Sau đó chọn job ở màn hình chạy như trước.
+
+Provide documents/URLs and known requirements, request agent analysis, review evidence
+and missing information, select endpoints, edit config and schema, then apply the reviewed
+draft. Continue with visual PK review, SQL preview, version saving and job creation.
+Analysis requires a configured Claude API or authenticated Claude CLI; it does not run
+vendor requests or write database tables.

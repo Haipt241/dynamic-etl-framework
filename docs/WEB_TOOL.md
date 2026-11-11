@@ -108,3 +108,45 @@ and save/run a job as before. All endpoints share base URL, auth and pagination;
 absolute endpoint URLs must be under the configured base URL. Different hosts
 require separate integrations. Samples are used for inference and are not saved
 in published versions; loading a version restores all endpoint paths and schemas.
+
+## Agent-assisted document analysis and review
+
+The preparation screen accepts pasted/uploaded text documents, up to five public
+HTTP(S) documentation URLs, and a free-text requirements/declaration form. Existing
+base URL/auth/pagination form values are sent only when the user opts to treat them
+as confirmed declarations. Documents and declarations are sent to the configured
+Claude provider when **Agent → propose config & schema** is clicked.
+
+`SchemaExtractor.analyze_document` reuses `Utils.run_claude_prompt(read_only=True)`.
+Legacy callers retain their previous behavior. Web analysis uses either:
+
+- `ANTHROPIC_API_KEY` and `ETL_ANALYSIS_MODEL` in the server environment / local `.env`;
+  the model must be available to that account. No key is exposed in the UI or saved
+  into integration versions.
+- The existing authenticated `claude` executable in the server PATH. This path runs
+  in a temporary directory, with tools/MCP disabled, a 180-second timeout, and no
+  session persistence. Presence of the executable is not proof of valid sign-in.
+
+The server reports availability explicitly; it does not manufacture a successful
+analysis when the provider is missing. Requests run in a background thread, with one
+active analysis and ten retained in-memory results. ETL workers remain independent.
+Browser reload can resume polling. Server restart discards unsaved analysis results.
+
+The output is two editable objects: runtime `config` and database `schema`, plus
+endpoint/table counts, source hashes, quoted evidence and missing-information notes.
+A matching quote confirms only that text occurs in the input, not that an inference
+is correct. Full documentation coverage and unique primary keys still require review.
+The user selects root endpoints (dependent nested tables follow), edits both JSONs,
+acknowledges review, and applies the draft. Backend validation rejects unsupported auth,
+methods, invalid columns/URLs and broken nested relationships. PK review and SQL preview
+use the existing UI/generator. Saving the reviewed version writes `config.json` and
+`schema.json` together; analysis itself never writes to the destination database.
+
+Agent analysis can propose fields from documented response schemas without fabricating
+response samples. This differs from the deterministic import button, which uses actual
+examples. PDF/Word need text extraction before upload; URL fetch reads only supplied
+pages, not an automatic website crawl. OAuth/custom auth reuses existing runtime types
+but must be reviewed against the provider's token flow before execution.
+
+Acceptance tests mock the agent and HTTP provider transport; no paid model or vendor
+API call is part of the test suite.

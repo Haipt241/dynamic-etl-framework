@@ -67,7 +67,7 @@ function loadDraft(data){designDirty=false;draft={name:data.name,schema:data.sch
 async function refreshDefinitions(){const rows=await api('definitions');$('saved').replaceChildren(new Option('Chọn phiên bản',''));for(const row of rows)$('saved').add(new Option(`${row.name} · ${new Date(row.created*1000).toLocaleString()} · ${row.id.slice(0,8)}`,row.id));if(definitionId)$('saved').value=definitionId;}
 action('load-saved',async()=>{if(!$('saved').value)throw Error('Chọn phiên bản trước.');loadDraft(await api('definitions/'+$('saved').value));notice('Đã mở phiên bản.');});
 let sourceFilename='input.json';
-$('source-file').addEventListener('change',async event=>{try{const file=event.target.files[0];if(file){if(file.size>4000000)throw Error('Mẫu JSON tối đa 4 MB.');sourceFilename=file.name;$('source-document').value=await file.text();}}catch(e){notice(e.message,true);}});
+$('source-file').addEventListener('change',async event=>{try{const files=[...event.target.files];if(!files.length)return;let size=0;const parts=[];for(const file of files){size+=file.size;if(size>800000)throw Error('Tổng tài liệu tối đa 800 KB.');parts.push(files.length===1?await file.text():'SOURCE FILE: '+file.name+'\n'+await file.text());}sourceFilename=files[0].name;$('source-document').value=parts.join('\n\n');}catch(e){notice(e.message,true);}});
 action('discover-endpoints',async()=>{
   const result=await api('discover',{content:$('source-document').value,filename:sourceFilename});
   if(result.base_url)$('base_url').value=result.base_url;
@@ -76,6 +76,61 @@ action('discover-endpoints',async()=>{
   $('discovery-report').textContent=result.endpoints.map(r=>r.name+' ← '+r.source).concat(result.warnings).join('\n');
   notice('Đã đề xuất endpoint. Duyệt URL, tên bảng và mẫu JSON trước khi phân tích schema.');
 });
+let analysisName='', analysisSchemaSnapshot='', analysisPolling=null;
+function showAnalysisEndpoints(){
+  const schema=JSON.parse($('analysis-schema').value);
+  if(!Array.isArray(schema.endpoints))throw Error('Schema cần danh sách endpoints.');
+  analysisSchemaSnapshot=$('analysis-schema').value;
+  $('analysis-endpoints').replaceChildren();
+  const roots=schema.endpoints.filter(e=>!e.is_virtual_endpoint);
+  $('analysis-coverage').textContent=roots.length+' API / '+schema.endpoints.length+' tables';
+  for(const endpoint of roots){const label=text('label','','check');const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=true;checkbox.dataset.endpoint=endpoint.name;checkbox.onchange=()=>{$('analysis-reviewed').checked=false;};label.append(checkbox,text('span',endpoint.name+' · '+(endpoint.api_details?.method||'GET')+' '+(endpoint.api_details?.path||'?')+' · '+(endpoint.fields||[]).length+' fields'));$('analysis-endpoints').append(label);}
+  $('analysis-reviewed').checked=false;
+}
+function showAnalysis(result){
+  analysisName=result.name;
+  $('analysis-review').hidden=false;
+  $('analysis-summary').textContent=result.summary||'';
+  $('analysis-config').value=JSON.stringify(result.config,null,2);
+  $('analysis-schema').value=JSON.stringify(result.schema,null,2);
+  $('analysis-validation').textContent=(result.validation_errors||[]).join('\n');
+  $('analysis-overview').replaceChildren();
+  for(const [label,value] of [['Base URL',result.schema.api_config?.base_url],['Auth',result.config.auth_type],['Pagination',result.schema.api_config?.pagination?.type]])$('analysis-overview').append(text('p',label+': '+(value||'?')));
+  $('analysis-findings').replaceChildren();
+  for(const f of result.findings||[]){const item=text('details');item.append(text('summary',f.topic+': '+f.value),text('p',(f.source||'')+' · '+(f.verified_quote?'Trích dẫn khớp tài liệu':'Cần xác minh nguồn')),text('blockquote',f.quote||''));$('analysis-findings').append(item);}
+  $('analysis-missing').replaceChildren();for(const item of result.missing_information||[])$('analysis-missing').append(text('li',item));
+  showAnalysisEndpoints();$('analysis-review').scrollIntoView({behavior:'smooth'});
+}
+async function pollAnalysis(id){
+  try{const task=await api('analyses/'+id);if(task.status==='running'){analysisPolling=setTimeout(()=>pollAnalysis(id),1500);return;}
+    localStorage.removeItem('etl-analysis-id');$('analyze-agent').disabled=false;
+    if(task.status==='failed')throw Error(task.error);
+    $('analysis-progress').textContent='Đã phân tích. Cần duyệt hai đầu ra.';showAnalysis(task.result);
+  }catch(e){$('analyze-agent').disabled=false;$('analysis-progress').textContent=e.message;localStorage.removeItem('etl-analysis-id');}
+}
+$('analyze-agent').addEventListener('click',async()=>{
+  $('analyze-agent').disabled=true;try{
+    const declared={description:$('analysis-description').value};
+    if($('analysis-use-form').checked)for(const key of ['base_url','auth','header','rate_limit','pagination','page_param','size_param','page_size'])declared[key]=$(key).value;
+    const result=await api('analyses',{name:$('name').value,content:$('source-document').value,urls:$('analysis-urls').value.split(/\r?\n/).map(v=>v.trim()).filter(Boolean),declared});
+    localStorage.setItem('etl-analysis-id',result.id);$('analysis-progress').textContent='Agent đang đọc tài liệu và đề xuất config/schema...';pollAnalysis(result.id);
+  }catch(e){notice(e.message,true);$('analysis-progress').textContent=e.message;$('analyze-agent').disabled=false;}
+});
+for(const id of ['analysis-config','analysis-schema'])$(id).addEventListener('input',()=>{$('analysis-reviewed').checked=false;});
+action('analysis-refresh',()=>showAnalysisEndpoints());
+action('apply-analysis',async()=>{
+  if(!$('analysis-reviewed').checked)throw Error('Duyệt config và schema trước khi áp dụng.');
+  if($('analysis-schema').value!==analysisSchemaSnapshot)throw Error('Cập nhật danh sách từ JSON trước khi áp dụng.');
+  const schema=JSON.parse($('analysis-schema').value),config=JSON.parse($('analysis-config').value);
+  const selected=new Set([...$('analysis-endpoints').querySelectorAll('input:checked')].map(i=>i.dataset.endpoint));
+  let count;do{count=selected.size;for(const ep of schema.endpoints)if(selected.has(ep.name))for(const child of ep.nested_extractions||[])selected.add(child.table_name);}while(count!==selected.size);
+  schema.endpoints=schema.endpoints.filter(e=>selected.has(e.name));
+  config.endpoints=schema.endpoints.filter(e=>!e.is_virtual_endpoint).map(e=>e.name);
+  const definition=await api('analysis-review',{name:analysisName,schema,config,reviewed:true});
+  loadDraft(definition);$('analysis-validation').textContent='';notice('Đã áp dụng hai đầu ra vào bản nháp. Tiếp tục duyệt PK và SQL.');$('schema').scrollIntoView({behavior:'smooth'});
+});
+api('analysis-status').then(status=>{$('agent-status').textContent=status.provider+(status.model?' · '+status.model:'')+' · '+(status.ready?'Ready':status.message);}).catch(e=>{$('agent-status').textContent=e.message;});
+try{const id=localStorage.getItem('etl-analysis-id');if(id){$('analyze-agent').disabled=true;pollAnalysis(id);}}catch(_){}
 function renderEndpointRows(rows){
   designDirty=true;
   $('endpoint-rows').replaceChildren();

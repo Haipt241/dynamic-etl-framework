@@ -17,6 +17,9 @@ def create_app(directory=None, manager_factory=JobManager):
     token = secrets.token_urlsafe(32)
     store = Store(directory or web_data_directory())
     jobs = manager_factory(store)
+    from .analysis import AnalysisTasks, agent_status, review_definition
+    analyses = AnalysisTasks()
+    app.extensions["etl_analyses"] = analyses
     app.extensions.update(etl_store=store, etl_jobs=jobs)
     atexit.register(jobs.close)
 
@@ -70,6 +73,28 @@ def create_app(directory=None, manager_factory=JobManager):
     @app.get('/')
     def index():
         return render_template('index.html', token=token)
+
+    @app.get('/api/analysis-status')
+    def analysis_status():
+        return jsonify(agent_status())
+
+    @app.post('/api/analyses')
+    def start_analysis():
+        data = payload()
+        if not agent_status()['ready']:
+            raise ValueError(agent_status()['message'])
+        return jsonify(id=analyses.start(data)), 202
+
+    @app.get('/api/analyses/<ident>')
+    def get_analysis(ident):
+        return jsonify(analyses.get(ident))
+
+    @app.post('/api/analysis-review')
+    def review_analysis():
+        data = payload()
+        if data.get('reviewed') is not True:
+            raise ValueError('Review both config and database schema before applying')
+        return jsonify(review_definition(data))
 
     @app.post('/api/discover')
     def discover():
