@@ -25,7 +25,7 @@ def test_all_transformation_methods():
     # Add the dynamic_integrations to path
 
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}
@@ -96,7 +96,7 @@ def test_endpoint_routing():
     print("\n🧪 Testing endpoint routing in _transform_complex_json_objects...")
 
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance  
         config = {'test_mode': True}
@@ -190,7 +190,7 @@ def test_sample_transformations():
     print("\n🧪 Testing sample transformations with mock data...")
 
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}

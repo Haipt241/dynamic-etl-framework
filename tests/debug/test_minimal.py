@@ -17,7 +17,7 @@ def test_api_parameters():
     print("=" * 50)
     
     # Import just the integration class
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Create minimal config  
     config = {'rate_limit': 60}

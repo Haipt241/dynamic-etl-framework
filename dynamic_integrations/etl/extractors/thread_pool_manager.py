@@ -10,7 +10,7 @@ from threading import RLock, Semaphore
 from typing import Any, Callable, Dict, List, Optional
 
 # Import RateLimiter from generator directory
-from dynamic_integrations.generator.rate_limiter import RateLimiter
+from dynamic_integrations.runtime.rate_limiter import RateLimiter
 
 
 class ThreadedExecutionError(Exception):

@@ -22,8 +22,8 @@ def test_orchestrator_creation():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.IntegrationPackage import create_integration_package, OperationMode
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.package import create_integration_package, OperationMode
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create XeroBlue integration instance
         config = {'rate_limit': 60, 'debug': True}
@@ -63,8 +63,8 @@ def test_orchestrator_validation():
     print("=" * 45)
     
     try:
-        from dynamic_integrations.IntegrationPackage import create_integration_package, OperationMode
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.package import create_integration_package, OperationMode
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create XeroBlue integration instance
         xeroblue_integration = XeroblueIntegration({'rate_limit': 60})
@@ -98,14 +98,14 @@ def test_factory_functions():
     print("=" * 30)
     
     try:
-        from dynamic_integrations.IntegrationPackage import create_package_upsert, create_package_insert
+        from dynamic_integrations.compatibility.package import create_package_upsert, create_package_insert
         
         print("1. Testing create_package_upsert with string name...")
         orchestrator_upsert_str = create_package_upsert('XEROBLUE', {'rate_limit': 60})
         print(f"   ✅ Created UPSERT orchestrator: {orchestrator_upsert_str.integration.integration_name}")
         
         print("2. Testing create_package_insert with integration instance...")
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         xeroblue_integration = XeroblueIntegration({'rate_limit': 60})
         orchestrator_insert = create_package_insert(xeroblue_integration)
         print(f"   ✅ Created INSERT orchestrator: {orchestrator_insert.integration.integration_name}")
@@ -129,7 +129,7 @@ def test_integration_registry():
     print("=" * 35)
     
     try:
-        from dynamic_integrations.IntegrationPackage import (
+        from dynamic_integrations.compatibility.package import (
             list_registered_integrations, 
             is_integration_registered,
             create_integration_from_registry

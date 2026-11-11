@@ -6,6 +6,11 @@ This script retrieves the database password from AWS Secrets Manager.
 Requires AWS credentials to be configured.
 """
 
+# Support direct operational CLI execution.
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import json
 import boto3
 import sys

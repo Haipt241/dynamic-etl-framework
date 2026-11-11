@@ -16,7 +16,7 @@ def test_api_patterns():
     os.environ.setdefault('DB_Destination', 'EVA')
     
     # Import the integration
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     config = {'rate_limit': 60, 'debug': True}
     integration = XeroblueIntegration(config)

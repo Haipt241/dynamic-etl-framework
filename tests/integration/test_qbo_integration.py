@@ -24,7 +24,7 @@ def test_qbo_integration_structure():
     
     try:
         # Import the integration
-        from dynamic_integrations.integrations.qbo_integration import QBOIntegration
+        from dynamic_integrations.compatibility.integrations.qbo_integration import QBOIntegration
         from dynamic_integrations import BaseIntegration, IntegrationCapability
         
         print("✅ Imports successful")
@@ -87,7 +87,7 @@ def test_integration_agnostic_compatibility():
             create_package_upsert, register_integration, 
             validate_integration_interface, create_integration_package
         )
-        from dynamic_integrations.integrations.qbo_integration import QBOIntegration
+        from dynamic_integrations.compatibility.integrations.qbo_integration import QBOIntegration
         
         # Test interface validation
         qbo_integration = QBOIntegration({'debug': True})
@@ -128,7 +128,7 @@ def test_key_methods_exist():
     print("-" * 50)
     
     try:
-        from dynamic_integrations.integrations.qbo_integration import QBOIntegration
+        from dynamic_integrations.compatibility.integrations.qbo_integration import QBOIntegration
         
         qbo_integration = QBOIntegration({'debug': True})
         

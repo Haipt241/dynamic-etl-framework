@@ -10,6 +10,6 @@ This package contains utility scripts for:
 """
 
 # Make key utilities easily importable
-from .s3_upload_tool import S3Uploader
+from dynamic_integrations.storage.s3_upload_tool import S3Uploader
 
 __all__ = ['S3Uploader']

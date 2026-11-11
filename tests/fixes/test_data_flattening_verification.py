@@ -161,7 +161,7 @@ def test_contact_transformation():
     print("="*60)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}
@@ -221,7 +221,7 @@ def test_invoice_transformation():
     print("="*60)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}
@@ -294,7 +294,7 @@ def test_creditnote_transformation():
     print("="*60)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}
@@ -353,7 +353,7 @@ def test_column_filtering():
     print("="*60)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}

@@ -24,7 +24,7 @@ def test_clientid_population():
     # Add the dynamic_integrations to path
 
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}
@@ -100,7 +100,7 @@ def test_all_organisations_columns():
     print("\n🧪 Testing all organisations columns...")
 
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         config = {'test_mode': True}

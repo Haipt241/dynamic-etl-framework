@@ -37,7 +37,7 @@ from dynamic_integrations.generator.utils import Utils
 import config
 
 # Import sql_helper after setting up sys.argv in main()
-from sql_helper import get_firmcode_from_client_id
+from dynamic_integrations.database.sql_helper import get_firmcode_from_client_id
 
 
 class SQLExecutor:
@@ -45,7 +45,8 @@ class SQLExecutor:
 
     def __init__(self):
         """Initialize SQL Executor"""
-        self.base_dir = Path(__file__).parent
+        from dynamic_integrations.paths import integration_root
+        self.base_dir = integration_root()
         self.generated_dir = self.base_dir / "generated_integrations"
         self.utils = Utils()
         self.get_firmcode_from_client_id = get_firmcode_from_client_id  # Assign imported function
@@ -72,7 +73,8 @@ class SQLExecutor:
             env_vars_config = config.get('env_vars_config', {})
             
             # Extract client ID from EtaniClientID (e.g., "BIGOLESHOECOMPANY_CLIENT2013" -> "2013", "BIGOLESHOECOMPANY")
-            etani_client_id = env_vars_config.get('etani_client_id', {}).get('default_value', '')
+            client_field = env_vars_config.get('etani_client_id', {})
+            etani_client_id = os.getenv(client_field.get('env_var', 'EtaniClientID'), client_field.get('default_value', ''))
             client_id = ""
             client_name = ""
             
@@ -85,7 +87,8 @@ class SQLExecutor:
                 client_name = etani_client_id.split('_CLIENT')[0]
             
             # Extract org ID
-            org_id = env_vars_config.get('etani_organisation_id', {}).get('default_value', '')
+            org_field = env_vars_config.get('etani_organisation_id', {})
+            org_id = os.getenv(org_field.get('env_var', 'EtaniOrganisationID'), org_field.get('default_value', ''))
             
             client_info = {
                 'client_id': client_id,
@@ -243,7 +246,7 @@ class SQLExecutor:
         try:
             # Try using sql_helper if available
             try:
-                from sql_helper import eva_engine, eva_main_engine, cms_engine, USE_AWS_DB, _create_aws_engine, get_firmcode_from_client_id, ensure_database_exists
+                from dynamic_integrations.database.sql_helper import eva_engine, eva_main_engine, cms_engine, USE_AWS_DB, _create_aws_engine, get_firmcode_from_client_id, ensure_database_exists
                 from sqlalchemy import text
 
                 # Get etani_client_id from client_info parameter if available
@@ -576,7 +579,7 @@ def main():
                 sys.argv.extend(['--integration', args.integration])
 
             # Now import sql_helper after sys.argv is set
-            from sql_helper import get_firmcode_from_client_id
+            from dynamic_integrations.database.sql_helper import get_firmcode_from_client_id
 
             # Set the function reference in the executor
             executor.get_firmcode_from_client_id = get_firmcode_from_client_id

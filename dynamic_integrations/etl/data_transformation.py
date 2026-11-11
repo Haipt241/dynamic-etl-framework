@@ -15,8 +15,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from dynamic_integrations.generator.utils import Utils
-from utils import ConvertDataTypes
-from sql_helper import LoadToEvaStageTable, ExecuteEvaSP, get_firm_id, update_container_logs
+from dynamic_integrations.etl.value_utils import ConvertDataTypes
+from dynamic_integrations.database.sql_helper import LoadToEvaStageTable, ExecuteEvaSP, get_firm_id, update_container_logs
 
 
 class DataTransformer:
@@ -132,8 +132,10 @@ class DataTransformer:
                         response_structure = ep.get('response_structure', {})
                         root_data_field = response_structure.get('root_data_field')
                         
-                        if root_data_field and isinstance(records, dict) and root_data_field in records:
-                            extracted_records = records[root_data_field]
+                        if root_data_field and isinstance(records, dict):
+                            extracted_records = records.get(root_data_field) if root_data_field in records else self._get_nested_field_value(records, root_data_field)
+                            if extracted_records is None:
+                                continue
                             self.logger.debug(f"Extracted data from schema root_data_field '{root_data_field}' for {endpoint}")
                             records = extracted_records
                             break
@@ -901,7 +903,7 @@ class DataTransformer:
         try:
             # PRIMARY: Query database first for accurate column list
             try:
-                from sql_helper import eva_engine
+                from dynamic_integrations.database.sql_helper import eva_engine
                 from sqlalchemy import text
 
                 query = text("""
@@ -1254,6 +1256,22 @@ class DataTransformer:
             # Load schema and foreign key pattern once for the entire method
             schema = self.integration._load_schema()
             fk_pattern = schema.get('metadata', {}).get('foreign_key_pattern', '') if schema else ''
+            # Tool-generated schemas explicitly identify their source key and inherited FKs.
+            current_schema = next((ep for ep in (schema or {}).get('endpoints', [])
+                                   if ep.get('name') == current_endpoint), {})
+            identity = current_schema.get('identity_field')
+            if identity:
+                fields = current_schema.get('fields', [])
+                mapped = next((f.get('db_column') for f in fields if f.get('api_name') == identity), identity)
+                value = self._get_nested_field_value(current_record, identity)
+                if value is None:
+                    value = next((v for k, v in current_record.items() if k.lower() == mapped.lower()), None)
+                ancestor_fks = {f['api_name']: next((v for k, v in current_record.items()
+                                                   if k.lower() == f['api_name'].lower()), None)
+                                for f in fields if f.get('is_foreign_key')}
+                ancestor_fks[f"{current_endpoint.lower()}Id"] = value
+                return ancestor_fks
+
             # Build hierarchy chain by tracing backwards from virtual table
             hierarchy_chain = []
             current_virtual = virtual_table_name

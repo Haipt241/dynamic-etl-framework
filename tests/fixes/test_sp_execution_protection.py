@@ -23,7 +23,7 @@ def test_stage_table_validation():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance with proper setup
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -80,7 +80,7 @@ def test_enhanced_sp_execution():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -125,7 +125,7 @@ def test_complete_protection_logic():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.error_list = []

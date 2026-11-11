@@ -21,15 +21,15 @@ from requests import Response
 
 from dynamic_integrations.etl.extractors.url_builder import URLBuilder
 from dynamic_integrations.etl.extractors.thread_pool_manager import ThreadPoolManager, calculate_optimal_workers
-from dynamic_integrations.generator.auth_manager import AuthManager
+from dynamic_integrations.auth.auth_manager import AuthManager
 from dynamic_integrations.singleton_manager import SingletonBase
 
 # Import reliability controlling system
-from reliability_controlling import enterprise_retry, RetryStrategy
+from dynamic_integrations.reliability import enterprise_retry, RetryStrategy
 
 # Add parent directory to path for sql_helper
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
-from sql_helper import LoadToEvaStageTable, ExecuteEvaSP, ExecuteCMSSP
+from dynamic_integrations.database.sql_helper import LoadToEvaStageTable, ExecuteEvaSP, ExecuteCMSSP
 
 
 class APIClient(SingletonBase):
@@ -976,7 +976,7 @@ class APIClient(SingletonBase):
             primary_key = self._get_primary_key_for_endpoint(endpoint)
             
             # Use UPSERT function like main extraction flow
-            from sql_helper import LoadToEvaStageTableUpsert
+            from dynamic_integrations.database.sql_helper import LoadToEvaStageTableUpsert
             LoadToEvaStageTableUpsert(df, endpoint, primary_key, stage_table, [])
             
             self.logger.info(f"Successfully saved {len(df)} records to {stage_table} using UPSERT")
@@ -1180,7 +1180,8 @@ class APIClient(SingletonBase):
             from datetime import datetime
 
             # Create failures directory
-            failures_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'retry_failures')
+            from dynamic_integrations.paths import data_directory
+            failures_dir = str(data_directory('retry_failures'))
             os.makedirs(failures_dir, exist_ok=True)
 
             # Write to simple text file

@@ -23,7 +23,7 @@ def test_creditnotes_default_values():
     print("🧪 Testing CreditNotes Default Values Fix")
     print("=" * 50)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Create integration instance
     integration = XeroblueIntegration.__new__(XeroblueIntegration)
@@ -84,7 +84,7 @@ def test_multiple_endpoints_default_values():
     print("\\n🔄 Testing Multiple Endpoints")
     print("=" * 40)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     integration = XeroblueIntegration.__new__(XeroblueIntegration)
     
@@ -152,7 +152,7 @@ def test_data_type_defaults():
     print("\\n📊 Testing Data Type Defaults")
     print("=" * 35)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     integration = XeroblueIntegration.__new__(XeroblueIntegration)
     
@@ -191,7 +191,7 @@ def test_integration_with_convert_data_types():
     print("\\n🔄 Testing Integration with Data Type Conversion")
     print("=" * 55)
     
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
     
     # Set up minimal integration
     config = {'rate_limit': 60}

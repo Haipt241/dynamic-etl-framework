@@ -24,7 +24,7 @@ def test_xeroblue_integration_structure():
     
     try:
         # Import the integration
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         from dynamic_integrations import BaseIntegration, IntegrationCapability
         
         print("✅ Imports successful")
@@ -96,7 +96,7 @@ def test_integration_agnostic_compatibility():
             create_package_upsert, create_package_insert, register_integration, 
             validate_integration_interface, create_integration_package
         )
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Test interface validation
         xeroblue_integration = XeroblueIntegration({'debug': True})
@@ -143,7 +143,7 @@ def test_key_methods_exist():
     print("-" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         xeroblue_integration = XeroblueIntegration({'debug': True})
         
@@ -231,7 +231,7 @@ def main():
         print("   orchestrator = create_package_upsert('XEROBLUE', config)")
         print("   result = orchestrator.run()")
         print("3. Or use the new instance-based approach:")
-        print("   from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration")
+        print("   from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration")
         print("   xeroblue = XeroblueIntegration(config)")
         print("   orchestrator = create_package_upsert(xeroblue)")
         print("   result = orchestrator.run()")

@@ -13,7 +13,7 @@ def quick_test():
         os.environ.setdefault('DB_Destination', 'EVA')
         
         print("Loading XeroBlue integration...")
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         print("Creating integration instance...")
         config = {'rate_limit': 60, 'debug': True}

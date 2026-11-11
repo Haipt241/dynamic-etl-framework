@@ -12,7 +12,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+    from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
 except ImportError:
     print("❌ Could not import XeroblueIntegration. Ensure the module is in the correct location.")
     sys.exit(1)

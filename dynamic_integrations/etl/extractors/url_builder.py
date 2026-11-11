@@ -10,7 +10,7 @@ import logging
 from dynamic_integrations.singleton_manager import SingletonBase
 
 # Import reliability controlling system  
-from reliability_controlling import enterprise_retry, RetryStrategy
+from dynamic_integrations.reliability import enterprise_retry, RetryStrategy
 
 
 class URLBuilder(SingletonBase):
@@ -112,7 +112,7 @@ class URLBuilder(SingletonBase):
         # Build final URL with query string
         if query_params:
             query_string = urllib.parse.urlencode(query_params)
-            complete_url += f"?{query_string}"
+            complete_url += ("&" if "?" in complete_url else "?") + query_string
         
         return complete_url
     
@@ -160,7 +160,7 @@ class URLBuilder(SingletonBase):
                     auth_query_string = urllib.parse.urlencode(query_params)
                     complete_url += f"?{auth_query_string}&{query_string}"
                 else:
-                    complete_url += f"?{query_string}"
+                    complete_url += ("&" if "?" in complete_url else "?") + query_string
         else:
             # Only auth params
             if query_params:
@@ -257,9 +257,9 @@ class URLBuilder(SingletonBase):
         if query_params:
             query_string = urllib.parse.urlencode(query_params)
             if complete_url:
-                complete_url += f"?{query_string}"
+                complete_url += ("&" if "?" in complete_url else "?") + query_string
             if detail_url:
-                detail_url += f"?{query_string}"
+                detail_url += ("&" if "?" in detail_url else "?") + query_string
         # else:
         #     # Fall back to config-based approach
         #     endpoint_config = self.config.get('endpoints_config', {}).get(endpoint, {})
@@ -577,7 +577,7 @@ class URLBuilder(SingletonBase):
                 if auth_type == 'oauth2_password_grant':
                     # Create TokenManager if not exists
                     if not hasattr(self.integration.auth_manager, 'token_manager') or not self.integration.auth_manager.token_manager:
-                        from ...generator.token_manager import TokenManager
+                        from dynamic_integrations.auth.token_manager import TokenManager
                         self.integration.auth_manager.token_manager = TokenManager(self.integration, self.integration.config)
                         self.logger.debug("Created TokenManager instance for OAuth2 password grant")
 

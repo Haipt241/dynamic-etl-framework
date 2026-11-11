@@ -23,11 +23,9 @@ dynamic_integrations/
 ├── IntegrationPackage.py                    # Main unified orchestrator class
 ├── cms_manager.py                           # CMS management utilities
 ├── sql_object_manager.py                    # SQL object management utilities
-├── original_integration_package_insert.py  # Original INSERT class (reference)
-├── original_IntegrationPackageUpsert.py   # Original UPSERT class (reference)
 ├── integrations/                           # Integration implementations
 │   ├── __init__.py
-│   ├── xeroblue_integration_enhanced.py
+│   ├── xeroblue_integration.py
 │   └── ... (other integration files)
 └── README.md                               # This file
 ```
@@ -208,40 +206,6 @@ Enhanced logging includes:
 - Success/failure indicators
 - Performance metrics
 
-## Migration from Original Classes
-
-### From IntegrationPackageInsert
-```python
-# Old way
-from integrations.integration_package_insert import create_package_insert
-orchestrator = create_package_insert(integration_instance)
-
-# New way (backward compatible)
-from etl_packages.dynamic_integrations import create_package_insert
-orchestrator = create_package_insert(integration_instance)
-
-# New way (recommended)
-from etl_packages.dynamic_integrations import create_integration_package
-orchestrator = create_integration_package(integration_instance, 'INSERT')
-```
-
-### From IntegrationPackageUpsert
-```python
-# Old way
-from IntegrationPackageUpsert import create_package_upsert
-orchestrator = create_package_upsert('XEROBLUE', config)
-
-# New way (backward compatible)
-from etl_packages.dynamic_integrations import create_package_upsert
-orchestrator = create_package_upsert('XEROBLUE', config)
-
-# New way (recommended)
-from etl_packages.dynamic_integrations import create_integration_package
-from integrations.xeroblue_integration_enhanced import XeroBlueIntegrationEnhanced
-integration_instance = XeroBlueIntegrationEnhanced(config)
-orchestrator = create_integration_package(integration_instance, 'UPSERT')
-```
-
 ## Version History
 
 - **v3.0.0**: Dynamic unified orchestrator combining INSERT and UPSERT operations
@@ -262,9 +226,9 @@ python IntegrationPackage.py
 
 # Test with specific integration
 from etl_packages.dynamic_integrations import create_integration_package
-from integrations.xeroblue_integration_enhanced import XeroBlueIntegrationEnhanced
+from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
 
-integration = XeroBlueIntegrationEnhanced({'debug': True})
+integration = XeroblueIntegration({'debug': True})
 orchestrator = create_integration_package(integration, 'AUTO')
 info = orchestrator.get_integration_info()
 print(info)

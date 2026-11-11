@@ -1,7 +1,6 @@
 # Requirements for ETL packages
 # Includes all dependencies for:
 # - run_dynamic_integration.py (dynamic integration runner)
-# - XPM workers and other ETL scripts
 # - Database connectivity (SQLAlchemy, pyodbc, pymysql)
 # - Cloud services (AWS boto3, Azure storage)
 # - Authentication (OAuth, JWT, MSAL)
@@ -86,3 +85,7 @@ psutil>=5.8.0
 
 # Data serialization
 msgpack>=1.0.0
+
+# Local web workbench (Windows/macOS/Linux)
+Flask>=3.0,<4
+waitress>=3.0,<4

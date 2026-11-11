@@ -67,6 +67,24 @@ class UnifiedSQLGenerator:
         print(f"🤖 LLM verification: {'enabled' if use_llm_verification else 'disabled'}")
         print(f"📦 Chunk size: {chunk_size}")
     
+    def render_imported_template(self, template: str, schema: Dict, generated_sql: str) -> str:
+        """Render an optional user SQL template using the same entity conversion."""
+        from jinja2 import StrictUndefined, TemplateError
+        from jinja2.sandbox import SandboxedEnvironment
+        if not isinstance(template, str) or not template.strip():
+            raise ValueError("SQL template cannot be empty")
+        try:
+            result = SandboxedEnvironment(undefined=StrictUndefined).from_string(template).render(
+                integration_name=self.integration_name,
+                entities=self._convert_schemas_to_entities([schema], "stage"),
+                generated_sql=generated_sql,
+            )
+        except TemplateError as error:
+            raise ValueError(f"Invalid SQL template: {error}") from error
+        if not result.strip():
+            raise ValueError("SQL template produced empty output")
+        return result
+
     def generate_sql_type(self, schema_dir: Path, output_dir: Path, sql_type: str, 
                           failed_chunks: Optional[List[int]] = None) -> str:
         """
@@ -101,7 +119,7 @@ class UnifiedSQLGenerator:
         
         # Initialize enterprise retry monitor
         try:
-            from reliability_controlling import ChunkMonitor
+            from dynamic_integrations.reliability import ChunkMonitor
             monitor = ChunkMonitor(
                 operation_name=f"sql_generation_{sql_type}",
                 integration_name=self.integration_name

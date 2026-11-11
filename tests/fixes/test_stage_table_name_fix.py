@@ -21,7 +21,7 @@ def test_stage_table_name_logic():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         # Create integration instance
         integration = XeroblueIntegration.__new__(XeroblueIntegration)

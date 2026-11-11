@@ -19,11 +19,11 @@ def test_basic_import():
     
     try:
         print("1. Testing IntegrationPackage import...")
-        from dynamic_integrations.IntegrationPackage import IntegrationPackage, OperationMode
+        from dynamic_integrations.compatibility.package import IntegrationPackage, OperationMode
         print("   ✅ IntegrationPackage imported successfully")
         
         print("2. Testing factory function import...")
-        from dynamic_integrations.IntegrationPackage import create_integration_package
+        from dynamic_integrations.compatibility.package import create_integration_package
         print("   ✅ Factory functions imported successfully")
         
         print("3. Testing OperationMode enum...")
@@ -42,8 +42,8 @@ def test_basic_orchestrator():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.IntegrationPackage import IntegrationPackage, OperationMode
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.package import IntegrationPackage, OperationMode
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         print("1. Creating XeroBlue integration...")
         # Proper initialization with minimal config to avoid full setup

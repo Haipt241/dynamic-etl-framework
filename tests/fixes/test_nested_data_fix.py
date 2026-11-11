@@ -22,7 +22,7 @@ def test_nested_data_id_preservation():
     print("=" * 45)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}
@@ -110,7 +110,7 @@ def test_complete_pipeline_with_nested_fix():
     print("=" * 50)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}
@@ -178,7 +178,7 @@ def test_real_creditnotes_scenario():
     print("=" * 40)
     
     try:
-        from dynamic_integrations.integrations.xeroblue_integration import XeroblueIntegration
+        from dynamic_integrations.compatibility.integrations.xeroblue_integration import XeroblueIntegration
         
         integration = XeroblueIntegration.__new__(XeroblueIntegration)
         integration.config = {'apply_default_values': True}

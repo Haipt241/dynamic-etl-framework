@@ -765,7 +765,7 @@ class BaseIntegration(ABC):
         try:
             # Import required functions (lazy import to avoid circular dependencies)
             try:
-                from sql_helper import ExecuteEvaSP, ExecuteCMSSP
+                from dynamic_integrations.database.sql_helper import ExecuteEvaSP, ExecuteCMSSP
             except ImportError:
                 # Fallback for testing environments
                 if hasattr(self, 'logger'):

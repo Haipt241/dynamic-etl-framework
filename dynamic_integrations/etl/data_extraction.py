@@ -14,7 +14,7 @@ from ..generator.utils import Utils
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from sql_helper import LoadToEvaStageTable, LoadToEvaStageTableUpsert, ExecuteDirectCMSSP
+from dynamic_integrations.database.sql_helper import LoadToEvaStageTable, LoadToEvaStageTableUpsert, ExecuteDirectCMSSP
 
 # Import modular extractors
 from .extractors.api_client import APIClient
@@ -639,7 +639,7 @@ class DataExtractor:
         """
         try:
             from sqlalchemy import text
-            from sql_helper import eva_engine
+            from dynamic_integrations.database.sql_helper import eva_engine
 
             # Build query to get all records from table
             query = text(f"""

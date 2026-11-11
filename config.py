@@ -14,31 +14,8 @@ SQL_SERVER_PASSWORD = os.getenv("SQL_SERVER_PASSWORD", "")
 SQL_SERVER_NAME = os.getenv("SQL_SERVER_NAME", "")
 SQL_SERVER_DATABASE = os.getenv("SQL_SERVER_DATABASE", "")
 
-# ============================================================================
-# DEPRECATED: Azure MySQL Credentials - NO LONGER USED
-# ============================================================================
-# The system has been fully migrated to AWS RDS Aurora.
-# These credentials are DISABLED and kept only for historical reference.
-# DO NOT USE - Will cause connection to wrong database!
-# ============================================================================
-if False:  # DISABLED - Azure MySQL deprecated, AWS RDS Aurora only
-    MYSQL_SERVER_USERNAME = os.getenv("MYSQL_SERVER_USERNAME", "")
-    MYSQL_SERVER_PASSWORD = os.getenv("MYSQL_SERVER_PASSWORD", "")
-    MYSQL_SERVER_NAME = os.getenv("MYSQL_SERVER_NAME", "")
-    MYSQL_SERVER_EVA_DATABASE = os.getenv("MYSQL_SERVER_EVA_DATABASE", "")
-    MYSQL_SERVER_EVA_MAIN_DATABASE = os.getenv("MYSQL_SERVER_EVA_MAIN_DATABASE", "")
-    MYSQL_SERVER_CMS_DATABASE = os.getenv("MYSQL_SERVER_CMS_DATABASE", "")
-
 # SSL Certificate (not used by AWS RDS, but kept for legacy code references)
 MYSQL_SERVER_SSL_CERT = os.path.join(os.path.dirname(__file__), 'DigiCertGlobalRootCA.crt 2.pem')
-
-# AWS RDS Aurora Credentials - SYDNEY CLUSTER (PRODUCTION)
-# AWS_RDS_HOST = 'vibecfo-db-cluster.cluster-cly0yq0eierj.ap-southeast-2.rds.amazonaws.com'
-# AWS_RDS_USERNAME = 'vibecfo_developer'
-# AWS_RDS_PASSWORD = 'fb*H&76^R5%fwe4'  # Static password for Sydney cluster
-# AWS_RDS_SECRET_NAME = 'rds!cluster-e715bbba-8b9f-43d1-8820-0f1b72fda546'
-# AWS_RDS_REGION = 'ap-southeast-2'
-# AWS_RDS_DATABASE = 'vibedb'  # Default database
 
 AWS_RDS_HOST = os.getenv("AWS_RDS_HOST", "")
 AWS_RDS_USERNAME = os.getenv("AWS_RDS_USERNAME", "")
@@ -51,7 +28,6 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
 
 # Token File Path
-#TOKEN_FILE_PATH = r'C:\Users\jefrey\Desktop\ETL_PYTHON APP\refreshtoken'
 STORAGE_ACCOUNT_NAME = os.getenv("STORAGE_ACCOUNT_NAME", "")
 STORAGE_ACCOUNT_KEY = os.getenv("STORAGE_ACCOUNT_KEY", "")
 BLOB_CONTAINER_NAME = os.getenv("BLOB_CONTAINER_NAME", "")
